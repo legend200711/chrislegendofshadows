@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>About | Chris Legend of Shadows</title>
+
+<style>
+body{
+margin:0;
+overflow:hidden;
+background:#000;
+color:#cfefff;
+font-family:Arial,sans-serif;
+cursor:none;
+}
+
+/* NAV */
+nav{
+position:fixed;
+top:0;
+width:100%;
+display:flex;
+justify-content:center;
+gap:18px;
+padding:14px;
+background:rgba(0,0,0,.6);
+backdrop-filter:blur(10px);
+z-index:100;
+}
+
+nav a{
+color:#7fd3ff;
+text-decoration:none;
+font-weight:bold;
+transition:0.3s;
+}
+
+nav a:hover{
+color:#00e5ff;
+text-shadow:0 0 10px #00e5ff;
+}
+
+/* FADE */
+#fade{
+position:fixed;
+inset:0;
+background:black;
+opacity:0;
+pointer-events:none;
+z-index:9999;
+transition:0.6s ease;
+}
+
+/* BACKGROUND LAYERS */
+#flames,#rain,#cats{
+position:fixed;
+inset:0;
+pointer-events:none;
+}
+
+#flames{z-index:-3;}
+#rain{z-index:-2;}
+#cats{z-index:-4;}
+
+/* BLUE RAIN */
+.drop{
+position:absolute;
+width:2px;
+height:40px;
+background:linear-gradient(to bottom,#00c8ff,transparent);
+opacity:0.7;
+animation:fall linear infinite;
+}
+
+@keyframes fall{
+0%{transform:translateY(-100vh);opacity:0}
+10%{opacity:1}
+100%{transform:translateY(100vh);opacity:0}
+}
+
+/* FLOATING CATS */
+.cat{
+position:absolute;
+width:40px;
+height:40px;
+background:#00c8ff;
+clip-path:polygon(50% 0%, 65% 25%, 100% 30%, 75% 55%, 80% 100%, 50% 75%, 20% 100%, 25% 55%, 0 30%, 35% 25%);
+opacity:0.25;
+filter:blur(0.3px);
+animation:floatCat 12s linear infinite;
+}
+
+@keyframes floatCat{
+0%{transform:translateY(100vh) scale(0.6);opacity:0}
+10%{opacity:0.4}
+100%{transform:translateY(-120vh) scale(1.2);opacity:0}
+}
+
+/* INTRO */
+#intro{
+position:fixed;
+inset:0;
+background:#000;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:1000;
+animation:fadeOut 3.5s forwards;
+}
+
+#intro h1{
+font-size:40px;
+color:#00c8ff;
+text-shadow:0 0 20px #00c8ff,0 0 60px #0066ff;
+animation:pop 2.5s ease;
+transform:scale(0.6);
+opacity:0;
+}
+
+@keyframes pop{
+0%{transform:scale(0.5);opacity:0;filter:blur(10px)}
+40%{opacity:1;filter:blur(0)}
+70%{transform:scale(1.2)}
+100%{transform:scale(1)}
+}
+
+@keyframes fadeOut{
+0%{opacity:1}
+80%{opacity:1}
+100%{opacity:0;visibility:hidden}
+}
+
+/* CONTENT */
+.container{
+max-width:900px;
+margin:120px auto;
+padding:20px;
+position:relative;
+z-index:2;
+}
+
+.box{
+background:rgba(10,10,20,.6);
+border:1px solid rgba(0,200,255,.25);
+padding:20px;
+margin-bottom:20px;
+border-radius:12px;
+backdrop-filter:blur(8px);
+}
+
+/* TYPEWRITER */
+#typing{
+min-height:120px;
+line-height:1.6;
+text-shadow:0 0 10px #00c8ff;
+white-space:pre-wrap;
+}
+
+/* CURSOR */
+#cursor{
+position:fixed;
+width:18px;
+height:18px;
+border-radius:50%;
+background:#00c8ff;
+box-shadow:0 0 20px #00c8ff;
+pointer-events:none;
+transform:translate(-50%,-50%);
+z-index:10000;
+}
+
+/* ENERGY GLOW */
+.energy{
+position:fixed;
+inset:0;
+background:radial-gradient(circle at center,rgba(0,200,255,0.08),transparent 60%);
+mix-blend-mode:screen;
+pointer-events:none;
+z-index:-1;
+animation:pulse 6s infinite ease-in-out;
+}
+
+@keyframes pulse{
+0%,100%{opacity:0.3}
+50%{opacity:0.7}
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="fade"></div>
+<div id="intro"><h1>ENTERING LEGEND WORLD</h1></div>
+
+<div class="energy"></div>
+
+<nav>
+<a href="music.html" class="link">Music</a>
+<a href="gallery.html" class="link">Gallery</a>
+</nav>
+
+<div id="flames"></div>
+<div id="rain"></div>
+<div id="cats"></div>
+
+<div id="cursor"></div>
+
+<div class="container">
+
+<h1 style="text-align:center;text-shadow:0 0 25px #00c8ff;">
+About Chris Legend of Shadows
+</h1>
+
+<div class="box">
+<h2>About Me</h2>
+<p id="typing"></p>
+</div>
+
+<div class="box">
+<h2>🔥 Fun Facts</h2>
+<ul>
+<li>I turn emotions into music</li>
+<li>I built my own universe</li>
+<li>Cinematic dark emotional style</li>
+<li>I express what I can’t say out loud</li>
+<li>I’m building my legacy step by step</li>
+</ul>
+</div>
+
+</div>
+
+<script>
+
+/* CURSOR */
+const cursor=document.getElementById("cursor");
+document.addEventListener("mousemove",e=>{
+cursor.style.left=e.clientX+"px";
+cursor.style.top=e.clientY+"px";
+});
+
+/* RAIN (continuous) */
+const rain=document.getElementById("rain");
+
+function spawnDrop(){
+let d=document.createElement("div");
+d.className="drop";
+d.style.left=Math.random()*100+"vw";
+d.style.animationDuration=(Math.random()*1.2+0.6)+"s";
+d.style.height=(Math.random()*35+15)+"px";
+rain.appendChild(d);
+
+setTimeout(()=>d.remove(),2000);
+}
+setInterval(()=>{for(let i=0;i<3;i++)spawnDrop();},80);
+
+/* FLOATING CATS */
+const cats=document.getElementById("cats");
+
+function spawnCat(){
+let c=document.createElement("div");
+c.className="cat";
+c.style.left=Math.random()*100+"vw";
+c.style.animationDuration=(8+Math.random()*8)+"s";
+cats.appendChild(c);
+setTimeout(()=>c.remove(),14000);
+}
+setInterval(spawnCat,800);
+
+/* FLAMES */
+const canvas=document.createElement("canvas");
+document.getElementById("flames").appendChild(canvas);
+const ctx=canvas.getContext("2d");
+
+function resize(){
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+}
+resize();
+window.addEventListener("resize",resize);
+
+class Flame{
+constructor(){this.reset();}
+reset(){
+this.x=Math.random()*canvas.width;
+this.y=canvas.height+50;
+this.size=Math.random()*6+2;
+this.speedY=Math.random()*2+1;
+this.speedX=(Math.random()-0.5)*1.2;
+this.alpha=Math.random()*0.6+0.2;
+this.life=Math.random()*100;
+}
+update(){
+this.x+=this.speedX;
+this.y-=this.speedY;
+this.life--;
+if(this.life<=0||this.y<-50)this.reset();
+}
+draw(){
+let g=ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size*2);
+g.addColorStop(0,`rgba(0,200,255,${this.alpha})`);
+g.addColorStop(1,"transparent");
+ctx.fillStyle=g;
+ctx.beginPath();
+ctx.arc(this.x,this.y,this.size*2,0,Math.PI*2);
+ctx.fill();
+}
+}
+
+let flames=[];
+for(let i=0;i<120;i++)flames.push(new Flame());
+
+function animate(){
+ctx.fillStyle="rgba(0,0,0,0.25)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+flames.forEach(f=>{f.update();f.draw();});
+requestAnimationFrame(animate);
+}
+animate();
+
+/* TYPEWRITER */
+const text=`
+Welcome to the world of Chris Legend of Shadows.
+
+This isn’t just a name — it’s a story built from everything I’ve been through.
+I created this world through pain, silence, and the battles in my own mind.
+
+Every beat, every sound, every lyric comes from fighting my demons and refusing to let them win.
+Music became my escape when words weren’t enough.
+
+I didn’t build this to be perfect — I built it to be real.
+A place where emotions turn into sound, and darkness turns into something powerful.
+`;
+
+let i=0;
+function typeWriter(){
+const el=document.getElementById("typing");
+if(i<text.length){
+el.innerHTML+=text.charAt(i++);
+setTimeout(typeWriter,25);
+}
+}
+window.addEventListener("load",typeWriter);
+
+/* INTRO */
+setTimeout(()=>document.getElementById("intro").style.display="none",3500);
+
+/* PAGE FADE */
+document.querySelectorAll(".link").forEach(link=>{
+link.addEventListener("click",e=>{
+e.preventDefault();
+document.getElementById("fade").style.opacity=1;
+setTimeout(()=>window.location=link.href,600);
+});
+});
+
+</script>
+
+</body>
+</html>

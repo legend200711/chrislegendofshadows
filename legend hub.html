@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Welcome in Legends</title>
+
+<style>
+body{
+margin:0;
+overflow:hidden;
+background:#000;
+font-family:Arial,sans-serif;
+color:#bff6ff;
+}
+
+/* INTENSE DARK CORE BACKGROUND */
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at 50% 50%, rgba(0,255,255,.25), transparent 35%),
+radial-gradient(circle at 20% 80%, rgba(0,80,255,.15), transparent 60%),
+radial-gradient(circle at 80% 20%, rgba(0,200,255,.12), transparent 60%);
+animation:dangerPulse 3s infinite alternate;
+z-index:-10;
+filter:contrast(1.2);
+}
+
+@keyframes dangerPulse{
+0%{filter:brightness(1) contrast(1.2)}
+100%{filter:brightness(1.8) contrast(1.6)}
+}
+
+/* GLITCH TITLE */
+h1{
+text-align:center;
+margin-top:60px;
+font-size:46px;
+letter-spacing:6px;
+text-shadow:
+0 0 10px #00f0ff,
+0 0 30px #0088ff,
+0 0 60px #00ffff;
+animation:glitch 1.5s infinite;
+}
+
+@keyframes glitch{
+0%{transform:translate(0)}
+20%{transform:translate(-2px,2px)}
+40%{transform:translate(2px,-2px)}
+60%{transform:translate(-1px,1px)}
+80%{transform:translate(1px,-1px)}
+100%{transform:translate(0)}
+}
+
+/* CORE */
+#core{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:190px;
+height:190px;
+border-radius:50%;
+background:radial-gradient(circle,#00f0ff,#0044ff,transparent);
+box-shadow:
+0 0 120px #00f0ff,
+0 0 200px #0066ff,
+inset 0 0 40px rgba(255,255,255,.2);
+animation:coreFlicker 0.8s infinite alternate;
+}
+
+@keyframes coreFlicker{
+0%{transform:translate(-50%,-50%) scale(1)}
+100%{transform:translate(-50%,-50%) scale(1.15)}
+}
+
+/* PORTALS */
+.portal{
+position:absolute;
+width:170px;
+height:170px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:#cfffff;
+text-decoration:none;
+background:radial-gradient(circle,rgba(0,255,255,.25),transparent);
+border:1px solid rgba(0,255,255,.5);
+box-shadow:
+0 0 25px rgba(0,255,255,.3),
+0 0 60px rgba(0,100,255,.2);
+transition:.2s;
+font-weight:bold;
+letter-spacing:2px;
+}
+
+.portal:hover{
+transform:scale(1.25);
+box-shadow:
+0 0 80px rgba(0,255,255,.8),
+0 0 120px rgba(0,120,255,.4);
+}
+
+/* POSITIONS */
+#about{top:25%;left:12%;}
+#gallery{top:25%;right:12%;}
+#music{bottom:18%;left:50%;transform:translateX(-50%);}
+
+/* CURSOR */
+#cursor{
+position:fixed;
+width:14px;
+height:14px;
+border-radius:50%;
+background:#00f0ff;
+box-shadow:0 0 25px #00f0ff;
+pointer-events:none;
+transform:translate(-50%,-50%);
+}
+
+/* RAIN */
+#rain{
+position:fixed;
+inset:0;
+z-index:-3;
+}
+
+.drop{
+position:absolute;
+width:2px;
+height:60px;
+background:linear-gradient(to bottom,#00f0ff,transparent);
+animation:fall linear infinite;
+opacity:.7;
+}
+
+@keyframes fall{
+0%{transform:translateY(-100vh);opacity:0}
+10%{opacity:1}
+100%{transform:translateY(100vh);opacity:0}
+}
+
+/* FLAMES */
+#flames{
+position:fixed;
+inset:0;
+z-index:-4;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔥 UPDATED TITLE -->
+<h1>WELCOME IN LEGENDS</h1>
+
+<div id="core"></div>
+
+<a href="about.html" class="portal" id="about">ABOUT</a>
+<a href="gallery.html" class="portal" id="gallery">GALLERY</a>
+<a href="music.html" class="portal" id="music">MUSIC</a>
+
+<div id="rain"></div>
+<div id="flames"></div>
+<div id="cursor"></div>
+
+<script>
+
+/* CURSOR */
+const cursor=document.getElementById("cursor");
+document.addEventListener("mousemove",e=>{
+cursor.style.left=e.clientX+"px";
+cursor.style.top=e.clientY+"px";
+});
+
+/* RAIN */
+const rain=document.getElementById("rain");
+for(let i=0;i<100;i++){
+let d=document.createElement("div");
+d.className="drop";
+d.style.left=Math.random()*100+"vw";
+d.style.animationDuration=(Math.random()*1.2+0.4)+"s";
+rain.appendChild(d);
+}
+
+/* FLAMES */
+const canvas=document.createElement("canvas");
+document.getElementById("flames").appendChild(canvas);
+const ctx=canvas.getContext("2d");
+
+function resize(){
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+}
+resize();
+window.onresize=resize;
+
+class Flame{
+constructor(){this.reset();}
+reset(){
+this.x=Math.random()*canvas.width;
+this.y=canvas.height+50;
+this.s=Math.random()*6+2;
+this.vy=Math.random()*2.5+1;
+this.vx=(Math.random()-0.5)*1.5;
+}
+update(){
+this.x+=this.vx;
+this.y-=this.vy;
+if(this.y<-50)this.reset();
+}
+draw(){
+ctx.fillStyle="rgba(0,255,255,.35)";
+ctx.beginPath();
+ctx.arc(this.x,this.y,this.s,0,Math.PI*2);
+ctx.fill();
+}
+}
+
+let flames=[];
+for(let i=0;i<140;i++)flames.push(new Flame());
+
+function animate(){
+ctx.fillStyle="rgba(0,0,0,.25)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+flames.forEach(f=>{f.update();f.draw();});
+requestAnimationFrame(animate);
+}
+animate();
+
+</script>
+
+</body>
+</html>
