@@ -133,7 +133,7 @@ animation:shake 0.2s infinite;
 100%{transform:translate(0,0);}
 }
 
-/* ===== POP EFFECT ===== */
+/* ===== 🔥 POP BURST EFFECT ===== */
 .popBurst{
 position:fixed;
 width:10px;
@@ -192,12 +192,27 @@ text-shadow:0 0 15px #00c8ff;
 </div>
 </div>
 
+<div class="box">
+<h2>🎬 YouTube Music</h2>
+<iframe width="100%" height="360"
+src="https://www.youtube.com/embed/videoseries?list=UUE_cbs14G_QUfPOvByU1q9w"
+allowfullscreen></iframe>
+</div>
+
+<div class="box">
+<h2>🎧 Spotify Artist</h2>
+<iframe width="100%" height="352"
+src="https://open.spotify.com/embed/artist/010qnpDsNjUeyIkyV2Fnlr"
+allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+</iframe>
+</div>
+
 <script>
 
-/* ===== MUSIC SYSTEM (FIXED FOR GITHUB) ===== */
-
+/* ===== MUSIC SYSTEM ===== */
 const songs = [
-"./music/afraid-of-the-dark-place.mp3"
+"music/Afraid of the Dark Place.mp3"
+
 ];
 
 let current = 0;
@@ -207,24 +222,51 @@ const nowPlaying = document.getElementById("nowPlaying");
 const volume = document.getElementById("volume");
 const progress = document.getElementById("progress");
 
-function loadSong(i){
+function createPop(x,y){
+const p=document.createElement("div");
+p.className="popBurst";
+p.style.left=x+"px";
+p.style.top=y+"px";
+document.body.appendChild(p);
+setTimeout(()=>p.remove(),800);
+}
 
-player.src = songs[i];
-player.load();
+function randomPop(){
+createPop(
+Math.random()*window.innerWidth,
+Math.random()*window.innerHeight
+);
+}
 
-nowPlaying.textContent =
-"Now Playing: afraid-of-the-dark-place.mp3";
+/* ===== ATTACH POP TO AUDIO ===== */
+function attachAudioPop(audio){
+if(!audio) return;
 
-player.play().catch(err=>{
-console.log("Audio error:", err);
+audio.addEventListener("play",()=>{
+for(let i=0;i<8;i++){
+setTimeout(()=>randomPop(), i*80);
+}
 });
 
+audio.addEventListener("playing",()=>{
+createPop(window.innerWidth/2,window.innerHeight/2);
+});
+}
+
+attachAudioPop(player);
+
+function loadSong(i){
+player.src = songs[i];
+player.load();
+player.play();
+
+nowPlaying.textContent =
+"Now Playing: " + songs[i].split("/").pop();
 }
 
 function playMusic(){
 if(!player.src) loadSong(current);
-else player.play();
-
+player.play();
 document.body.classList.add("shake");
 }
 
@@ -245,21 +287,78 @@ if(current >= songs.length) current = 0;
 loadSong(current);
 }
 
-volume.oninput = ()=>{
-player.volume = volume.value;
-};
+volume.oninput = ()=> player.volume = volume.value;
 
 player.ontimeupdate = ()=>{
-progress.value =
-(player.currentTime / player.duration) * 100 || 0;
+progress.value = (player.currentTime / player.duration) * 100 || 0;
 };
 
 progress.oninput = ()=>{
-player.currentTime =
-(progress.value / 100) * player.duration;
+player.currentTime = (progress.value / 100) * player.duration;
 };
 
 player.onended = nextSong;
+
+/* ===== RAIN ===== */
+const rain = document.getElementById("rainCanvas");
+const rctx = rain.getContext("2d");
+rain.width = innerWidth;
+rain.height = innerHeight;
+
+let drops=[];
+for(let i=0;i<120;i++){
+drops.push({x:Math.random()*rain.width,y:Math.random()*rain.height});
+}
+
+function drawRain(){
+rctx.clearRect(0,0,rain.width,rain.height);
+rctx.strokeStyle="rgba(0,180,255,0.6)";
+for(let d of drops){
+rctx.beginPath();
+rctx.moveTo(d.x,d.y);
+rctx.lineTo(d.x+2,d.y+12);
+rctx.stroke();
+d.y+=8;
+if(d.y>rain.height){d.y=0;d.x=Math.random()*rain.width;}
+}
+requestAnimationFrame(drawRain);
+}
+drawRain();
+
+/* ===== FIRE ===== */
+const fire = document.getElementById("fireCanvas");
+const fctx = fire.getContext("2d");
+fire.width = innerWidth;
+fire.height = innerHeight;
+
+let flames=[];
+for(let i=0;i<60;i++){
+flames.push({x:Math.random()*fire.width,y:fire.height+Math.random()*200});
+}
+
+function drawFire(){
+fctx.clearRect(0,0,fire.width,fire.height);
+
+for(let f of flames){
+let g=fctx.createRadialGradient(f.x,f.y,2,f.x,f.y,30);
+g.addColorStop(0,"rgba(0,200,255,0.8)");
+g.addColorStop(1,"transparent");
+
+fctx.fillStyle=g;
+fctx.beginPath();
+fctx.arc(f.x,f.y,30,0,Math.PI*2);
+fctx.fill();
+
+f.y-=2.5;
+if(f.y<-50){
+f.y=fire.height+50;
+f.x=Math.random()*fire.width;
+}
+}
+
+requestAnimationFrame(drawFire);
+}
+drawFire();
 
 </script>
 
