@@ -84,15 +84,11 @@ transition:0.6s ease;
 }
 
 /* BACKGROUND LAYERS */
-#flames,#rain,#cats{
+#flames,#rain,#cats,#blueFlames,#ghosts,#starfield,#blueRainCanvas{
 position:fixed;
 inset:0;
 pointer-events:none;
 }
-
-#flames{z-index:-3;}
-#rain{z-index:-2;}
-#cats{z-index:-4;}
 
 /* CURSOR */
 #cursor{
@@ -121,6 +117,22 @@ animation:pulse 5s infinite ease-in-out;
 @keyframes pulse{
 0%,100%{opacity:0.3}
 50%{opacity:0.8}
+}
+
+/* 🔵 STRONG BLUE CINEMATIC PULSE (ADDED) */
+.bluePulse{
+position:fixed;
+inset:0;
+background:radial-gradient(circle at 50% 50%,rgba(0,200,255,0.25),transparent 70%);
+mix-blend-mode:screen;
+pointer-events:none;
+z-index:-1;
+animation:strongPulse 3s infinite ease-in-out;
+}
+
+@keyframes strongPulse{
+0%,100%{opacity:0.25;transform:scale(1)}
+50%{opacity:0.75;transform:scale(1.05)}
 }
 
 /* INTRO */
@@ -199,6 +211,25 @@ animation:headerGlow 3s infinite ease-in-out;
 0%,100%{text-shadow:0 0 20px #00c8ff}
 50%{text-shadow:0 0 40px #00e5ff}
 }
+
+/* 👻 GHOST PARTICLES (ADDED) */
+.ghost{
+position:fixed;
+width:6px;
+height:6px;
+background:rgba(200,255,255,0.7);
+border-radius:50%;
+box-shadow:0 0 12px #00e5ff;
+pointer-events:none;
+animation:floatGhost linear infinite;
+}
+
+@keyframes floatGhost{
+from{transform:translateY(100vh) translateX(0);opacity:0}
+10%{opacity:1}
+to{transform:translateY(-10vh) translateX(40px);opacity:0}
+}
+
 </style>
 </head>
 
@@ -208,6 +239,13 @@ animation:headerGlow 3s infinite ease-in-out;
 <div id="intro"><h1>ENTERING LEGEND WORLD</h1></div>
 
 <div class="energy"></div>
+<div class="bluePulse"></div>
+
+<!-- ✨ ADDED BACKGROUND LAYERS -->
+<canvas id="starfield"></canvas>
+<canvas id="blueRainCanvas"></canvas>
+<div id="blueFlames"></div>
+<div id="ghosts"></div>
 
 <nav>
 <a href="music.html">Music</a>
@@ -279,6 +317,85 @@ setTimeout(typeWriter,25);
 }
 }
 window.onload=typeWriter;
+
+/* ✨ STARFIELD */
+const starCanvas=document.getElementById("starfield");
+const sctx=starCanvas.getContext("2d");
+
+function resizeStars(){
+starCanvas.width=window.innerWidth;
+starCanvas.height=window.innerHeight;
+}
+window.addEventListener("resize",resizeStars);
+resizeStars();
+
+let stars=Array.from({length:120},()=>({
+x:Math.random()*innerWidth,
+y:Math.random()*innerHeight,
+r:Math.random()*2
+}));
+
+function drawStars(){
+sctx.clearRect(0,0,starCanvas.width,starCanvas.height);
+sctx.fillStyle="#00c8ff";
+stars.forEach(s=>{
+s.y+=0.2;
+if(s.y>innerHeight)s.y=0;
+sctx.beginPath();
+sctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+sctx.fill();
+});
+requestAnimationFrame(drawStars);
+}
+drawStars();
+
+/* 🌧️ BLUE RAIN */
+const rainCanvas=document.getElementById("blueRainCanvas");
+const rctx=rainCanvas.getContext("2d");
+
+function resizeRain(){
+rainCanvas.width=window.innerWidth;
+rainCanvas.height=window.innerHeight;
+}
+window.addEventListener("resize",resizeRain);
+resizeRain();
+
+let drops=Array.from({length:80},()=>({
+x:Math.random()*innerWidth,
+y:Math.random()*innerHeight,
+l:Math.random()*20+10,
+s:Math.random()*4+4
+}));
+
+function drawRain(){
+rctx.clearRect(0,0,rainCanvas.width,rainCanvas.height);
+rctx.strokeStyle="#00c8ff";
+rctx.lineWidth=1;
+
+drops.forEach(d=>{
+rctx.beginPath();
+rctx.moveTo(d.x,d.y);
+rctx.lineTo(d.x,d.y+d.l);
+rctx.stroke();
+d.y+=d.s;
+if(d.y>innerHeight)d.y=0;
+});
+requestAnimationFrame(drawRain);
+}
+drawRain();
+
+/* 👻 GHOST PARTICLES */
+function spawnGhosts(){
+const ghost=document.createElement("div");
+ghost.className="ghost";
+ghost.style.left=Math.random()*innerWidth+"px";
+ghost.style.top=innerHeight+"px";
+ghost.style.animationDuration=(3+Math.random()*5)+"s";
+document.getElementById("ghosts").appendChild(ghost);
+
+setTimeout(()=>ghost.remove(),8000);
+}
+setInterval(spawnGhosts,400);
 
 </script>
 
