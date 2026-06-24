@@ -70,16 +70,12 @@ background:#00c8ff;
 color:#000;
 font-weight:bold;
 cursor:pointer;
+margin:5px;
 }
 
 button:hover{
 background:#00e5ff;
 transform:scale(1.05);
-}
-
-input[type=range]{
-width:100%;
-accent-color:#00c8ff;
 }
 
 /* ===== NAV ===== */
@@ -120,20 +116,7 @@ pointer-events:none;
 #rainCanvas{z-index:-5;}
 #fireCanvas{z-index:-6;}
 
-/* ===== SHAKE ===== */
-.shake{
-animation:shake 0.2s infinite;
-}
-
-@keyframes shake{
-0%{transform:translate(0,0);}
-25%{transform:translate(1px,-1px);}
-50%{transform:translate(-1px,1px);}
-75%{transform:translate(1px,1px);}
-100%{transform:translate(0,0);}
-}
-
-/* ===== 🔥 POP BURST EFFECT ===== */
+/* ===== POP EFFECT ===== */
 .popBurst{
 position:fixed;
 width:10px;
@@ -171,27 +154,16 @@ text-shadow:0 0 15px #00c8ff;
 </nav>
 </header>
 
-<!-- DJ PLAYER -->
+<!-- ===== ONE SONG PLAYER (ADDED) ===== -->
 <div class="box">
-<h2>🔥 Local DJ System</h2>
+<h2>🎵 Afraid of the Dark Place</h2>
 
-<h3 id="nowPlaying">Now Playing: None</h3>
+<button onclick="playSong()">▶ Play</button>
+<button onclick="pauseSong()">⏸ Pause</button>
 
-<audio id="player"></audio>
-
-<label>Volume</label>
-<input type="range" id="volume" min="0" max="1" step="0.01" value="1">
-
-<input type="range" id="progress" value="0">
-
-<div>
-<button onclick="playMusic()">▶ Play</button>
-<button onclick="pauseMusic()">⏸ Pause</button>
-<button onclick="stopMusic()">⏹ Stop</button>
-<button onclick="nextSong()">⏭ Skip</button>
-</div>
 </div>
 
+<!-- YOUTUBE -->
 <div class="box">
 <h2>🎬 YouTube Music</h2>
 <iframe width="100%" height="360"
@@ -199,6 +171,7 @@ src="https://www.youtube.com/embed/videoseries?list=UUE_cbs14G_QUfPOvByU1q9w"
 allowfullscreen></iframe>
 </div>
 
+<!-- SPOTIFY -->
 <div class="box">
 <h2>🎧 Spotify Artist</h2>
 <iframe width="100%" height="352"
@@ -209,19 +182,21 @@ allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-pictur
 
 <script>
 
-/* ===== MUSIC SYSTEM ===== */
-const songs = [
-"music/Afraid of the Dark Place.mp3"
+/* ===== ONE SONG AUDIO ===== */
+let audio = new Audio("./music/afraid of the dark place.mp3");
 
-];
+function playSong(){
+audio.play().catch(err=>{
+console.log(err);
+alert("Song not found. Check file path or name.");
+});
+}
 
-let current = 0;
+function pauseSong(){
+audio.pause();
+}
 
-const player = document.getElementById("player");
-const nowPlaying = document.getElementById("nowPlaying");
-const volume = document.getElementById("volume");
-const progress = document.getElementById("progress");
-
+/* ===== POP EFFECT ===== */
 function createPop(x,y){
 const p=document.createElement("div");
 p.className="popBurst";
@@ -231,73 +206,13 @@ document.body.appendChild(p);
 setTimeout(()=>p.remove(),800);
 }
 
-function randomPop(){
+/* OPTIONAL AMBIENT POPS */
+setInterval(()=>{
 createPop(
 Math.random()*window.innerWidth,
 Math.random()*window.innerHeight
 );
-}
-
-/* ===== ATTACH POP TO AUDIO ===== */
-function attachAudioPop(audio){
-if(!audio) return;
-
-audio.addEventListener("play",()=>{
-for(let i=0;i<8;i++){
-setTimeout(()=>randomPop(), i*80);
-}
-});
-
-audio.addEventListener("playing",()=>{
-createPop(window.innerWidth/2,window.innerHeight/2);
-});
-}
-
-attachAudioPop(player);
-
-function loadSong(i){
-player.src = songs[i];
-player.load();
-player.play();
-
-nowPlaying.textContent =
-"Now Playing: " + songs[i].split("/").pop();
-}
-
-function playMusic(){
-if(!player.src) loadSong(current);
-player.play();
-document.body.classList.add("shake");
-}
-
-function pauseMusic(){
-player.pause();
-document.body.classList.remove("shake");
-}
-
-function stopMusic(){
-player.pause();
-player.currentTime = 0;
-document.body.classList.remove("shake");
-}
-
-function nextSong(){
-current++;
-if(current >= songs.length) current = 0;
-loadSong(current);
-}
-
-volume.oninput = ()=> player.volume = volume.value;
-
-player.ontimeupdate = ()=>{
-progress.value = (player.currentTime / player.duration) * 100 || 0;
-};
-
-progress.oninput = ()=>{
-player.currentTime = (progress.value / 100) * player.duration;
-};
-
-player.onended = nextSong;
+}, 3000);
 
 /* ===== RAIN ===== */
 const rain = document.getElementById("rainCanvas");
