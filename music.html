@@ -120,6 +120,19 @@ pointer-events:none;
 #rainCanvas{z-index:-5;}
 #fireCanvas{z-index:-6;}
 
+/* ===== SHAKE ===== */
+.shake{
+animation:shake 0.2s infinite;
+}
+
+@keyframes shake{
+0%{transform:translate(0,0);}
+25%{transform:translate(1px,-1px);}
+50%{transform:translate(-1px,1px);}
+75%{transform:translate(1px,1px);}
+100%{transform:translate(0,0);}
+}
+
 /* ===== POP BURST EFFECT ===== */
 .popBurst{
 position:fixed;
@@ -140,13 +153,6 @@ animation:popAnim 0.8s ease-out forwards;
 
 h2{
 text-shadow:0 0 15px #00c8ff;
-}
-
-/* ===== PLAY BUTTON STYLE ===== */
-#playBtn{
-font-size:16px;
-padding:12px 18px;
-margin-top:10px;
 }
 </style>
 </head>
@@ -182,30 +188,7 @@ allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-pictur
 </iframe>
 </div>
 
-<!-- SIMPLE PLAYER -->
-<div class="box">
-<h2>🎵 Quick Player</h2>
-
-<audio id="audio" src="Afraid%20of%20the%20Dark%20Place.mp3"></audio>
-
-<button onclick="togglePlay()" id="playBtn">▶ Play</button>
-</div>
-
 <script>
-
-/* ===== PLAY / PAUSE ===== */
-const audio = document.getElementById("audio");
-const playBtn = document.getElementById("playBtn");
-
-function togglePlay(){
-  if(audio.paused){
-    audio.play();
-    playBtn.innerHTML = "⏸ Pause";
-  } else {
-    audio.pause();
-    playBtn.innerHTML = "▶ Play";
-  }
-}
 
 /* ===== POP EFFECT ===== */
 function createPop(x,y){
@@ -224,6 +207,7 @@ Math.random()*window.innerHeight
 );
 }
 
+/* OPTIONAL RANDOM ENERGY POPS */
 setInterval(()=>randomPop(), 2500);
 
 /* ===== RAIN ===== */
