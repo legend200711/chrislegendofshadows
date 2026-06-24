@@ -70,12 +70,16 @@ background:#00c8ff;
 color:#000;
 font-weight:bold;
 cursor:pointer;
-margin:5px;
 }
 
 button:hover{
 background:#00e5ff;
 transform:scale(1.05);
+}
+
+input[type=range]{
+width:100%;
+accent-color:#00c8ff;
 }
 
 /* ===== NAV ===== */
@@ -116,7 +120,20 @@ pointer-events:none;
 #rainCanvas{z-index:-5;}
 #fireCanvas{z-index:-6;}
 
-/* ===== POP EFFECT ===== */
+/* ===== SHAKE ===== */
+.shake{
+animation:shake 0.2s infinite;
+}
+
+@keyframes shake{
+0%{transform:translate(0,0);}
+25%{transform:translate(1px,-1px);}
+50%{transform:translate(-1px,1px);}
+75%{transform:translate(1px,1px);}
+100%{transform:translate(0,0);}
+}
+
+/* ===== POP BURST EFFECT ===== */
 .popBurst{
 position:fixed;
 width:10px;
@@ -154,15 +171,6 @@ text-shadow:0 0 15px #00c8ff;
 </nav>
 </header>
 
-<!-- ===== ONE SONG PLAYER (ADDED) ===== -->
-<div class="box">
-<h2>🎵 Afraid of the Dark Place</h2>
-
-<button onclick="playSong()">▶ Play</button>
-<button onclick="pauseSong()">⏸ Pause</button>
-
-</div>
-
 <!-- YOUTUBE -->
 <div class="box">
 <h2>🎬 YouTube Music</h2>
@@ -182,20 +190,6 @@ allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-pictur
 
 <script>
 
-/* ===== ONE SONG AUDIO ===== */
-let audio = new Audio(".afraid of the dark place.mp3");
-
-function playSong(){
-audio.play().catch(err=>{
-console.log(err);
-alert("Song not found. Check file path or name.");
-});
-}
-
-function pauseSong(){
-audio.pause();
-}
-
 /* ===== POP EFFECT ===== */
 function createPop(x,y){
 const p=document.createElement("div");
@@ -206,13 +200,15 @@ document.body.appendChild(p);
 setTimeout(()=>p.remove(),800);
 }
 
-/* OPTIONAL AMBIENT POPS */
-setInterval(()=>{
+function randomPop(){
 createPop(
 Math.random()*window.innerWidth,
 Math.random()*window.innerHeight
 );
-}, 3000);
+}
+
+/* OPTIONAL RANDOM ENERGY POPS */
+setInterval(()=>randomPop(), 2500);
 
 /* ===== RAIN ===== */
 const rain = document.getElementById("rainCanvas");
