@@ -32,7 +32,6 @@ z-index:-20;
 100%{filter:brightness(1.7)}
 }
 
-/* HEADER */
 header{
 text-align:center;
 padding:60px 20px 10px;
@@ -43,7 +42,6 @@ font-size:52px;
 text-shadow:0 0 25px #00c8ff;
 }
 
-/* BOX */
 .box{
 max-width:900px;
 margin:25px auto;
@@ -61,7 +59,6 @@ transform:translateY(-8px) scale(1.02);
 box-shadow:0 25px 60px rgba(0,0,0,.8),0 0 30px #00c8ff;
 }
 
-/* NAV */
 nav{
 display:flex;
 justify-content:center;
@@ -86,7 +83,7 @@ background:rgba(0,200,255,.15);
 color:#fff;
 }
 
-/* CANVAS LAYERS */
+/* CANVAS */
 #rainCanvas,#fireCanvas,#vortexCanvas,#lightningCanvas{
 position:fixed;
 top:0;
@@ -128,16 +125,7 @@ src="https://www.youtube.com/embed/videoseries?list=UUE_cbs14G_QUfPOvByU1q9w"
 allowfullscreen></iframe>
 </div>
 
-<!-- ✅ FIXED YOUTUBE CHANNEL -->
-<div class="box">
-<h2>📺 YouTube Channel</h2>
 
-<iframe width="100%" height="360"
-src="https://www.youtube.com/embed/videoseries?channel=UCogREUwx9wI7AaHq3Uj7l9w&list=UUogREUwx9wI7AaHq3Uj7l9w"
-allowfullscreen>
-</iframe>
-
-</div>
 
 <div class="box">
 <h2>🎧 Spotify Artist</h2>
@@ -149,53 +137,103 @@ allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-pictur
 
 <script>
 
-/* BEAT SYSTEM */
 let beat = 0;
-setInterval(()=>{ beat = Math.random(); }, 400);
+setInterval(()=>{ beat = Math.random(); }, 250);
 
-/* SCREEN SHAKE */
-let shakeTime = 0;
-let shakePower = 0;
-
-function screenShake(power=12,time=250){
-shakePower = power;
-shakeTime = time;
-}
-
-/* RAIN */
+/* RAIN (BLUE NEON RAIN) */
 const rain = document.getElementById("rainCanvas");
 const rctx = rain.getContext("2d");
 rain.width = innerWidth;
 rain.height = innerHeight;
 
-/* FIRE */
+let drops=[];
+for(let i=0;i<180;i++){
+drops.push({
+x:Math.random()*rain.width,
+y:Math.random()*rain.height,
+len:10+Math.random()*15,
+speed:4+Math.random()*6
+});
+}
+
+/* FIRE (BLUE FLAMES) */
 const fire = document.getElementById("fireCanvas");
 const fctx = fire.getContext("2d");
 fire.width = innerWidth;
 fire.height = innerHeight;
 
-/* VORTEX */
-const vortex = document.getElementById("vortexCanvas");
-const vctx = vortex.getContext("2d");
-vortex.width = innerWidth;
-vortex.height = innerHeight;
+let flames=[];
+for(let i=0;i<80;i++){
+flames.push({
+x:Math.random()*fire.width,
+y:fire.height+Math.random()*200
+});
+}
 
-/* LIGHTNING */
-const lightning = document.getElementById("lightningCanvas");
-const lctx = lightning.getContext("2d");
-lightning.width = innerWidth;
-lightning.height = innerHeight;
+/* ANIMATE RAIN */
+function drawRain(){
+rctx.clearRect(0,0,rain.width,rain.height);
 
-/* ANIMATION LOOPS */
-function drawRain(){ rctx.clearRect(0,0,rain.width,rain.height); requestAnimationFrame(drawRain); }
-function drawFire(){ fctx.clearRect(0,0,fire.width,fire.height); requestAnimationFrame(drawFire); }
-function drawVortex(){ vctx.clearRect(0,0,vortex.width,vortex.height); requestAnimationFrame(drawVortex); }
-function drawLightning(){ lctx.clearRect(0,0,lightning.width,lightning.height); requestAnimationFrame(drawLightning); }
+for(let d of drops){
 
+let speed = d.speed + beat*5;
+
+rctx.strokeStyle="rgba(0,200,255,0.9)";
+rctx.shadowBlur = 10;
+rctx.shadowColor = "#00c8ff";
+
+rctx.beginPath();
+rctx.moveTo(d.x,d.y);
+rctx.lineTo(d.x, d.y + d.len);
+rctx.stroke();
+
+d.y += speed;
+d.x += -1 + beat*2;
+
+if(d.y > rain.height){
+d.y = 0;
+d.x = Math.random()*rain.width;
+}
+}
+
+requestAnimationFrame(drawRain);
+}
+
+/* ANIMATE BLUE FIRE */
+function drawFire(){
+fctx.clearRect(0,0,fire.width,fire.height);
+
+for(let f of flames){
+
+let glow = 0.3 + beat;
+
+let g = fctx.createRadialGradient(f.x,f.y,2,f.x,f.y,40);
+g.addColorStop(0,`rgba(0,200,255,${glow})`);
+g.addColorStop(0.5,"rgba(0,120,255,0.2)");
+g.addColorStop(1,"transparent");
+
+fctx.shadowBlur = 25;
+fctx.shadowColor = "#00c8ff";
+fctx.fillStyle = g;
+
+fctx.beginPath();
+fctx.arc(f.x,f.y,35,0,Math.PI*2);
+fctx.fill();
+
+f.y -= 2 + beat*6;
+
+if(f.y < -50){
+f.y = fire.height + 50;
+f.x = Math.random()*fire.width;
+}
+}
+
+requestAnimationFrame(drawFire);
+}
+
+/* START */
 drawRain();
 drawFire();
-drawVortex();
-drawLightning();
 
 </script>
 
