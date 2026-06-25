@@ -14,7 +14,7 @@ font-family:Arial,sans-serif;
 color:#bff6ff;
 }
 
-/* INTENSE DARK CORE BACKGROUND */
+/* CORE BACKGROUND */
 body::before{
 content:"";
 position:fixed;
@@ -33,7 +33,7 @@ filter:contrast(1.2);
 100%{filter:brightness(1.8) contrast(1.6)}
 }
 
-/* GLITCH TITLE */
+/* TITLE */
 h1{
 text-align:center;
 margin-top:60px;
@@ -77,11 +77,11 @@ animation:coreFlicker 0.8s infinite alternate;
 100%{transform:translate(-50%,-50%) scale(1.15)}
 }
 
-/* PORTALS */
+/* PORTALS BASE */
 .portal{
 position:absolute;
-width:170px;
-height:170px;
+width:150px;
+height:150px;
 border-radius:50%;
 display:flex;
 align-items:center;
@@ -99,17 +99,43 @@ font-weight:bold;
 letter-spacing:2px;
 }
 
+/* ORBIT SYSTEM */
+.orbitWrap{
+position:absolute;
+top:50%;
+left:50%;
+width:0;
+height:0;
+animation:orbit 10s linear infinite;
+transform-origin:center;
+}
+
+/* each node sits on circle */
+.node{
+position:absolute;
+top:0;
+left:0;
+}
+
+/* positions around circle */
+#aboutNode{transform:rotate(0deg) translateX(260px);}
+#galleryNode{transform:rotate(90deg) translateX(260px);}
+#musicNode{transform:rotate(180deg) translateX(260px);}
+#chatNode{transform:rotate(270deg) translateX(260px);}
+
+/* orbit animation */
+@keyframes orbit{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
+}
+
+/* hover effect */
 .portal:hover{
 transform:scale(1.25);
 box-shadow:
 0 0 80px rgba(0,255,255,.8),
 0 0 120px rgba(0,120,255,.4);
 }
-
-/* POSITIONS */
-#about{top:25%;left:12%;}
-#gallery{top:25%;right:12%;}
-#music{bottom:18%;left:50%;transform:translateX(-50%);}
 
 /* CURSOR */
 #cursor{
@@ -156,14 +182,30 @@ z-index:-4;
 
 <body>
 
-<!-- 🔥 UPDATED TITLE -->
 <h1>WELCOME IN LEGENDS</h1>
 
 <div id="core"></div>
 
-<a href="about.html" class="portal" id="about">ABOUT</a>
-<a href="gallery.html" class="portal" id="gallery">GALLERY</a>
-<a href="music.html" class="portal" id="music">MUSIC</a>
+<!-- 🌐 ORBIT SYSTEM -->
+<div class="orbitWrap">
+
+  <div class="node" id="aboutNode">
+    <a href="about.html" class="portal">ABOUT</a>
+  </div>
+
+  <div class="node" id="galleryNode">
+    <a href="gallery.html" class="portal">GALLERY</a>
+  </div>
+
+  <div class="node" id="musicNode">
+    <a href="music.html" class="portal">MUSIC</a>
+  </div>
+
+  <div class="node" id="chatNode">
+    <a href="chat room.html" class="portal">CHAT</a>
+  </div>
+
+</div>
 
 <div id="rain"></div>
 <div id="flames"></div>
