@@ -101,17 +101,13 @@ border-radius:50px;
 cursor:pointer;
 z-index:9999;
 backdrop-filter:blur(10px);
-box-shadow:
-0 0 15px #00c8ff,
-0 0 30px rgba(0,200,255,.5);
-transition:.3s;
+box-shadow:0 0 15px #00c8ff;
+transition:0.3s;
 }
 
 #musicBtn:hover{
 transform:scale(1.08);
-box-shadow:
-0 0 25px #00c8ff,
-0 0 50px rgba(0,200,255,.8);
+box-shadow:0 0 25px #00c8ff;
 }
 
 /* CANVAS LAYERS */
@@ -134,12 +130,14 @@ pointer-events:none;
 
 <body>
 
+<!-- MUSIC -->
 <button id="musicBtn">🎵 Play Music</button>
 
 <audio id="bgMusic" loop>
-<source src="music/Afraid of the Dark Place.mp3" type="audio/mpeg">
+<source src="./music/afraid-of-the-dark-place.mp3" type="audio/mpeg">
 </audio>
 
+<!-- CANVAS -->
 <canvas id="rainCanvas"></canvas>
 <canvas id="fireCanvas"></canvas>
 <canvas id="vortexCanvas"></canvas>
@@ -175,18 +173,13 @@ allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-pictur
 const music = document.getElementById("bgMusic");
 const musicBtn = document.getElementById("musicBtn");
 
-musicBtn.addEventListener("click",()=>{
-
-if(music.paused){
-
+musicBtn.addEventListener("click", () => {
+if (music.paused) {
 music.play();
 musicBtn.innerHTML = "⏸ Pause Music";
-
-}else{
-
+} else {
 music.pause();
 musicBtn.innerHTML = "🎵 Play Music";
-
 }
 });
 
@@ -202,6 +195,7 @@ function screenShake(power=12,time=250){
 shakePower = power;
 shakeTime = time;
 }
+
 /* RAIN */
 const rain = document.getElementById("rainCanvas");
 const rctx = rain.getContext("2d");
