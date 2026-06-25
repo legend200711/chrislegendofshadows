@@ -86,30 +86,6 @@ background:rgba(0,200,255,.15);
 color:#fff;
 }
 
-/* MUSIC BUTTON */
-#musicBtn{
-position:fixed;
-bottom:20px;
-right:20px;
-padding:14px 22px;
-background:rgba(0,200,255,.15);
-border:1px solid #00c8ff;
-color:#fff;
-font-size:16px;
-font-weight:bold;
-border-radius:50px;
-cursor:pointer;
-z-index:9999;
-backdrop-filter:blur(10px);
-box-shadow:0 0 15px #00c8ff;
-transition:0.3s;
-}
-
-#musicBtn:hover{
-transform:scale(1.08);
-box-shadow:0 0 25px #00c8ff;
-}
-
 /* CANVAS LAYERS */
 #rainCanvas,#fireCanvas,#vortexCanvas,#lightningCanvas{
 position:fixed;
@@ -130,14 +106,6 @@ pointer-events:none;
 
 <body>
 
-<!-- MUSIC -->
-<button id="musicBtn">🎵 Play Music</button>
-
-<audio id="bgMusic" loop>
-<source src="./music/afraid-of-the-dark-place.mp3" type="audio/mpeg">
-</audio>
-
-<!-- CANVAS -->
 <canvas id="rainCanvas"></canvas>
 <canvas id="fireCanvas"></canvas>
 <canvas id="vortexCanvas"></canvas>
@@ -168,20 +136,6 @@ allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-pictur
 </div>
 
 <script>
-
-/* MUSIC PLAYER */
-const music = document.getElementById("bgMusic");
-const musicBtn = document.getElementById("musicBtn");
-
-musicBtn.addEventListener("click", () => {
-if (music.paused) {
-music.play();
-musicBtn.innerHTML = "⏸ Pause Music";
-} else {
-music.pause();
-musicBtn.innerHTML = "🎵 Play Music";
-}
-});
 
 /* BEAT SYSTEM */
 let beat = 0;
@@ -215,12 +169,76 @@ speed:4+Math.random()*4
 });
 }
 
+/* FIRE */
+const fire = document.getElementById("fireCanvas");
+const fctx = fire.getContext("2d");
+fire.width = innerWidth;
+fire.height = innerHeight;
+
+let flames=[];
+for(let i=0;i<60;i++){
+flames.push({
+x:Math.random()*fire.width,
+y:fire.height+Math.random()*200
+});
+}
+
+/* VORTEX */
+const vortex = document.getElementById("vortexCanvas");
+const vctx = vortex.getContext("2d");
+vortex.width = innerWidth;
+vortex.height = innerHeight;
+
+let angle = 0;
+
+/* LIGHTNING */
+const lightning = document.getElementById("lightningCanvas");
+const lctx = lightning.getContext("2d");
+lightning.width = innerWidth;
+lightning.height = innerHeight;
+
+let flashAlpha = 0;
+let lightningBolt = null;
+
+function flash(){
+flashAlpha = 0.6;
+screenShake(12,250);
+}
+
+/* GUST */
+function triggerGust(){
+gust = (Math.random()*7 - 3.5);
+
+flash();
+
+lightningBolt = {
+x: Math.random()*lightning.width,
+y: 0,
+segments:[]
+};
+
+let x = lightningBolt.x;
+let y = 0;
+
+for(let i=0;i<12;i++){
+x += (Math.random()-0.5)*80;
+y += 60 + Math.random()*40;
+lightningBolt.segments.push({x,y});
+}
+}
+
+setInterval(()=>{
+if(Math.random()<0.5) triggerGust();
+},2200);
+
+/* WIND */
 function updateWind(){
 wind += (Math.random()-0.5)*0.12;
 wind *= 0.98;
 wind = Math.max(-3,Math.min(3,wind));
 }
 
+/* RAIN */
 function drawRain(){
 rctx.clearRect(0,0,rain.width,rain.height);
 
@@ -251,19 +269,6 @@ requestAnimationFrame(drawRain);
 }
 
 /* FIRE */
-const fire = document.getElementById("fireCanvas");
-const fctx = fire.getContext("2d");
-fire.width = innerWidth;
-fire.height = innerHeight;
-
-let flames=[];
-for(let i=0;i<60;i++){
-flames.push({
-x:Math.random()*fire.width,
-y:fire.height+Math.random()*200
-});
-}
-
 function drawFire(){
 fctx.clearRect(0,0,fire.width,fire.height);
 
@@ -290,13 +295,6 @@ requestAnimationFrame(drawFire);
 }
 
 /* VORTEX */
-const vortex = document.getElementById("vortexCanvas");
-const vctx = vortex.getContext("2d");
-vortex.width = innerWidth;
-vortex.height = innerHeight;
-
-let angle = 0;
-
 function drawVortex(){
 vctx.clearRect(0,0,vortex.width,vortex.height);
 
@@ -322,44 +320,6 @@ requestAnimationFrame(drawVortex);
 }
 
 /* LIGHTNING */
-const lightning = document.getElementById("lightningCanvas");
-const lctx = lightning.getContext("2d");
-lightning.width = innerWidth;
-lightning.height = innerHeight;
-
-let flashAlpha = 0;
-let lightningBolt = null;
-
-function flash(){
-flashAlpha = 0.6;
-screenShake(12,250);
-}
-
-function triggerGust(){
-gust = (Math.random()*7 - 3.5);
-
-flash();
-
-lightningBolt = {
-x: Math.random()*lightning.width,
-y: 0,
-segments:[]
-};
-
-let x = lightningBolt.x;
-let y = 0;
-
-for(let i=0;i<12;i++){
-x += (Math.random()-0.5)*80;
-y += 60 + Math.random()*40;
-lightningBolt.segments.push({x,y});
-}
-}
-
-setInterval(()=>{
-if(Math.random()<0.5) triggerGust();
-},2200);
-
 function drawLightning(){
 lctx.clearRect(0,0,lightning.width,lightning.height);
 
