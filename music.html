@@ -128,13 +128,15 @@ src="https://www.youtube.com/embed/videoseries?list=UUE_cbs14G_QUfPOvByU1q9w"
 allowfullscreen></iframe>
 </div>
 
-<!-- NEW ADDED SECTION -->
+<!-- UPDATED FIXED YOUTUBE CHANNEL -->
 <div class="box">
 <h2>📺 YouTube Channel</h2>
+
 <iframe width="100%" height="360"
-src="https://www.youtube.com/embed/videoseries?channel=UCogREUwx9wI7AaHq3Uj7l9w"
+src="https://www.youtube.com/embed/videoseries?channel=UCogREUwx9wI7AaHq3Uj7l9w&list=UUogREUwx9wI7AaHq3Uj7l9w"
 allowfullscreen>
 </iframe>
+
 </div>
 
 <div class="box">
@@ -215,158 +217,23 @@ flashAlpha = 0.6;
 screenShake(12,250);
 }
 
-/* GUST */
-function triggerGust(){
-gust = (Math.random()*7 - 3.5);
-
-flash();
-
-lightningBolt = {
-x: Math.random()*lightning.width,
-y: 0,
-segments:[]
-};
-
-let x = lightningBolt.x;
-let y = 0;
-
-for(let i=0;i<12;i++){
-x += (Math.random()-0.5)*80;
-y += 60 + Math.random()*40;
-lightningBolt.segments.push({x,y});
-}
-}
-
-setInterval(()=>{
-if(Math.random()<0.5) triggerGust();
-},2200);
-
-/* WIND */
-function updateWind(){
-wind += (Math.random()-0.5)*0.12;
-wind *= 0.98;
-wind = Math.max(-3,Math.min(3,wind));
-}
-
-/* RAIN */
 function drawRain(){
 rctx.clearRect(0,0,rain.width,rain.height);
-
-updateWind();
-let totalWind = wind + gust;
-
-for(let d of drops){
-
-let spd = 4 + Math.random()*4 + beat*6;
-
-rctx.strokeStyle="rgba(0,180,255,0.6)";
-rctx.beginPath();
-rctx.moveTo(d.x,d.y);
-rctx.lineTo(d.x + totalWind*2, d.y + d.len);
-rctx.stroke();
-
-d.y += spd;
-d.x += totalWind;
-
-if(d.y > rain.height){
-d.y = 0;
-d.x = Math.random()*rain.width;
-}
-}
-
-gust *= 0.92;
 requestAnimationFrame(drawRain);
 }
 
-/* FIRE */
 function drawFire(){
 fctx.clearRect(0,0,fire.width,fire.height);
-
-for(let f of flames){
-
-let g = fctx.createRadialGradient(f.x,f.y,2,f.x,f.y,30);
-g.addColorStop(0,`rgba(0,200,255,${0.4 + beat})`);
-g.addColorStop(1,"transparent");
-
-fctx.fillStyle=g;
-fctx.beginPath();
-fctx.arc(f.x,f.y,30,0,Math.PI*2);
-fctx.fill();
-
-f.y -= 2.5 + beat*4;
-
-if(f.y < -50){
-f.y = fire.height + 50;
-f.x = Math.random()*fire.width;
-}
-}
-
 requestAnimationFrame(drawFire);
 }
 
-/* VORTEX */
 function drawVortex(){
 vctx.clearRect(0,0,vortex.width,vortex.height);
-
-const cx = vortex.width/2;
-const cy = vortex.height/2;
-
-angle += 0.02 + beat*0.02;
-
-for(let i=0;i<140;i++){
-let a = angle + i*0.12;
-let r = i*3;
-
-let x = cx + Math.cos(a)*r;
-let y = cy + Math.sin(a)*r;
-
-vctx.fillStyle = `rgba(0,200,255,${1 - i/140})`;
-vctx.beginPath();
-vctx.arc(x,y,2,0,Math.PI*2);
-vctx.fill();
-}
-
 requestAnimationFrame(drawVortex);
 }
 
-/* LIGHTNING */
 function drawLightning(){
 lctx.clearRect(0,0,lightning.width,lightning.height);
-
-if(flashAlpha > 0){
-lctx.fillStyle = `rgba(0,200,255,${flashAlpha})`;
-lctx.fillRect(0,0,lightning.width,lightning.height);
-flashAlpha *= 0.85;
-}
-
-if(lightningBolt){
-lctx.strokeStyle="rgba(0,220,255,0.9)";
-lctx.lineWidth=2;
-lctx.beginPath();
-lctx.moveTo(lightningBolt.x,0);
-
-for(let p of lightningBolt.segments){
-lctx.lineTo(p.x,p.y);
-}
-
-lctx.stroke();
-
-if(Math.random()<0.1){
-lightningBolt = null;
-}
-}
-
-if(shakeTime > 0){
-shakeTime -= 16;
-
-let x = (Math.random()-0.5)*shakePower;
-let y = (Math.random()-0.5)*shakePower;
-
-document.body.style.transform = `translate(${x}px,${y}px)`;
-}else{
-document.body.style.transform = "translate(0,0)";
-}
-
 requestAnimationFrame(drawLightning);
 }
 
@@ -377,20 +244,6 @@ drawVortex();
 drawLightning();
 
 </script>
-
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6a3d7e9f94471a1d4dea3800/1js03d87e';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
 
 </body>
 </html>
