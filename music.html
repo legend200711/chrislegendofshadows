@@ -66,10 +66,10 @@ nav{
 display:flex;
 justify-content:center;
 gap:20px;
-margin-bottom:20px;
+margin-top:15px;
 }
 
-nav a.link{
+nav a{
 color:#00c8ff;
 text-decoration:none;
 padding:10px 16px;
@@ -79,7 +79,7 @@ background:rgba(0,0,0,.5);
 transition:0.3s;
 }
 
-nav a.link:hover{
+nav a:hover{
 transform:translateY(-6px) scale(1.08);
 box-shadow:0 0 25px #00c8ff;
 background:rgba(0,200,255,.15);
@@ -87,7 +87,7 @@ color:#fff;
 }
 
 /* CANVAS LAYERS */
-#rainCanvas,#fireCanvas,#lightningCanvas,#vortexCanvas{
+#rainCanvas,#fireCanvas,#vortexCanvas,#lightningCanvas{
 position:fixed;
 top:0;
 left:0;
@@ -113,9 +113,13 @@ pointer-events:none;
 
 <header>
 <h1>🎧 LEGEND MUSIC HUB</h1>
+
+<nav>
+<a href="gallery.html">Gallery</a>
+<a href="about.html">About</a>
+</nav>
 </header>
 
-<!-- BOXES -->
 <div class="box">
 <h2>🎬 YouTube Music</h2>
 <iframe width="100%" height="360"
@@ -133,11 +137,11 @@ allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-pictur
 
 <script>
 
-/* ===================== BEAT SYSTEM ===================== */
+/* BEAT SYSTEM */
 let beat = 0;
 setInterval(()=>{ beat = Math.random(); }, 400);
 
-/* ===================== SCREEN SHAKE ===================== */
+/* SCREEN SHAKE */
 let shakeTime = 0;
 let shakePower = 0;
 
@@ -146,7 +150,7 @@ shakePower = power;
 shakeTime = time;
 }
 
-/* ===================== RAIN ===================== */
+/* RAIN */
 const rain = document.getElementById("rainCanvas");
 const rctx = rain.getContext("2d");
 rain.width = innerWidth;
@@ -165,7 +169,7 @@ speed:4+Math.random()*4
 });
 }
 
-/* ===================== FIRE ===================== */
+/* FIRE */
 const fire = document.getElementById("fireCanvas");
 const fctx = fire.getContext("2d");
 fire.width = innerWidth;
@@ -179,7 +183,7 @@ y:fire.height+Math.random()*200
 });
 }
 
-/* ===================== VORTEX ===================== */
+/* VORTEX */
 const vortex = document.getElementById("vortexCanvas");
 const vctx = vortex.getContext("2d");
 vortex.width = innerWidth;
@@ -187,7 +191,7 @@ vortex.height = innerHeight;
 
 let angle = 0;
 
-/* ===================== LIGHTNING ===================== */
+/* LIGHTNING */
 const lightning = document.getElementById("lightningCanvas");
 const lctx = lightning.getContext("2d");
 lightning.width = innerWidth;
@@ -201,7 +205,7 @@ flashAlpha = 0.6;
 screenShake(12,250);
 }
 
-/* ===================== GUST ===================== */
+/* GUST */
 function triggerGust(){
 gust = (Math.random()*7 - 3.5);
 
@@ -227,14 +231,14 @@ setInterval(()=>{
 if(Math.random()<0.5) triggerGust();
 },2200);
 
-/* ===================== WIND ===================== */
+/* WIND */
 function updateWind(){
 wind += (Math.random()-0.5)*0.12;
 wind *= 0.98;
 wind = Math.max(-3,Math.min(3,wind));
 }
 
-/* ===================== DRAW RAIN ===================== */
+/* RAIN */
 function drawRain(){
 rctx.clearRect(0,0,rain.width,rain.height);
 
@@ -264,7 +268,7 @@ gust *= 0.92;
 requestAnimationFrame(drawRain);
 }
 
-/* ===================== DRAW FIRE ===================== */
+/* FIRE */
 function drawFire(){
 fctx.clearRect(0,0,fire.width,fire.height);
 
@@ -290,7 +294,7 @@ f.x = Math.random()*fire.width;
 requestAnimationFrame(drawFire);
 }
 
-/* ===================== DRAW VORTEX ===================== */
+/* VORTEX */
 function drawVortex(){
 vctx.clearRect(0,0,vortex.width,vortex.height);
 
@@ -315,18 +319,16 @@ vctx.fill();
 requestAnimationFrame(drawVortex);
 }
 
-/* ===================== DRAW LIGHTNING ===================== */
+/* LIGHTNING */
 function drawLightning(){
 lctx.clearRect(0,0,lightning.width,lightning.height);
 
-/* flash */
 if(flashAlpha > 0){
 lctx.fillStyle = `rgba(0,200,255,${flashAlpha})`;
 lctx.fillRect(0,0,lightning.width,lightning.height);
 flashAlpha *= 0.85;
 }
 
-/* bolt */
 if(lightningBolt){
 lctx.strokeStyle="rgba(0,220,255,0.9)";
 lctx.lineWidth=2;
@@ -344,7 +346,6 @@ lightningBolt = null;
 }
 }
 
-/* SCREEN SHAKE APPLY */
 if(shakeTime > 0){
 shakeTime -= 16;
 
@@ -359,7 +360,7 @@ document.body.style.transform = "translate(0,0)";
 requestAnimationFrame(drawLightning);
 }
 
-/* ===================== START ===================== */
+/* START */
 drawRain();
 drawFire();
 drawVortex();
