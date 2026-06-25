@@ -128,7 +128,7 @@ src="https://www.youtube.com/embed/videoseries?list=UUE_cbs14G_QUfPOvByU1q9w"
 allowfullscreen></iframe>
 </div>
 
-<!-- UPDATED FIXED YOUTUBE CHANNEL -->
+<!-- ✅ FIXED YOUTUBE CHANNEL -->
 <div class="box">
 <h2>📺 YouTube Channel</h2>
 
@@ -168,32 +168,11 @@ const rctx = rain.getContext("2d");
 rain.width = innerWidth;
 rain.height = innerHeight;
 
-let wind = 0;
-let gust = 0;
-
-let drops=[];
-for(let i=0;i<150;i++){
-drops.push({
-x:Math.random()*rain.width,
-y:Math.random()*rain.height,
-len:8+Math.random()*10,
-speed:4+Math.random()*4
-});
-}
-
 /* FIRE */
 const fire = document.getElementById("fireCanvas");
 const fctx = fire.getContext("2d");
 fire.width = innerWidth;
 fire.height = innerHeight;
-
-let flames=[];
-for(let i=0;i<60;i++){
-flames.push({
-x:Math.random()*fire.width,
-y:fire.height+Math.random()*200
-});
-}
 
 /* VORTEX */
 const vortex = document.getElementById("vortexCanvas");
@@ -201,43 +180,18 @@ const vctx = vortex.getContext("2d");
 vortex.width = innerWidth;
 vortex.height = innerHeight;
 
-let angle = 0;
-
 /* LIGHTNING */
 const lightning = document.getElementById("lightningCanvas");
 const lctx = lightning.getContext("2d");
 lightning.width = innerWidth;
 lightning.height = innerHeight;
 
-let flashAlpha = 0;
-let lightningBolt = null;
+/* ANIMATION LOOPS */
+function drawRain(){ rctx.clearRect(0,0,rain.width,rain.height); requestAnimationFrame(drawRain); }
+function drawFire(){ fctx.clearRect(0,0,fire.width,fire.height); requestAnimationFrame(drawFire); }
+function drawVortex(){ vctx.clearRect(0,0,vortex.width,vortex.height); requestAnimationFrame(drawVortex); }
+function drawLightning(){ lctx.clearRect(0,0,lightning.width,lightning.height); requestAnimationFrame(drawLightning); }
 
-function flash(){
-flashAlpha = 0.6;
-screenShake(12,250);
-}
-
-function drawRain(){
-rctx.clearRect(0,0,rain.width,rain.height);
-requestAnimationFrame(drawRain);
-}
-
-function drawFire(){
-fctx.clearRect(0,0,fire.width,fire.height);
-requestAnimationFrame(drawFire);
-}
-
-function drawVortex(){
-vctx.clearRect(0,0,vortex.width,vortex.height);
-requestAnimationFrame(drawVortex);
-}
-
-function drawLightning(){
-lctx.clearRect(0,0,lightning.width,lightning.height);
-requestAnimationFrame(drawLightning);
-}
-
-/* START */
 drawRain();
 drawFire();
 drawVortex();
