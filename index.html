@@ -6,34 +6,7 @@
 <title>Welcome in Legends</title>
 
 <style>
-  /* =========================
-   RESPONSIVE AUTO-FIT
-   ========================= */
 
-html,body{
-width:100%;
-height:100%;
-overflow:hidden;
-}
-
-/* Tablets */
-@media (max-width:900px){
-
-h1{
-font-size:34px;
-letter-spacing:4px;
-margin-top:40px;
-}
-
-#core{
-width:150px;
-height:150px;
-}
-
-.portal{
-width:120px;
-height:120px;
-font-size:14px;
 }
 
 #aboutNode{transform:rotate(0deg) translateX(200px);}
@@ -239,6 +212,69 @@ opacity:.7;
 position:fixed;
 inset:0;
 z-index:-4;
+}
+/* =========================
+   RESPONSIVE AUTO-FIT
+   ========================= */
+
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+}
+
+/* Tablets */
+@media (max-width:900px){
+
+h1{
+font-size:34px;
+letter-spacing:4px;
+margin-top:40px;
+}
+
+#core{
+width:150px;
+height:150px;
+}
+
+.portal{
+width:120px;
+height:120px;
+font-size:14px;
+}
+
+#aboutNode{transform:rotate(0deg) translateX(200px);}
+#galleryNode{transform:rotate(90deg) translateX(200px);}
+#musicNode{transform:rotate(180deg) translateX(200px);}
+#chatNode{transform:rotate(270deg) translateX(200px);}
+}
+
+/* Phones */
+@media (max-width:600px){
+
+h1{
+font-size:22px;
+letter-spacing:2px;
+margin-top:20px;
+padding:0 10px;
+}
+
+#core{
+width:110px;
+height:110px;
+}
+
+.portal{
+width:85px;
+height:85px;
+font-size:11px;
+letter-spacing:1px;
+}
+
+#aboutNode{transform:rotate(0deg) translateX(130px);}
+#galleryNode{transform:rotate(90deg) translateX(130px);}
+#musicNode{transform:rotate(180deg) translateX(130px);}
+#chatNode{transform:rotate(270deg) translateX(130px);}
 }
 </style>
 </head>
