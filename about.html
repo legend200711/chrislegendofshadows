@@ -3,418 +3,397 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>About | Chris Legend of Shadows</title>
+<title>Welcome in Legends</title>
 
 <style>
 
-/* FIXED SCROLL */
-html, body{
-height:100%;
+}
+
+#aboutNode{transform:rotate(0deg) translateX(200px);}
+#galleryNode{transform:rotate(90deg) translateX(200px);}
+#musicNode{transform:rotate(180deg) translateX(200px);}
+#chatNode{transform:rotate(270deg) translateX(200px);}
+}
+
+/* Phones */
+@media (max-width:600px){
+
+h1{
+font-size:22px;
+letter-spacing:2px;
+margin-top:20px;
+padding:0 10px;
+}
+
+#core{
+width:110px;
+height:110px;
+}
+
+.portal{
+width:85px;
+height:85px;
+font-size:11px;
+letter-spacing:1px;
+}
+
+#aboutNode{transform:rotate(0deg) translateX(130px);}
+#galleryNode{transform:rotate(90deg) translateX(130px);}
+#musicNode{transform:rotate(180deg) translateX(130px);}
+#chatNode{transform:rotate(270deg) translateX(130px);}
+}
+body{
 margin:0;
-overflow-x:hidden;
-overflow-y:auto;
-scroll-behavior:smooth;
+overflow:hidden;
 background:#000;
-color:#cfefff;
 font-family:Arial,sans-serif;
-cursor:none;
+color:#bff6ff;
 }
 
-/* NAV */
-nav{
+/* CORE BACKGROUND */
+body::before{
+content:"";
 position:fixed;
-top:0;
-width:100%;
-display:flex;
-justify-content:center;
-gap:18px;
-padding:14px;
-background:rgba(0,0,0,.4);
-backdrop-filter:blur(12px);
-z-index:100;
-border-bottom:1px solid rgba(0,200,255,0.2);
+inset:0;
+background:
+radial-gradient(circle at 50% 50%, rgba(0,255,255,.25), transparent 35%),
+radial-gradient(circle at 20% 80%, rgba(0,80,255,.15), transparent 60%),
+radial-gradient(circle at 80% 20%, rgba(0,200,255,.12), transparent 60%);
+animation:dangerPulse 3s infinite alternate;
+z-index:-10;
+filter:contrast(1.2);
 }
 
-nav a{
-color:#7fd3ff;
-text-decoration:none;
-font-weight:bold;
-transition:0.3s;
+@keyframes dangerPulse{
+0%{filter:brightness(1) contrast(1.2)}
+100%{filter:brightness(1.8) contrast(1.6)}
 }
 
-nav a:hover{
-color:#00e5ff;
-text-shadow:0 0 15px #00e5ff;
-transform:scale(1.1);
-}
-
-/* PLATFORM BADGE BAR */
-#platforms{
-margin-top:70px;
+/* TITLE */
+h1{
 text-align:center;
-padding:12px 18px;
+margin-top:60px;
+font-size:46px;
+letter-spacing:6px;
+text-shadow:
+0 0 10px #00f0ff,
+0 0 30px #0088ff,
+0 0 60px #00ffff;
+animation:glitch 1.5s infinite;
+}
+
+@keyframes glitch{
+0%{transform:translate(0)}
+20%{transform:translate(-2px,2px)}
+40%{transform:translate(2px,-2px)}
+60%{transform:translate(-1px,1px)}
+80%{transform:translate(1px,-1px)}
+100%{transform:translate(0)}
+}
+
+/* CORE */
+#core{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:190px;
+height:190px;
+border-radius:50%;
+background:radial-gradient(circle,#00f0ff,#0044ff,transparent);
+box-shadow:
+0 0 120px #00f0ff,
+0 0 200px #0066ff,
+inset 0 0 40px rgba(255,255,255,.2);
+animation:coreFlicker 0.8s infinite alternate;
+}
+
+@keyframes coreFlicker{
+0%{transform:translate(-50%,-50%) scale(1)}
+100%{transform:translate(-50%,-50%) scale(1.15)}
+}
+
+/* PORTALS BASE */
+.portal{
+position:absolute;
+width:150px;
+height:150px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:#cfffff;
+text-decoration:none;
+background:radial-gradient(circle,rgba(0,255,255,.25),transparent);
+border:1px solid rgba(0,255,255,.5);
+box-shadow:
+0 0 25px rgba(0,255,255,.3),
+0 0 60px rgba(0,100,255,.2);
+transition:.2s;
 font-weight:bold;
-color:#00c8ff;
-text-shadow:0 0 20px #00c8ff;
-background:rgba(0,200,255,0.08);
-border:1px solid rgba(0,200,255,0.25);
-backdrop-filter:blur(10px);
-width:90%;
-max-width:900px;
-margin-left:auto;
-margin-right:auto;
-border-radius:14px;
-animation:floatGlow 4s infinite ease-in-out;
+letter-spacing:2px;
 }
 
-@keyframes floatGlow{
-0%,100%{transform:translateY(0);box-shadow:0 0 10px rgba(0,200,255,0.2)}
-50%{transform:translateY(-5px);box-shadow:0 0 30px rgba(0,200,255,0.6)}
+/* ORBIT SYSTEM */
+.orbitWrap{
+position:absolute;
+top:50%;
+left:50%;
+width:0;
+height:0;
+animation:orbit 10s linear infinite;
+transform-origin:center;
 }
 
-/* FADE */
-#fade{
-position:fixed;
-inset:0;
-background:black;
-opacity:0;
-pointer-events:none;
-z-index:9999;
-transition:0.6s ease;
+/* each node sits on circle */
+.node{
+position:absolute;
+top:0;
+left:0;
 }
 
-/* BACKGROUND LAYERS */
-#flames,#rain,#cats,#blueFlames,#ghosts,#starfield,#blueRainCanvas{
-position:fixed;
-inset:0;
-pointer-events:none;
+/* positions around circle */
+#aboutNode{transform:rotate(0deg) translateX(260px);}
+#galleryNode{transform:rotate(90deg) translateX(260px);}
+#musicNode{transform:rotate(180deg) translateX(260px);}
+#chatNode{transform:rotate(270deg) translateX(260px);}
+
+/* orbit animation */
+@keyframes orbit{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
+}
+
+/* hover effect */
+.portal:hover{
+transform:scale(1.25);
+box-shadow:
+0 0 80px rgba(0,255,255,.8),
+0 0 120px rgba(0,120,255,.4);
 }
 
 /* CURSOR */
 #cursor{
 position:fixed;
-width:16px;
-height:16px;
+width:14px;
+height:14px;
 border-radius:50%;
-background:#00c8ff;
-box-shadow:0 0 25px #00c8ff;
+background:#00f0ff;
+box-shadow:0 0 25px #00f0ff;
 pointer-events:none;
 transform:translate(-50%,-50%);
-z-index:10000;
 }
 
-/* ENERGY GLOW */
-.energy{
+/* RAIN */
+#rain{
 position:fixed;
 inset:0;
-background:radial-gradient(circle at center,rgba(0,200,255,0.10),transparent 60%);
-mix-blend-mode:screen;
-pointer-events:none;
-z-index:-1;
-animation:pulse 5s infinite ease-in-out;
+z-index:-3;
 }
 
-@keyframes pulse{
-0%,100%{opacity:0.3}
-50%{opacity:0.8}
+.drop{
+position:absolute;
+width:2px;
+height:60px;
+background:linear-gradient(to bottom,#00f0ff,transparent);
+animation:fall linear infinite;
+opacity:.7;
 }
 
-/* 🔵 STRONG BLUE CINEMATIC PULSE (ADDED) */
-.bluePulse{
-position:fixed;
-inset:0;
-background:radial-gradient(circle at 50% 50%,rgba(0,200,255,0.25),transparent 70%);
-mix-blend-mode:screen;
-pointer-events:none;
-z-index:-1;
-animation:strongPulse 3s infinite ease-in-out;
-}
-
-@keyframes strongPulse{
-0%,100%{opacity:0.25;transform:scale(1)}
-50%{opacity:0.75;transform:scale(1.05)}
-}
-
-/* INTRO */
-#intro{
-position:fixed;
-inset:0;
-background:#000;
-display:flex;
-align-items:center;
-justify-content:center;
-z-index:1000;
-animation:fadeOut 3.5s forwards;
-}
-
-#intro h1{
-font-size:42px;
-color:#00c8ff;
-text-shadow:0 0 25px #00c8ff,0 0 70px #0066ff;
-animation:pop 2.5s ease;
-}
-
-@keyframes pop{
-0%{transform:scale(0.5);opacity:0;filter:blur(10px)}
-50%{opacity:1}
-70%{transform:scale(1.2)}
-100%{transform:scale(1)}
-}
-
-@keyframes fadeOut{
-0%{opacity:1}
-80%{opacity:1}
-100%{opacity:0;visibility:hidden}
-}
-
-/* MAIN CONTENT */
-.container{
-max-width:900px;
-margin:120px auto;
-padding:20px;
-position:relative;
-z-index:2;
-}
-
-.box{
-background:rgba(10,10,20,.45);
-border:1px solid rgba(0,200,255,.25);
-padding:22px;
-margin-bottom:20px;
-border-radius:16px;
-backdrop-filter:blur(14px);
-box-shadow:0 0 25px rgba(0,200,255,0.15);
-transition:0.3s;
-}
-
-.box:hover{
-transform:translateY(-6px) scale(1.02);
-box-shadow:0 0 40px rgba(0,200,255,0.35);
-}
-
-/* TYPEWRITER */
-#typing{
-min-height:120px;
-line-height:1.6;
-text-shadow:0 0 12px #00c8ff;
-white-space:pre-wrap;
-}
-
-/* HEADER */
-h1{
-text-align:center;
-text-shadow:0 0 30px #00c8ff;
-animation:headerGlow 3s infinite ease-in-out;
-}
-
-@keyframes headerGlow{
-0%,100%{text-shadow:0 0 20px #00c8ff}
-50%{text-shadow:0 0 40px #00e5ff}
-}
-
-/* 👻 GHOST PARTICLES (ADDED) */
-.ghost{
-position:fixed;
-width:6px;
-height:6px;
-background:rgba(200,255,255,0.7);
-border-radius:50%;
-box-shadow:0 0 12px #00e5ff;
-pointer-events:none;
-animation:floatGhost linear infinite;
-}
-
-@keyframes floatGhost{
-from{transform:translateY(100vh) translateX(0);opacity:0}
+@keyframes fall{
+0%{transform:translateY(-100vh);opacity:0}
 10%{opacity:1}
-to{transform:translateY(-10vh) translateX(40px);opacity:0}
+100%{transform:translateY(100vh);opacity:0}
 }
 
+/* FLAMES */
+#flames{
+position:fixed;
+inset:0;
+z-index:-4;
+}
+
+/* =========================
+   RESPONSIVE AUTO-FIT
+   ========================= */
+
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+}
+
+/* Tablets */
+@media (max-width:900px){
+
+h1{
+font-size:34px;
+letter-spacing:4px;
+margin-top:40px;
+}
+
+#core{
+width:150px;
+height:150px;
+}
+
+.portal{
+width:120px;
+height:120px;
+font-size:14px;
+}
+
+#aboutNode{transform:rotate(0deg) translateX(200px);}
+#galleryNode{transform:rotate(90deg) translateX(200px);}
+#musicNode{transform:rotate(180deg) translateX(200px);}
+#chatNode{transform:rotate(270deg) translateX(200px);}
+}
+
+/* Phones */
+@media (max-width:600px){
+
+h1{
+font-size:22px;
+letter-spacing:2px;
+margin-top:20px;
+padding:0 10px;
+}
+
+#core{
+width:110px;
+height:110px;
+}
+
+.portal{
+width:85px;
+height:85px;
+font-size:11px;
+letter-spacing:1px;
+}
+
+#aboutNode{transform:rotate(0deg) translateX(130px);}
+#galleryNode{transform:rotate(90deg) translateX(130px);}
+#musicNode{transform:rotate(180deg) translateX(130px);}
+#chatNode{transform:rotate(270deg) translateX(130px);}
+}
 </style>
 </head>
 
 <body>
 
-<div id="fade"></div>
-<div id="intro"><h1>ENTERING LEGEND WORLD</h1></div>
+<h1>WELCOME IN LEGENDS</h1>
 
-<div class="energy"></div>
-<div class="bluePulse"></div>
+<div id="core"></div>
 
-<!-- ✨ ADDED BACKGROUND LAYERS -->
-<canvas id="starfield"></canvas>
-<canvas id="blueRainCanvas"></canvas>
-<div id="blueFlames"></div>
-<div id="ghosts"></div>
-<div id="platforms">
-🔥 Find me on Spotify • YouTube Music • Amazon Music • Apple Music — search <b>Chris Legend of Shadows</b>
+<div class="orbitWrap">
 
-<br><br>
+  <div class="node" id="aboutNode">
+    <a href="about.html" class="portal">ABOUT</a>
+  </div>
 
-📱 This is the link to my app:
-<a href="https://median.co/share/abxwzby#apk"
-   target="_blank"
-   style="
-      color:#00e5ff;
-      text-decoration:none;
-      font-weight:bold;
-      text-shadow:0 0 15px #00c8ff;
-      transition:0.3s;
-   ">
-   Download My Android App (APK)
-</a>
-</div>
-<nav>
-<a href="music.html">Music</a>
-<a href="gallery.html">Gallery</a>
-      <a href="chat room.html">chat room</a>
-</nav>
+  <div class="node" id="galleryNode">
+    <a href="gallery.html" class="portal">GALLERY</a>
+  </div>
 
-<div id="platforms">
-🔥 Find me on Spotify • YouTube Music • Amazon Music • Apple Music — search <b>Chris Legend of Shadows</b>
+  <div class="node" id="musicNode">
+    <a href="music.html" class="portal">MUSIC</a>
+  </div>
+
+  <div class="node" id="chatNode">
+    <a href="chat room.html" class="portal">CHAT</a>
+  </div>
+
 </div>
 
-<div id="flames"></div>
 <div id="rain"></div>
-<div id="cats"></div>
-
+<div id="flames"></div>
 <div id="cursor"></div>
-
-<div class="container">
-
-<h1>About Chris Legend of Shadows</h1>
-
-<div class="box">
-<h2>About Me</h2>
-<p id="typing"></p>
-</div>
-
-<div class="box">
-<h2>🔥 Fun Facts</h2>
-<ul>
-<li>I turn emotions into music</li>
-<li>I built my own universe</li>
-<li>Cinematic dark emotional style</li>
-<li>I express what I can’t say out loud</li>
-<li>I’m building my legacy step by step</li>
-</ul>
-</div>
-
-</div>
 
 <script>
 
+/* CURSOR */
 const cursor=document.getElementById("cursor");
 document.addEventListener("mousemove",e=>{
 cursor.style.left=e.clientX+"px";
 cursor.style.top=e.clientY+"px";
 });
 
-/* TYPEWRITER */
-const text=`
-Welcome to the world of Chris Legend of Shadows.
+/* RAIN */
+const rain=document.getElementById("rain");
+for(let i=0;i<100;i++){
+let d=document.createElement("div");
+d.className="drop";
+d.style.left=Math.random()*100+"vw";
+d.style.animationDuration=(Math.random()*1.2+0.4)+"s";
+rain.appendChild(d);
+}
 
-This isn’t just a name — it’s a story built from everything I’ve been through.
-I created this world through pain, silence, and the battles in my own mind.
+/* FLAMES */
+const canvas=document.createElement("canvas");
+document.getElementById("flames").appendChild(canvas);
+const ctx=canvas.getContext("2d");
 
-Every beat, every sound, every lyric comes from fighting my demons and refusing to let them win.
-Music became my escape when words weren’t enough.
+function resize(){
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+}
+resize();
+window.onresize=resize;
 
-I write 90% of my music, and AI helps with music ideas and voice production.
-
-I didn’t build this to be perfect — I built it to be real.
-A place where emotions turn into sound, and darkness turns into something powerful.
-`;
-
-let i=0;
-function typeWriter(){
-const el=document.getElementById("typing");
-if(i<text.length){
-el.innerHTML+=text.charAt(i++);
-setTimeout(typeWriter,25);
+class Flame{
+constructor(){this.reset();}
+reset(){
+this.x=Math.random()*canvas.width;
+this.y=canvas.height+50;
+this.s=Math.random()*6+2;
+this.vy=Math.random()*2.5+1;
+this.vx=(Math.random()-0.5)*1.5;
+}
+update(){
+this.x+=this.vx;
+this.y-=this.vy;
+if(this.y<-50)this.reset();
+}
+draw(){
+ctx.fillStyle="rgba(0,255,255,.35)";
+ctx.beginPath();
+ctx.arc(this.x,this.y,this.s,0,Math.PI*2);
+ctx.fill();
 }
 }
-window.onload=typeWriter;
 
-/* ✨ STARFIELD */
-const starCanvas=document.getElementById("starfield");
-const sctx=starCanvas.getContext("2d");
+let flames=[];
+for(let i=0;i<140;i++)flames.push(new Flame());
 
-function resizeStars(){
-starCanvas.width=window.innerWidth;
-starCanvas.height=window.innerHeight;
+function animate(){
+ctx.fillStyle="rgba(0,0,0,.25)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+flames.forEach(f=>{f.update();f.draw();});
+requestAnimationFrame(animate);
 }
-window.addEventListener("resize",resizeStars);
-resizeStars();
+animate();
 
-let stars=Array.from({length:120},()=>({
-x:Math.random()*innerWidth,
-y:Math.random()*innerHeight,
-r:Math.random()*2
-}));
+/* HIDE DOWNLOAD LINK WHEN OPENED FROM APP */
+const urlParams = new URLSearchParams(window.location.search);
 
-function drawStars(){
-sctx.clearRect(0,0,starCanvas.width,starCanvas.height);
-sctx.fillStyle="#00c8ff";
-stars.forEach(s=>{
-s.y+=0.2;
-if(s.y>innerHeight)s.y=0;
-sctx.beginPath();
-sctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-sctx.fill();
-});
-requestAnimationFrame(drawStars);
+if (urlParams.get('from_app') === 'true') {
+    document.getElementById("app-download-link").style.display = "none";
 }
-drawStars();
 
-/* 🌧️ BLUE RAIN */
-const rainCanvas=document.getElementById("blueRainCanvas");
-const rctx=rainCanvas.getContext("2d");
+</script>
 
-function resizeRain(){
-rainCanvas.width=window.innerWidth;
-rainCanvas.height=window.innerHeight;
-}
-window.addEventListener("resize",resizeRain);
-resizeRain();
-
-let drops=Array.from({length:80},()=>({
-x:Math.random()*innerWidth,
-y:Math.random()*innerHeight,
-l:Math.random()*20+10,
-s:Math.random()*4+4
-}));
-
-function drawRain(){
-rctx.clearRect(0,0,rainCanvas.width,rainCanvas.height);
-rctx.strokeStyle="#00c8ff";
-rctx.lineWidth=1;
-
-drops.forEach(d=>{
-rctx.beginPath();
-rctx.moveTo(d.x,d.y);
-rctx.lineTo(d.x,d.y+d.l);
-rctx.stroke();
-d.y+=d.s;
-if(d.y>innerHeight)d.y=0;
-});
-requestAnimationFrame(drawRain);
-}
-drawRain();
-
-/* 👻 GHOST PARTICLES */
-function spawnGhosts(){
-const ghost=document.createElement("div");
-ghost.className="ghost";
-ghost.style.left=Math.random()*innerWidth+"px";
-ghost.style.top=innerHeight+"px";
-ghost.style.animationDuration=(3+Math.random()*5)+"s";
-document.getElementById("ghosts").appendChild(ghost);
-
-setTimeout(()=>ghost.remove(),8000);
-}
-setInterval(spawnGhosts,400);
-
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a3d7e9f94471a1d4dea3800/1js03d87e';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
 </script>
 
 </body>
