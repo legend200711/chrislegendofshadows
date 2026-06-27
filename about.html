@@ -414,6 +414,53 @@ setTimeout(()=>ghost.remove(),8000);
 setInterval(spawnGhosts,400);
 
 </script>
+/* 📱 MOBILE FIT FIX (ADD ONLY) */
+@media (max-width: 768px){
 
+html, body{
+cursor:auto; /* fixes mobile cursor issue */
+}
+
+/* container fits screen better */
+.container{
+margin:90px 12px;
+padding:12px;
+}
+
+/* nav wraps instead of overflowing */
+nav{
+flex-wrap:wrap;
+gap:10px;
+padding:10px;
+font-size:14px;
+}
+
+/* platform bar tighter */
+#platforms{
+width:95%;
+font-size:13px;
+padding:10px;
+}
+
+/* headings scale down */
+h1{
+font-size:24px;
+}
+
+.box{
+padding:14px;
+}
+
+/* intro text scales */
+#intro h1{
+font-size:28px;
+text-align:center;
+}
+
+/* cursor hide on mobile */
+#cursor{
+display:none;
+}
+}
 </body>
 </html>
