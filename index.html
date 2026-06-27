@@ -2,10 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<!-- FIXED MOBILE APP FIT VIEWPORT -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Welcome in Legends</title>
 
 <style>
+
+/* =========================
+   AUTO FIT SYSTEM (ADDED)
+   ========================= */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  transform-origin: center center;
+}
+
+/* ORIGINAL CODE STARTS */
 
 #aboutNode{transform:rotate(0deg) translateX(200px);}
 #galleryNode{transform:rotate(90deg) translateX(200px);}
@@ -40,7 +60,6 @@ font-size:10px;
 letter-spacing:1px;
 }
 
-/* tighter orbit so it fits screen */
 #aboutNode{transform:rotate(0deg) translateX(100px);}
 #galleryNode{transform:rotate(90deg) translateX(100px);}
 #musicNode{transform:rotate(180deg) translateX(100px);}
@@ -238,12 +257,6 @@ inset:0;
 z-index:-4;
 }
 
-html,body{
-width:100%;
-height:100%;
-overflow:hidden;
-}
-
 </style>
 </head>
 
@@ -341,19 +354,22 @@ requestAnimationFrame(animate);
 }
 animate();
 
-</script>
+/* =========================
+   MOBILE APP AUTO FIT (ADDED)
+   ========================= */
+function autoFit() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
 
-<!-- Tawk.to -->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6a3d7e9f94471a1d4dea3800/1js03d87e';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
+    let scale = Math.min(w / 420, h / 800);
+    scale = Math.max(0.6, Math.min(scale, 1));
+
+    document.body.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", autoFit);
+window.addEventListener("load", autoFit);
+
 </script>
 
 </body>
