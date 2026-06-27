@@ -213,6 +213,7 @@ position:fixed;
 inset:0;
 z-index:-4;
 }
+
 /* =========================
    RESPONSIVE AUTO-FIT
    ========================= */
@@ -285,7 +286,6 @@ letter-spacing:1px;
 
 <div id="core"></div>
 
-<!-- 🌐 ORBIT SYSTEM -->
 <div class="orbitWrap">
 
   <div class="node" id="aboutNode">
@@ -374,7 +374,15 @@ requestAnimationFrame(animate);
 }
 animate();
 
+/* HIDE DOWNLOAD LINK WHEN OPENED FROM APP */
+const urlParams = new URLSearchParams(window.location.search);
+
+if (urlParams.get('from_app') === 'true') {
+    document.getElementById("app-download-link").style.display = "none";
+}
+
 </script>
+
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
@@ -387,6 +395,6 @@ s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
-<!--End of Tawk.to Script-->
+
 </body>
 </html>
