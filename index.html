@@ -5,15 +5,46 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Welcome in Legends</title>
 
-<!-- Link the manifest file -->
-<link rel="manifest" href="manifest.json">
-
 <style>
-html,body{
-width:100%;
-height:100%;
-overflow:hidden;
+
+}
+
+#aboutNode{transform:rotate(0deg) translateX(200px);}
+#galleryNode{transform:rotate(90deg) translateX(200px);}
+#musicNode{transform:rotate(180deg) translateX(200px);}
+#chatNode{transform:rotate(270deg) translateX(200px);}
+}
+
+/* Phones */
+@media (max-width:600px){
+
+h1{
+font-size:22px;
+letter-spacing:2px;
+margin-top:20px;
+padding:0 10px;
+}
+
+#core{
+width:110px;
+height:110px;
+}
+
+.portal{
+width:85px;
+height:85px;
+font-size:11px;
+letter-spacing:1px;
+}
+
+#aboutNode{transform:rotate(0deg) translateX(130px);}
+#galleryNode{transform:rotate(90deg) translateX(130px);}
+#musicNode{transform:rotate(180deg) translateX(130px);}
+#chatNode{transform:rotate(270deg) translateX(130px);}
+}
+body{
 margin:0;
+overflow:hidden;
 background:#000;
 font-family:Arial,sans-serif;
 color:#bff6ff;
@@ -44,7 +75,10 @@ text-align:center;
 margin-top:60px;
 font-size:46px;
 letter-spacing:6px;
-text-shadow:0 0 10px #00f0ff,0 0 30px #0088ff,0 0 60px #00ffff;
+text-shadow:
+0 0 10px #00f0ff,
+0 0 30px #0088ff,
+0 0 60px #00ffff;
 animation:glitch 1.5s infinite;
 }
 
@@ -67,7 +101,10 @@ width:190px;
 height:190px;
 border-radius:50%;
 background:radial-gradient(circle,#00f0ff,#0044ff,transparent);
-box-shadow:0 0 120px #00f0ff,0 0 200px #0066ff,inset 0 0 40px rgba(255,255,255,.2);
+box-shadow:
+0 0 120px #00f0ff,
+0 0 200px #0066ff,
+inset 0 0 40px rgba(255,255,255,.2);
 animation:coreFlicker 0.8s infinite alternate;
 }
 
@@ -76,7 +113,7 @@ animation:coreFlicker 0.8s infinite alternate;
 100%{transform:translate(-50%,-50%) scale(1.15)}
 }
 
-/* PORTALS */
+/* PORTALS BASE */
 .portal{
 position:absolute;
 width:150px;
@@ -90,18 +127,15 @@ color:#cfffff;
 text-decoration:none;
 background:radial-gradient(circle,rgba(0,255,255,.25),transparent);
 border:1px solid rgba(0,255,255,.5);
-box-shadow:0 0 25px rgba(0,255,255,.3),0 0 60px rgba(0,100,255,.2);
+box-shadow:
+0 0 25px rgba(0,255,255,.3),
+0 0 60px rgba(0,100,255,.2);
+transition:.2s;
 font-weight:bold;
 letter-spacing:2px;
-transition:.2s;
 }
 
-.portal:hover{
-transform:scale(1.25);
-box-shadow:0 0 80px rgba(0,255,255,.8),0 0 120px rgba(0,120,255,.4);
-}
-
-/* ORBIT */
+/* ORBIT SYSTEM */
 .orbitWrap{
 position:absolute;
 top:50%;
@@ -112,16 +146,31 @@ animation:orbit 10s linear infinite;
 transform-origin:center;
 }
 
-.node{position:absolute;top:0;left:0;}
+/* each node sits on circle */
+.node{
+position:absolute;
+top:0;
+left:0;
+}
 
+/* positions around circle */
 #aboutNode{transform:rotate(0deg) translateX(260px);}
 #galleryNode{transform:rotate(90deg) translateX(260px);}
 #musicNode{transform:rotate(180deg) translateX(260px);}
 #chatNode{transform:rotate(270deg) translateX(260px);}
 
+/* orbit animation */
 @keyframes orbit{
 0%{transform:rotate(0deg);}
 100%{transform:rotate(360deg);}
+}
+
+/* hover effect */
+.portal:hover{
+transform:scale(1.25);
+box-shadow:
+0 0 80px rgba(0,255,255,.8),
+0 0 120px rgba(0,120,255,.4);
 }
 
 /* CURSOR */
@@ -137,7 +186,12 @@ transform:translate(-50%,-50%);
 }
 
 /* RAIN */
-#rain{position:fixed;inset:0;z-index:-3;}
+#rain{
+position:fixed;
+inset:0;
+z-index:-3;
+}
+
 .drop{
 position:absolute;
 width:2px;
@@ -153,23 +207,70 @@ opacity:.7;
 100%{transform:translateY(100vh);opacity:0}
 }
 
-#flames{position:fixed;inset:0;z-index:-4;}
+/* FLAMES */
+#flames{
+position:fixed;
+inset:0;
+z-index:-4;
+}
+/* =========================
+   RESPONSIVE AUTO-FIT
+   ========================= */
 
-/* RESPONSIVE */
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+}
+
+/* Tablets */
 @media (max-width:900px){
-h1{font-size:34px;margin-top:40px;}
-#core{width:150px;height:150px;}
-.portal{width:120px;height:120px;font-size:14px;}
+
+h1{
+font-size:34px;
+letter-spacing:4px;
+margin-top:40px;
+}
+
+#core{
+width:150px;
+height:150px;
+}
+
+.portal{
+width:120px;
+height:120px;
+font-size:14px;
+}
+
 #aboutNode{transform:rotate(0deg) translateX(200px);}
 #galleryNode{transform:rotate(90deg) translateX(200px);}
 #musicNode{transform:rotate(180deg) translateX(200px);}
 #chatNode{transform:rotate(270deg) translateX(200px);}
 }
 
+/* Phones */
 @media (max-width:600px){
-h1{font-size:22px;margin-top:20px;}
-#core{width:110px;height:110px;}
-.portal{width:85px;height:85px;font-size:11px;}
+
+h1{
+font-size:22px;
+letter-spacing:2px;
+margin-top:20px;
+padding:0 10px;
+}
+
+#core{
+width:110px;
+height:110px;
+}
+
+.portal{
+width:85px;
+height:85px;
+font-size:11px;
+letter-spacing:1px;
+}
+
 #aboutNode{transform:rotate(0deg) translateX(130px);}
 #galleryNode{transform:rotate(90deg) translateX(130px);}
 #musicNode{transform:rotate(180deg) translateX(130px);}
@@ -184,11 +285,25 @@ h1{font-size:22px;margin-top:20px;}
 
 <div id="core"></div>
 
+<!-- 🌐 ORBIT SYSTEM -->
 <div class="orbitWrap">
-  <div class="node" id="aboutNode"><a href="about.html" class="portal">ABOUT</a></div>
-  <div class="node" id="galleryNode"><a href="gallery.html" class="portal">GALLERY</a></div>
-  <div class="node" id="musicNode"><a href="music.html" class="portal">MUSIC</a></div>
-  <div class="node" id="chatNode"><a href="chat room.html" class="portal">CHAT</a></div>
+
+  <div class="node" id="aboutNode">
+    <a href="about.html" class="portal">ABOUT</a>
+  </div>
+
+  <div class="node" id="galleryNode">
+    <a href="gallery.html" class="portal">GALLERY</a>
+  </div>
+
+  <div class="node" id="musicNode">
+    <a href="music.html" class="portal">MUSIC</a>
+  </div>
+
+  <div class="node" id="chatNode">
+    <a href="chat room.html" class="portal">CHAT</a>
+  </div>
+
 </div>
 
 <div id="rain"></div>
@@ -196,12 +311,15 @@ h1{font-size:22px;margin-top:20px;}
 <div id="cursor"></div>
 
 <script>
+
+/* CURSOR */
 const cursor=document.getElementById("cursor");
 document.addEventListener("mousemove",e=>{
 cursor.style.left=e.clientX+"px";
 cursor.style.top=e.clientY+"px";
 });
 
+/* RAIN */
 const rain=document.getElementById("rain");
 for(let i=0;i<100;i++){
 let d=document.createElement("div");
@@ -211,6 +329,7 @@ d.style.animationDuration=(Math.random()*1.2+0.4)+"s";
 rain.appendChild(d);
 }
 
+/* FLAMES */
 const canvas=document.createElement("canvas");
 document.getElementById("flames").appendChild(canvas);
 const ctx=canvas.getContext("2d");
@@ -254,16 +373,9 @@ flames.forEach(f=>{f.update();f.draw();});
 requestAnimationFrame(animate);
 }
 animate();
-</script>
 
-<!-- Register the service worker -->
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
 </script>
-
-<!-- Tawk.to Script -->
+<!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
@@ -275,6 +387,6 @@ s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
-
+<!--End of Tawk.to Script-->
 </body>
 </html>
