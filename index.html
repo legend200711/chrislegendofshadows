@@ -277,6 +277,16 @@ letter-spacing:1px;
 #chatNode{transform:rotate(270deg) translateX(130px);}
 }
 </style>
+  <!-- Link the manifest file -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Register the service worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+</script>
+</script>
 </head>
 
 <body>
