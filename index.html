@@ -7,6 +7,64 @@
 
 <style>
 
+#aboutNode{transform:rotate(0deg) translateX(200px);}
+#galleryNode{transform:rotate(90deg) translateX(200px);}
+#musicNode{transform:rotate(180deg) translateX(200px);}
+#chatNode{transform:rotate(270deg) translateX(200px);}
+
+/* Phones */
+@media (max-width:600px){
+
+html,body{
+overflow:hidden;
+height:100%;
+width:100%;
+}
+
+h1{
+font-size:18px;
+letter-spacing:2px;
+margin-top:15px;
+padding:0 10px;
+}
+
+#core{
+width:90px;
+height:90px;
+}
+
+.portal{
+width:70px;
+height:70px;
+font-size:10px;
+letter-spacing:1px;
+}
+
+/* tighter orbit so it fits screen */
+#aboutNode{transform:rotate(0deg) translateX(100px);}
+#galleryNode{transform:rotate(90deg) translateX(100px);}
+#musicNode{transform:rotate(180deg) translateX(100px);}
+#chatNode{transform:rotate(270deg) translateX(100px);}
+}
+
+/* Tablets */
+@media (max-width:900px){
+
+h1{
+font-size:34px;
+letter-spacing:4px;
+margin-top:40px;
+}
+
+#core{
+width:150px;
+height:150px;
+}
+
+.portal{
+width:120px;
+height:120px;
+font-size:14px;
 }
 
 #aboutNode{transform:rotate(0deg) translateX(200px);}
@@ -15,33 +73,6 @@
 #chatNode{transform:rotate(270deg) translateX(200px);}
 }
 
-/* Phones */
-@media (max-width:600px){
-
-h1{
-font-size:22px;
-letter-spacing:2px;
-margin-top:20px;
-padding:0 10px;
-}
-
-#core{
-width:110px;
-height:110px;
-}
-
-.portal{
-width:85px;
-height:85px;
-font-size:11px;
-letter-spacing:1px;
-}
-
-#aboutNode{transform:rotate(0deg) translateX(130px);}
-#galleryNode{transform:rotate(90deg) translateX(130px);}
-#musicNode{transform:rotate(180deg) translateX(130px);}
-#chatNode{transform:rotate(270deg) translateX(130px);}
-}
 body{
 margin:0;
 overflow:hidden;
@@ -113,7 +144,7 @@ animation:coreFlicker 0.8s infinite alternate;
 100%{transform:translate(-50%,-50%) scale(1.15)}
 }
 
-/* PORTALS BASE */
+/* PORTALS */
 .portal{
 position:absolute;
 width:150px;
@@ -135,7 +166,7 @@ font-weight:bold;
 letter-spacing:2px;
 }
 
-/* ORBIT SYSTEM */
+/* ORBIT */
 .orbitWrap{
 position:absolute;
 top:50%;
@@ -146,26 +177,22 @@ animation:orbit 10s linear infinite;
 transform-origin:center;
 }
 
-/* each node sits on circle */
 .node{
 position:absolute;
 top:0;
 left:0;
 }
 
-/* positions around circle */
 #aboutNode{transform:rotate(0deg) translateX(260px);}
 #galleryNode{transform:rotate(90deg) translateX(260px);}
 #musicNode{transform:rotate(180deg) translateX(260px);}
 #chatNode{transform:rotate(270deg) translateX(260px);}
 
-/* orbit animation */
 @keyframes orbit{
 0%{transform:rotate(0deg);}
 100%{transform:rotate(360deg);}
 }
 
-/* hover effect */
 .portal:hover{
 transform:scale(1.25);
 box-shadow:
@@ -173,7 +200,6 @@ box-shadow:
 0 0 120px rgba(0,120,255,.4);
 }
 
-/* CURSOR */
 #cursor{
 position:fixed;
 width:14px;
@@ -185,7 +211,6 @@ pointer-events:none;
 transform:translate(-50%,-50%);
 }
 
-/* RAIN */
 #rain{
 position:fixed;
 inset:0;
@@ -207,15 +232,11 @@ opacity:.7;
 100%{transform:translateY(100vh);opacity:0}
 }
 
-/* FLAMES */
 #flames{
 position:fixed;
 inset:0;
 z-index:-4;
 }
-/* =========================
-   RESPONSIVE AUTO-FIT
-   ========================= */
 
 html,body{
 width:100%;
@@ -223,59 +244,6 @@ height:100%;
 overflow:hidden;
 }
 
-/* Tablets */
-@media (max-width:900px){
-
-h1{
-font-size:34px;
-letter-spacing:4px;
-margin-top:40px;
-}
-
-#core{
-width:150px;
-height:150px;
-}
-
-.portal{
-width:120px;
-height:120px;
-font-size:14px;
-}
-
-#aboutNode{transform:rotate(0deg) translateX(200px);}
-#galleryNode{transform:rotate(90deg) translateX(200px);}
-#musicNode{transform:rotate(180deg) translateX(200px);}
-#chatNode{transform:rotate(270deg) translateX(200px);}
-}
-
-/* Phones */
-@media (max-width:600px){
-
-h1{
-font-size:22px;
-letter-spacing:2px;
-margin-top:20px;
-padding:0 10px;
-}
-
-#core{
-width:110px;
-height:110px;
-}
-
-.portal{
-width:85px;
-height:85px;
-font-size:11px;
-letter-spacing:1px;
-}
-
-#aboutNode{transform:rotate(0deg) translateX(130px);}
-#galleryNode{transform:rotate(90deg) translateX(130px);}
-#musicNode{transform:rotate(180deg) translateX(130px);}
-#chatNode{transform:rotate(270deg) translateX(130px);}
-}
 </style>
 </head>
 
@@ -285,7 +253,6 @@ letter-spacing:1px;
 
 <div id="core"></div>
 
-<!-- 🌐 ORBIT SYSTEM -->
 <div class="orbitWrap">
 
   <div class="node" id="aboutNode">
@@ -375,7 +342,8 @@ requestAnimationFrame(animate);
 animate();
 
 </script>
-<!--Start of Tawk.to Script-->
+
+<!-- Tawk.to -->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
@@ -387,6 +355,6 @@ s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
-<!--End of Tawk.to Script-->
+
 </body>
 </html>
