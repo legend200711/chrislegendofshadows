@@ -2,20 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<!-- ✅ FIXED VIEWPORT FOR FULL MOBILE AUTO-FIT -->
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>About | Chris Legend of Shadows</title>
 
 <style>
 
-/* ✅ MOBILE AUTO FIT BASE FIX */
+/* FIXED SCROLL */
 html, body{
-width:100%;
 height:100%;
 margin:0;
-padding:0;
 overflow-x:hidden;
 overflow-y:auto;
 scroll-behavior:smooth;
@@ -23,14 +18,6 @@ background:#000;
 color:#cfefff;
 font-family:Arial,sans-serif;
 cursor:none;
--webkit-text-size-adjust:100%;
--ms-text-size-adjust:100%;
-}
-
-/* GLOBAL BOX FIX */
-*{
-box-sizing:border-box;
-max-width:100%;
 }
 
 /* NAV */
@@ -46,7 +33,6 @@ background:rgba(0,0,0,.4);
 backdrop-filter:blur(12px);
 z-index:100;
 border-bottom:1px solid rgba(0,200,255,0.2);
-flex-wrap:wrap;
 }
 
 nav a{
@@ -133,7 +119,7 @@ animation:pulse 5s infinite ease-in-out;
 50%{opacity:0.8}
 }
 
-/* BLUE PULSE */
+/* 🔵 STRONG BLUE CINEMATIC PULSE */
 .bluePulse{
 position:fixed;
 inset:0;
@@ -226,7 +212,7 @@ animation:headerGlow 3s infinite ease-in-out;
 50%{text-shadow:0 0 40px #00e5ff}
 }
 
-/* GHOST PARTICLES */
+/* 👻 GHOST PARTICLES */
 .ghost{
 position:fixed;
 width:6px;
@@ -244,12 +230,6 @@ from{transform:translateY(100vh) translateX(0);opacity:0}
 to{transform:translateY(-10vh) translateX(40px);opacity:0}
 }
 
-/* 📱 FINAL MOBILE HEIGHT FIX */
-body{
-min-height:100vh;
-min-height:100dvh;
-}
-
 </style>
 </head>
 
@@ -261,11 +241,13 @@ min-height:100dvh;
 <div class="energy"></div>
 <div class="bluePulse"></div>
 
+<!-- BACKGROUND -->
 <canvas id="starfield"></canvas>
 <canvas id="blueRainCanvas"></canvas>
 <div id="blueFlames"></div>
 <div id="ghosts"></div>
 
+<!-- PLATFORM SECTION -->
 <div id="platforms">
 🔥 Find me on Spotify • YouTube Music • Amazon Music • Apple Music — search <b>Chris Legend of Shadows</b>
 
@@ -273,17 +255,28 @@ min-height:100dvh;
 
 📱 This is the link to my app:
 <a href="https://median.co/share/abxwzby#apk"
-target="_blank"
-style="color:#00e5ff;font-weight:bold;text-decoration:none;">
-Download My Android App (APK)
+   target="_blank"
+   style="
+      color:#00e5ff;
+      text-decoration:none;
+      font-weight:bold;
+      text-shadow:0 0 15px #00c8ff;
+   ">
+   Download My Android App (APK)
 </a>
 </div>
 
+<!-- NAV MOVED HERE (ONLY CHANGE) -->
 <nav>
 <a href="music.html">Music</a>
 <a href="gallery.html">Gallery</a>
 <a href="chat room.html">chat room</a>
 </nav>
+
+<!-- MAIN PLATFORM BADGE (unchanged) -->
+<div id="platforms">
+🔥 Find me on Spotify • YouTube Music • Amazon Music • Apple Music — search <b>Chris Legend of Shadows</b>
+</div>
 
 <div id="flames"></div>
 <div id="rain"></div>
@@ -315,15 +308,15 @@ Download My Android App (APK)
 
 <script>
 
+/* cursor */
 const cursor=document.getElementById("cursor");
 document.addEventListener("mousemove",e=>{
 cursor.style.left=e.clientX+"px";
 cursor.style.top=e.clientY+"px";
 });
 
-/* TYPEWRITER */
-const text=`
-Welcome to the world of Chris Legend of Shadows.
+/* typewriter */
+const text=`Welcome to the world of Chris Legend of Shadows.
 
 This isn’t just a name — it’s a story built from everything I’ve been through.
 I created this world through pain, silence, and the battles in my own mind.
@@ -334,8 +327,7 @@ Music became my escape when words weren’t enough.
 I write 90% of my music, and AI helps with music ideas and voice production.
 
 I didn’t build this to be perfect — I built it to be real.
-A place where emotions turn into sound, and darkness turns into something powerful.
-`;
+A place where emotions turn into sound, and darkness turns into something powerful.`;
 
 let i=0;
 function typeWriter(){
