@@ -2,69 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Legend Gallery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legend Gallery + Comments</title>
 
 <style>
-  /* 📱 MOBILE FIT FIX (ADD ONLY) */
-@media (max-width: 768px){
 
+/* ================= GLOBAL ================= */
 html, body{
-cursor:auto; /* fixes mobile cursor issue */
-}
-
-/* container fits screen better */
-.container{
-margin:90px 12px;
-padding:12px;
-}
-
-/* nav wraps instead of overflowing */
-nav{
-flex-wrap:wrap;
-gap:10px;
-padding:10px;
-font-size:14px;
-}
-
-/* platform bar tighter */
-#platforms{
-width:95%;
-font-size:13px;
-padding:10px;
-}
-
-/* headings scale down */
-h1{
-font-size:24px;
-}
-
-.box{
-padding:14px;
-}
-
-/* intro text scales */
-#intro h1{
-font-size:28px;
-text-align:center;
-}
-
-/* cursor hide on mobile */
-#cursor{
-display:none;
-}
-}
-html{scroll-behavior:smooth}
-
-body{
+width:100%;
+height:100%;
 margin:0;
+overflow-x:hidden;
+font-family:Arial,sans-serif;
 background:#000;
 color:#cfefff;
-font-family:Arial,sans-serif;
-overflow-x:hidden;
 }
 
-/* ===== CINEMATIC BACKGROUND ===== */
+/* ================= BACKGROUND ================= */
 body::before{
 content:"";
 position:fixed;
@@ -81,7 +35,7 @@ animation:bgPulse 6s infinite alternate;
 100%{filter:brightness(1.5)}
 }
 
-/* ===== FLAMES ===== */
+/* ================= FLAMES ================= */
 #flameCanvas{
 position:fixed;
 inset:0;
@@ -89,7 +43,7 @@ z-index:-8;
 pointer-events:none;
 }
 
-/* ===== LIGHTNING ===== */
+/* ================= LIGHTNING ================= */
 .lightning{
 position:fixed;
 inset:0;
@@ -108,7 +62,7 @@ animation:lightningFlash 6s infinite;
 97%{opacity:0}
 }
 
-/* ===== INTRO OVERLAY ===== */
+/* ================= INTRO ================= */
 .intro-overlay{
 position:fixed;
 inset:0;
@@ -117,68 +71,29 @@ display:flex;
 align-items:center;
 justify-content:center;
 background:#000;
-overflow:hidden;
 animation:fadeOutIntro 4.5s forwards;
-}
-
-.lightning-burst{
-position:absolute;
-inset:0;
-background:white;
-opacity:0;
-animation:lightningStrike 4.5s ease-in-out;
 }
 
 .logo{
 font-size:48px;
+text-align:center;
 color:#cfefff;
-text-shadow:
-0 0 10px #00aaff,
-0 0 30px #0077ff,
-0 0 60px #0033ff;
-opacity:0;
-transform:scale(0.6);
+text-shadow:0 0 10px #00aaff,0 0 30px #0077ff,0 0 60px #0033ff;
 animation:logoReveal 4.5s ease forwards;
 }
 
-/* ===== INTRO ANIMATIONS ===== */
-@keyframes lightningStrike{
-0%{opacity:0}
-18%{opacity:0}
-20%{opacity:1}
-22%{opacity:0}
-40%{opacity:0}
-42%{opacity:1}
-44%{opacity:0}
-100%{opacity:0}
-}
-
 @keyframes logoReveal{
-0%{opacity:0; transform:scale(0.5) translateY(30px)}
-20%{opacity:0}
+0%{opacity:0; transform:scale(0.5)}
 25%{opacity:1; transform:scale(1.1)}
-35%{transform:scale(1)}
 100%{opacity:1}
 }
 
 @keyframes fadeOutIntro{
-0%{opacity:1}
 80%{opacity:1}
 100%{opacity:0; visibility:hidden}
 }
 
-/* HEADER */
-header{
-text-align:center;
-padding:80px 20px 20px;
-}
-
-h1{
-font-size:40px;
-text-shadow:0 0 25px #00c8ff;
-}
-
-/* NAV */
+/* ================= NAV ================= */
 nav{
 position:fixed;
 top:0;
@@ -189,7 +104,6 @@ gap:20px;
 padding:14px;
 background:rgba(0,0,0,.6);
 backdrop-filter:blur(10px);
-border-bottom:1px solid rgba(0,200,255,.2);
 z-index:99;
 }
 
@@ -199,75 +113,198 @@ text-decoration:none;
 font-weight:bold;
 }
 
-nav a:hover{
-color:#00e5ff;
-}
-
-/* GALLERY */
+/* ================= GALLERY (NEW VERSION ADDED) ================= */
 .gallery{
 max-width:1100px;
-margin:40px auto;
+margin:120px auto 40px;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:18px;
+gap:20px;
 padding:20px;
+box-sizing:border-box;
+align-items:start;
+}
+
+/* 🔥 AUTO-FIT ALL IMAGES */
+.gallery img{
+display:block;
+width:100%;
+max-width:100%;
+height:auto;
+object-fit:contain;
+background:#07111d;
+padding:8px;
+border-radius:14px;
+border:1px solid rgba(0,200,255,.25);
+box-shadow:
+0 0 15px rgba(0,170,255,.25),
+0 0 30px rgba(0,80,255,.15);
+transition:.3s;
+}
+
+.gallery img:hover{
+transform:scale(1.03);
+box-shadow:
+0 0 25px rgba(0,200,255,.5),
+0 0 50px rgba(0,100,255,.3);
+}
+
+/* 📱 MOBILE FIT */
+@media (max-width:768px){
+
+.gallery{
+grid-template-columns:1fr;
+padding:12px;
+gap:16px;
 }
 
 .gallery img{
 width:100%;
-height:260px;
-object-fit:cover;
-border-radius:14px;
-border:1px solid rgba(0,200,255,.25);
-box-shadow:0 0 20px rgba(0,200,255,.15);
-transition:.3s ease;
+height:auto;
+max-height:70vh;
+object-fit:contain;
+}
 }
 
-.gallery img:hover{
-transform:scale(1.05);
-box-shadow:0 0 30px rgba(0,200,255,.4);
+/* ================= COMMENTS ================= */
+.comments-section{
+max-width:600px;
+margin:40px auto;
+background:#111f33;
+padding:20px;
+border-radius:12px;
+}
+
+input, textarea{
+width:100%;
+margin-top:10px;
+padding:10px;
+border-radius:8px;
+border:none;
+background:#0b2a44;
+color:white;
+}
+
+button{
+width:100%;
+margin-top:10px;
+padding:10px;
+background:#00c3ff;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.comment{
+margin-top:10px;
+padding:10px;
+background:#0b2a44;
+border-left:3px solid #00c3ff;
+border-radius:8px;
+}
+
+/* ================= CANVAS ================= */
+#flameCanvas{
+position:fixed;
+inset:0;
+z-index:-8;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 FLAMES -->
 <canvas id="flameCanvas"></canvas>
-
-<!-- ⚡ LIGHTNING BACKGROUND -->
 <div class="lightning"></div>
 
-<!-- ⚡ INTRO LOGO REVEAL -->
+<!-- INTRO -->
 <div class="intro-overlay" id="intro">
-  <div class="lightning-burst"></div>
-  <div class="logo"> Chris Legend of Shadows</div>
+<div class="logo">Chris Legend of Shadows</div>
 </div>
 
+<!-- NAV -->
 <nav>
-<a href="music.html">Music</a>
-  <a href="about.html">About</a>
-    <a href="chat room.html">chat room</a>
+<a href="#">Home</a>
+<a href="#">Music</a>
+<a href="#">Gallery</a>
+<a href="#">Chat</a>
 </nav>
 
-<header>
-<h1>🔥 Chris Legend of Shadows Gallery</h1>
-<p>All your visuals, memories, and world building.</p>
-</header>
-
+<!-- GALLERY -->
 <div class="gallery">
-<img src="samiam.png" style="width:100%; height:auto;">
-<img src="tam.png" style="width:100%; height:auto;">
+<img src="samiam.png">
+<img src="tam.png">
 </div>
 
-<script>
-/* ===== AUTO REMOVE INTRO ===== */
-setTimeout(() => {
-  const intro = document.getElementById("intro");
-  if (intro) intro.style.display = "none";
-}, 4700);
+<!-- COMMENTS -->
+<div class="comments-section">
+<h2 style="text-align:center;color:#00c3ff;">💬 Global Comments</h2>
 
-/* ===== FLAME PARTICLES ===== */
+<input id="name" placeholder="Your name">
+<textarea id="message" placeholder="Write a comment..."></textarea>
+<button onclick="addComment()">Post</button>
+
+<div id="comments"></div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDSxO8uyyEwWSIDW-y0-ngWrCPytzA4XmA",
+authDomain: "legend-4af26.firebaseapp.com",
+databaseURL: "https://legend-4af26-default-rtdb.firebaseio.com",
+projectId: "legend-4af26",
+storageBucket: "legend-4af26.firebasestorage.app",
+messagingSenderId: "128882062099",
+appId: "1:128882062099:web:3fd0f76f80fbea137620e6",
+measurementId: "G-Q5X2MDBBH1"
+};
+
+const app = initializeApp(firebaseConfig);
+getAnalytics(app);
+const db = getDatabase(app);
+
+const commentsRef = ref(db, "comments");
+
+window.addComment = function(){
+const name = document.getElementById("name").value;
+const message = document.getElementById("message").value;
+
+if(!name.trim() || !message.trim()) return;
+
+push(commentsRef,{
+name,
+message,
+time: Date.now()
+});
+
+document.getElementById("message").value="";
+};
+
+onValue(commentsRef,(snapshot)=>{
+const data = snapshot.val();
+const box = document.getElementById("comments");
+box.innerHTML="";
+
+if(!data) return;
+
+Object.values(data).forEach(c=>{
+box.innerHTML += `
+<div class="comment">
+<b>${c.name}</b><br>
+${c.message}
+</div>`;
+});
+});
+</script>
+
+<!-- FLAMES -->
+<script>
 const canvas = document.getElementById("flameCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -295,11 +332,7 @@ update(){
 this.y -= this.speedY;
 this.x += this.speedX;
 this.life--;
-this.alpha += (Math.random()-0.5)*0.1;
-
-if(this.life<=0 || this.y<-50){
-this.reset();
-}
+if(this.life<=0 || this.y<-50) this.reset();
 }
 
 draw(){
@@ -308,11 +341,11 @@ this.x,this.y,0,
 this.x,this.y,this.size*2
 );
 
-g.addColorStop(0,`rgba(0,180,255,${this.alpha})`);
-g.addColorStop(0.4,`rgba(0,120,255,${this.alpha*0.6})`);
+g.addColorStop(0, `rgba(0,180,255,${this.alpha})`);
+g.addColorStop(0.4, `rgba(0,120,255,${this.alpha*0.6})`);
 g.addColorStop(1,"rgba(0,0,0,0)");
 
-ctx.fillStyle=g;
+ctx.fillStyle = g;
 ctx.beginPath();
 ctx.arc(this.x,this.y,this.size*2,0,Math.PI*2);
 ctx.fill();
@@ -334,25 +367,12 @@ f.draw();
 requestAnimationFrame(animate);
 }
 animate();
+
+/* INTRO REMOVE */
+setTimeout(()=>{
+document.getElementById("intro").style.display="none";
+},4700);
 </script>
-<div id="disqus_thread"></div>
-<script>
-    /**
-    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
-    /*
-    var disqus_config = function () {
-    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-    };
-    */
-    (function() { // DON'T EDIT BELOW THIS LINE
-    var d = document, s = d.createElement('script');
-    s.src = 'https://http-greenheartfamily-online.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
 </body>
 </html>
