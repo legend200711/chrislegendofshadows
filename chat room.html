@@ -57,6 +57,37 @@ header{
     text-shadow:0 0 10px #00aaff;
 }
 
+/* NAV POP OUT STYLE */
+.pop-nav{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    padding:12px;
+    margin:10px auto;
+    background:rgba(0, 140, 255, 0.15);
+    border:1px solid rgba(0, 180, 255, 0.6);
+    border-radius:14px;
+    backdrop-filter:blur(12px);
+    box-shadow:0 0 18px rgba(0, 170, 255, 0.4);
+    width:fit-content;
+}
+
+.pop-nav a{
+    color:#00c3ff;
+    text-decoration:none;
+    font-weight:bold;
+    padding:6px 12px;
+    border-radius:10px;
+    transition:0.2s;
+    text-shadow:0 0 8px rgba(0,195,255,0.8);
+}
+
+.pop-nav a:hover{
+    background:rgba(0, 195, 255, 0.2);
+    transform:scale(1.1);
+    box-shadow:0 0 12px rgba(0,195,255,0.6);
+}
+
 /* CHAT */
 #chat{
     height:calc(100vh - 140px);
@@ -118,6 +149,12 @@ button{
 <body>
 
 <header>💙 Legend Chat Pro 💙</header>
+
+<nav class="pop-nav">
+    <a href="music.html">music</a>
+    <a href="about.html">About</a>
+    <a href="gallery.html">gallery</a>
+</nav>
 
 <div id="chat"></div>
 
