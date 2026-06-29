@@ -3,94 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Legend Gallery + Comments</title>
+<title>Legend Gallery + Storm Mode</title>
 
 <style>
 
-/* ================= GLOBAL ================= */
+/* ================= BASE ================= */
 html, body{
+margin:0;
+padding:0;
 width:100%;
 height:100%;
-margin:0;
+background:#000;
 overflow-x:hidden;
 font-family:Arial,sans-serif;
-background:#000;
 color:#cfefff;
 }
 
-/* ================= BACKGROUND ================= */
-body::before{
-content:"";
+body{
+position:relative;
+}
+
+/* ================= CANVAS (FIXED STACKING) ================= */
+#rainCanvas{
 position:fixed;
-inset:0;
-background:
-radial-gradient(circle at 20% 20%,rgba(0,200,255,.25),transparent 40%),
-radial-gradient(circle at 80% 70%,rgba(0,120,255,.18),transparent 45%);
-z-index:-10;
-animation:bgPulse 6s infinite alternate;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+z-index:1;
+pointer-events:none;
 }
 
-@keyframes bgPulse{
-0%{filter:brightness(1)}
-100%{filter:brightness(1.5)}
-}
-
-/* ================= FLAMES ================= */
 #flameCanvas{
 position:fixed;
-inset:0;
-z-index:-8;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+z-index:2;
 pointer-events:none;
 }
 
-/* ================= LIGHTNING ================= */
-.lightning{
-position:fixed;
-inset:0;
-z-index:-7;
-background:white;
-opacity:0;
-pointer-events:none;
-animation:lightningFlash 6s infinite;
-}
-
-@keyframes lightningFlash{
-0%,92%,100%{opacity:0}
-93%{opacity:0.8}
-94%{opacity:0}
-96%{opacity:1}
-97%{opacity:0}
-}
-
-/* ================= INTRO ================= */
-.intro-overlay{
-position:fixed;
-inset:0;
-z-index:200;
-display:flex;
-align-items:center;
-justify-content:center;
-background:#000;
-animation:fadeOutIntro 4.5s forwards;
-}
-
-.logo{
-font-size:48px;
-text-align:center;
-color:#cfefff;
-text-shadow:0 0 10px #00aaff,0 0 30px #0077ff,0 0 60px #0033ff;
-animation:logoReveal 4.5s ease forwards;
-}
-
-@keyframes logoReveal{
-0%{opacity:0; transform:scale(0.5)}
-25%{opacity:1; transform:scale(1.1)}
-100%{opacity:1}
-}
-
-@keyframes fadeOutIntro{
-80%{opacity:1}
-100%{opacity:0; visibility:hidden}
+/* CONTENT ABOVE EVERYTHING */
+nav, .gallery, .comments-section{
+position:relative;
+z-index:10;
 }
 
 /* ================= NAV ================= */
@@ -104,7 +61,6 @@ gap:20px;
 padding:14px;
 background:rgba(0,0,0,.6);
 backdrop-filter:blur(10px);
-z-index:99;
 }
 
 nav a{
@@ -113,7 +69,7 @@ text-decoration:none;
 font-weight:bold;
 }
 
-/* ================= GALLERY (NEW VERSION ADDED) ================= */
+/* ================= GALLERY ================= */
 .gallery{
 max-width:1100px;
 margin:120px auto 40px;
@@ -121,49 +77,12 @@ display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:20px;
 padding:20px;
-box-sizing:border-box;
-align-items:start;
 }
 
-/* 🔥 AUTO-FIT ALL IMAGES */
 .gallery img{
-display:block;
 width:100%;
-max-width:100%;
-height:auto;
-object-fit:contain;
-background:#07111d;
-padding:8px;
 border-radius:14px;
 border:1px solid rgba(0,200,255,.25);
-box-shadow:
-0 0 15px rgba(0,170,255,.25),
-0 0 30px rgba(0,80,255,.15);
-transition:.3s;
-}
-
-.gallery img:hover{
-transform:scale(1.03);
-box-shadow:
-0 0 25px rgba(0,200,255,.5),
-0 0 50px rgba(0,100,255,.3);
-}
-
-/* 📱 MOBILE FIT */
-@media (max-width:768px){
-
-.gallery{
-grid-template-columns:1fr;
-padding:12px;
-gap:16px;
-}
-
-.gallery img{
-width:100%;
-height:auto;
-max-height:70vh;
-object-fit:contain;
-}
 }
 
 /* ================= COMMENTS ================= */
@@ -201,27 +120,16 @@ margin-top:10px;
 padding:10px;
 background:#0b2a44;
 border-left:3px solid #00c3ff;
-border-radius:8px;
 }
 
-/* ================= CANVAS ================= */
-#flameCanvas{
-position:fixed;
-inset:0;
-z-index:-8;
-}
 </style>
 </head>
 
 <body>
 
+<!-- CANVAS MUST BE FIRST -->
+<canvas id="rainCanvas"></canvas>
 <canvas id="flameCanvas"></canvas>
-<div class="lightning"></div>
-
-<!-- INTRO -->
-<div class="intro-overlay" id="intro">
-<div class="logo">Chris Legend of Shadows</div>
-</div>
 
 <!-- NAV -->
 <nav>
@@ -229,6 +137,7 @@ z-index:-8;
 <a href="about.html">About</a>
 <a href="chat room.html">chat room</a>
 </nav>
+
 <!-- GALLERY -->
 <div class="gallery">
 <img src="samiam.png">
@@ -246,79 +155,62 @@ z-index:-8;
 <div id="comments"></div>
 </div>
 
-<!-- FIREBASE -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
-
-const firebaseConfig = {
-apiKey: "AIzaSyDSxO8uyyEwWSIDW-y0-ngWrCPytzA4XmA",
-authDomain: "legend-4af26.firebaseapp.com",
-databaseURL: "https://legend-4af26-default-rtdb.firebaseio.com",
-projectId: "legend-4af26",
-storageBucket: "legend-4af26.firebasestorage.app",
-messagingSenderId: "128882062099",
-appId: "1:128882062099:web:3fd0f76f80fbea137620e6",
-measurementId: "G-Q5X2MDBBH1"
-};
-
-const app = initializeApp(firebaseConfig);
-getAnalytics(app);
-const db = getDatabase(app);
-
-const commentsRef = ref(db, "comments");
-
-window.addComment = function(){
-const name = document.getElementById("name").value;
-const message = document.getElementById("message").value;
-
-if(!name.trim() || !message.trim()) return;
-
-push(commentsRef,{
-name,
-message,
-time: Date.now()
-});
-
-document.getElementById("message").value="";
-};
-
-onValue(commentsRef,(snapshot)=>{
-const data = snapshot.val();
-const box = document.getElementById("comments");
-box.innerHTML="";
-
-if(!data) return;
-
-Object.values(data).forEach(c=>{
-box.innerHTML += `
-<div class="comment">
-<b>${c.name}</b><br>
-${c.message}
-</div>`;
-});
-});
-</script>
-
-<!-- FLAMES -->
 <script>
-const canvas = document.getElementById("flameCanvas");
-const ctx = canvas.getContext("2d");
+/* ================= CANVAS SETUP ================= */
+const rainCanvas = document.getElementById("rainCanvas");
+const rctx = rainCanvas.getContext("2d");
+
+const flameCanvas = document.getElementById("flameCanvas");
+const fctx = flameCanvas.getContext("2d");
 
 function resize(){
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+rainCanvas.width = window.innerWidth;
+rainCanvas.height = window.innerHeight;
+flameCanvas.width = window.innerWidth;
+flameCanvas.height = window.innerHeight;
 }
-resize();
 window.addEventListener("resize", resize);
+resize();
 
+/* ================= STORM RAIN (VISIBLE GUARANTEE) ================= */
+class Rain{
+constructor(){ this.reset(); }
+
+reset(){
+this.x = Math.random()*rainCanvas.width;
+this.y = Math.random()*rainCanvas.height;
+this.len = 15 + Math.random()*25;
+this.speed = 8 + Math.random()*8;
+this.wind = -3 - Math.random()*3;
+}
+
+update(){
+this.x += this.wind;
+this.y += this.speed;
+
+if(this.y > rainCanvas.height){
+this.x = Math.random()*rainCanvas.width;
+this.y = -20;
+}
+}
+
+draw(){
+rctx.strokeStyle = "rgba(0,200,255,0.9)";
+rctx.lineWidth = 1.5;
+rctx.beginPath();
+rctx.moveTo(this.x,this.y);
+rctx.lineTo(this.x + this.wind*2, this.y + this.len);
+rctx.stroke();
+}
+}
+
+/* ================= FLAMES ================= */
 class Flame{
 constructor(){ this.reset(); }
 
 reset(){
-this.x = Math.random()*canvas.width;
-this.y = canvas.height + Math.random()*100;
+this.x = Math.random()*flameCanvas.width;
+this.y = flameCanvas.height + Math.random()*100;
 this.size = Math.random()*6 + 2;
 this.speedY = Math.random()*2 + 1;
 this.speedX = (Math.random()-0.5)*1.5;
@@ -334,42 +226,48 @@ if(this.life<=0 || this.y<-50) this.reset();
 }
 
 draw(){
-const g = ctx.createRadialGradient(
-this.x,this.y,0,
-this.x,this.y,this.size*2
-);
-
+const g = fctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size*2);
 g.addColorStop(0, `rgba(0,180,255,${this.alpha})`);
-g.addColorStop(0.4, `rgba(0,120,255,${this.alpha*0.6})`);
 g.addColorStop(1,"rgba(0,0,0,0)");
 
-ctx.fillStyle = g;
-ctx.beginPath();
-ctx.arc(this.x,this.y,this.size*2,0,Math.PI*2);
-ctx.fill();
+fctx.fillStyle = g;
+fctx.beginPath();
+fctx.arc(this.x,this.y,this.size*2,0,Math.PI*2);
+fctx.fill();
 }
 }
 
-const flames=[];
-for(let i=0;i<140;i++) flames.push(new Flame());
+const rain = Array.from({length:250}, ()=>new Rain());
+const flames = Array.from({length:120}, ()=>new Flame());
 
+/* ================= ANIMATE ================= */
 function animate(){
-ctx.fillStyle="rgba(0,0,0,0.25)";
-ctx.fillRect(0,0,canvas.width,canvas.height);
 
-flames.forEach(f=>{
-f.update();
-f.draw();
-});
+rctx.clearRect(0,0,rainCanvas.width,rainCanvas.height);
+fctx.fillStyle = "rgba(0,0,0,0.15)";
+fctx.fillRect(0,0,flameCanvas.width,flameCanvas.height);
+
+rain.forEach(r=>{ r.update(); r.draw(); });
+flames.forEach(f=>{ f.update(); f.draw(); });
 
 requestAnimationFrame(animate);
 }
 animate();
 
-/* INTRO REMOVE */
-setTimeout(()=>{
-document.getElementById("intro").style.display="none";
-},4700);
+/* ================= SIMPLE COMMENTS ================= */
+window.addComment = function(){
+const name = document.getElementById("name").value;
+const message = document.getElementById("message").value;
+if(!name || !message) return;
+
+const div = document.createElement("div");
+div.className = "comment";
+div.innerHTML = `<b>${name}</b><br>${message}`;
+
+document.getElementById("comments").prepend(div);
+
+document.getElementById("message").value = "";
+};
 </script>
 
 </body>
