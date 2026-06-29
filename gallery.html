@@ -18,7 +18,6 @@ background: radial-gradient(circle at top, #050b18, #000);
 position:relative;
 }
 
-/* DARK OVERLAY FOR CONTRAST */
 body::before{
 content:"";
 position:fixed;
@@ -30,7 +29,6 @@ z-index:0;
 pointer-events:none;
 }
 
-/* CANVAS */
 #flameCanvas{
 position:fixed;
 top:0;
@@ -41,12 +39,11 @@ pointer-events:none;
 z-index:2;
 }
 
-nav, .gallery, .comments-section{
+nav, .gallery{
 position:relative;
 z-index:10;
 }
 
-/* NAV */
 nav{
 position:fixed;
 top:0;
@@ -65,7 +62,6 @@ text-decoration:none;
 font-weight:bold;
 }
 
-/* GALLERY */
 .gallery{
 max-width:1100px;
 margin:120px auto 40px;
@@ -79,43 +75,6 @@ padding:20px;
 width:100%;
 border-radius:14px;
 border:1px solid rgba(0,200,255,.25);
-}
-
-/* COMMENTS */
-.comments-section{
-max-width:600px;
-margin:40px auto;
-background:#111f33;
-padding:20px;
-border-radius:12px;
-}
-
-input, textarea{
-width:100%;
-margin-top:10px;
-padding:10px;
-border-radius:8px;
-border:none;
-background:#0b2a44;
-color:white;
-}
-
-button{
-width:100%;
-margin-top:10px;
-padding:10px;
-background:#00c3ff;
-border:none;
-border-radius:8px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.comment{
-margin-top:10px;
-padding:10px;
-background:#0b2a44;
-border-left:3px solid #00c3ff;
 }
 </style>
 </head>
@@ -135,16 +94,6 @@ border-left:3px solid #00c3ff;
 <img src="tam.png">
 </div>
 
-<div class="comments-section">
-<h2 style="text-align:center;color:#00c3ff;">💬 Global Comments</h2>
-
-<input id="name" placeholder="Your name">
-<textarea id="message" placeholder="Write a comment..."></textarea>
-<button onclick="addComment()">Post</button>
-
-<div id="comments"></div>
-</div>
-
 <script>
 const flameCanvas = document.getElementById("flameCanvas");
 const fctx = flameCanvas.getContext("2d");
@@ -156,7 +105,6 @@ flameCanvas.height = window.innerHeight;
 window.addEventListener("resize", resize);
 resize();
 
-/* FLAMES */
 class Flame{
 constructor(){ this.reset(); }
 
@@ -200,21 +148,6 @@ flames.forEach(f=>{ f.update(); f.draw(); });
 requestAnimationFrame(animate);
 }
 animate();
-
-/* COMMENTS */
-window.addComment = function(){
-const name = document.getElementById("name").value;
-const message = document.getElementById("message").value;
-if(!name || !message) return;
-
-const div = document.createElement("div");
-div.className = "comment";
-div.innerHTML = `<b>${name}</b><br>${message}`;
-
-document.getElementById("comments").prepend(div);
-
-document.getElementById("message").value = "";
-};
 </script>
 
 </body>
