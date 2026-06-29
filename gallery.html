@@ -6,48 +6,41 @@
 <title>Legend Gallery + Storm Mode</title>
 
 <style>
-
-/* ================= BASE ================= */
 html, body{
 margin:0;
 padding:0;
 width:100%;
 height:100%;
-background:#000;
 overflow-x:hidden;
 font-family:Arial,sans-serif;
 color:#cfefff;
+background: radial-gradient(circle at top, #050b18, #000);
+position:relative;
 }
 
-/* ================= CANVAS ================= */
-#rainCanvas, #flameCanvas{
+/* DARK OVERLAY FOR CONTRAST */
+body::before{
+content:"";
+position:fixed;
+top:0;left:0;
+width:100%;
+height:100%;
+background:radial-gradient(circle, rgba(0,0,0,0.2), rgba(0,0,0,0.85));
+z-index:0;
+pointer-events:none;
+}
+
+/* CANVAS */
+#flameCanvas{
 position:fixed;
 top:0;
 left:0;
 width:100vw;
 height:100vh;
 pointer-events:none;
+z-index:2;
 }
 
-#rainCanvas{ z-index:1; }
-#flameCanvas{ z-index:2; }
-
-/* LIGHTNING FLASH */
-#flash{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:white;
-opacity:0;
-z-index:5;
-pointer-events:none;
-mix-blend-mode:overlay;
-transition:opacity 0.15s ease;
-}
-
-/* CONTENT ABOVE */
 nav, .gallery, .comments-section{
 position:relative;
 z-index:10;
@@ -62,7 +55,7 @@ display:flex;
 justify-content:center;
 gap:20px;
 padding:14px;
-background:rgba(0,0,0,.6);
+background:rgba(0,0,0,.5);
 backdrop-filter:blur(10px);
 }
 
@@ -124,15 +117,12 @@ padding:10px;
 background:#0b2a44;
 border-left:3px solid #00c3ff;
 }
-
 </style>
 </head>
 
 <body>
 
-<canvas id="rainCanvas"></canvas>
 <canvas id="flameCanvas"></canvas>
-<div id="flash"></div>
 
 <nav>
 <a href="music.html">music</a>
@@ -156,88 +146,17 @@ border-left:3px solid #00c3ff;
 </div>
 
 <script>
-
-/* ================= CANVAS ================= */
-const rainCanvas = document.getElementById("rainCanvas");
-const rctx = rainCanvas.getContext("2d");
-
 const flameCanvas = document.getElementById("flameCanvas");
 const fctx = flameCanvas.getContext("2d");
 
-const flash = document.getElementById("flash");
-
 function resize(){
-rainCanvas.width = window.innerWidth;
-rainCanvas.height = window.innerHeight;
 flameCanvas.width = window.innerWidth;
 flameCanvas.height = window.innerHeight;
 }
 window.addEventListener("resize", resize);
 resize();
 
-/* ================= LIGHTNING ================= */
-function lightning(){
-flash.style.opacity = "1";
-setTimeout(()=> flash.style.opacity = "0.25", 120);
-setTimeout(()=> flash.style.opacity = "0", 250);
-}
-
-function lightningLoop(){
-setTimeout(()=>{
-lightning();
-lightningLoop();
-}, 2500 + Math.random()*6000);
-}
-lightningLoop();
-
-/* ================= WIND ================= */
-let wind = -2;
-
-setInterval(()=>{
-wind = -4 + Math.random()*8;
-}, 3000);
-
-/* ================= BLUE RAIN (FIXED ENDLESS LOOP) ================= */
-class Rain{
-constructor(){
-this.reset();
-}
-
-reset(){
-this.x = Math.random()*rainCanvas.width;
-this.y = Math.random()*rainCanvas.height;
-this.len = 30 + Math.random()*40;
-this.speed = 12 + Math.random()*10;
-}
-
-update(){
-this.x += wind;
-this.y += this.speed;
-
-/* 🌧️ smooth infinite loop (NO flicker) */
-if(this.y > rainCanvas.height){
-this.y = -this.len;
-this.x = Math.random()*rainCanvas.width;
-}
-}
-
-draw(){
-rctx.strokeStyle = "rgba(0,220,255,1)";
-rctx.lineWidth = 2.3;
-
-rctx.shadowBlur = 18;
-rctx.shadowColor = "rgba(0,220,255,0.9)";
-
-rctx.beginPath();
-rctx.moveTo(this.x,this.y);
-rctx.lineTo(this.x + wind*3, this.y + this.len);
-rctx.stroke();
-
-rctx.shadowBlur = 0;
-}
-}
-
-/* ================= ENERGY PARTICLES ================= */
+/* FLAMES */
 class Flame{
 constructor(){ this.reset(); }
 
@@ -246,22 +165,21 @@ this.x = Math.random()*flameCanvas.width;
 this.y = flameCanvas.height + Math.random()*100;
 this.size = Math.random()*6 + 2;
 this.speedY = Math.random()*2 + 1;
-this.speedX = (Math.random()-0.5)*2;
-this.life = Math.random()*140;
-this.alpha = Math.random()*0.7 + 0.2;
+this.speedX = (Math.random()-0.5)*1.5;
+this.alpha = Math.random()*0.6 + 0.2;
+this.life = Math.random()*120;
 }
 
 update(){
 this.y -= this.speedY;
-this.x += this.speedX + wind*0.2;
+this.x += this.speedX;
 this.life--;
-
 if(this.life<=0 || this.y<-50) this.reset();
 }
 
 draw(){
 const g = fctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size*2);
-g.addColorStop(0, `rgba(0,200,255,${this.alpha})`);
+g.addColorStop(0, `rgba(0,180,255,${this.alpha})`);
 g.addColorStop(1,"rgba(0,0,0,0)");
 
 fctx.fillStyle = g;
@@ -271,26 +189,19 @@ fctx.fill();
 }
 }
 
-const rain = Array.from({length:350}, ()=>new Rain());
-const flames = Array.from({length:140}, ()=>new Flame());
+const flames = Array.from({length:120}, ()=>new Flame());
 
-/* ================= ANIMATE ================= */
 function animate(){
-
-rctx.clearRect(0,0,rainCanvas.width,rainCanvas.height);
-
-/* fog trail */
-fctx.fillStyle = "rgba(0,0,0,0.14)";
+fctx.fillStyle = "rgba(0,0,0,0.12)";
 fctx.fillRect(0,0,flameCanvas.width,flameCanvas.height);
 
-rain.forEach(r=>{ r.update(); r.draw(); });
 flames.forEach(f=>{ f.update(); f.draw(); });
 
 requestAnimationFrame(animate);
 }
 animate();
 
-/* ================= COMMENTS ================= */
+/* COMMENTS */
 window.addComment = function(){
 const name = document.getElementById("name").value;
 const message = document.getElementById("message").value;
@@ -304,7 +215,6 @@ document.getElementById("comments").prepend(div);
 
 document.getElementById("message").value = "";
 };
-
 </script>
 
 </body>
