@@ -18,6 +18,7 @@ background: radial-gradient(circle at top, #050b18, #000);
 position:relative;
 }
 
+/* DARK OVERLAY */
 body::before{
 content:"";
 position:fixed;
@@ -29,7 +30,7 @@ z-index:0;
 pointer-events:none;
 }
 
-/* ===== STORM CANVAS ===== */
+/* ===== FLAME CANVAS (STORM MODE) ===== */
 #flameCanvas{
 position:fixed;
 top:0;
@@ -66,7 +67,7 @@ opacity:0.5;
 to{ transform:translateY(120vh); }
 }
 
-/* NAV */
+/* ===== NAV ===== */
 nav{
 position:fixed;
 top:0;
@@ -94,10 +95,28 @@ color:black;
 box-shadow:0 0 15px #00aaff;
 }
 
-/* MAIN */
+/* ===== GALLERY ===== */
+.gallery{
+max-width:1100px;
+margin:120px auto 40px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+padding:20px;
+position:relative;
+z-index:5;
+}
+
+.gallery img{
+width:100%;
+border-radius:14px;
+border:1px solid rgba(0,200,255,.25);
+}
+
+/* ===== COMMENTS SYSTEM ===== */
 .container{
 max-width:800px;
-margin:100px auto 40px;
+margin:40px auto;
 padding:20px;
 position:relative;
 z-index:5;
@@ -139,7 +158,6 @@ button:hover{
 box-shadow:0 0 20px #00aaff;
 }
 
-/* COMMENTS */
 .comment{
 margin-top:15px;
 padding:15px;
@@ -174,15 +192,26 @@ transform:translateY(0);
 
 <body>
 
+<!-- STORM CANVAS -->
 <canvas id="flameCanvas"></canvas>
+
+<!-- BLUE RAIN -->
 <div class="rain" id="rain"></div>
 
+<!-- NAV -->
 <nav>
 <a href="music.html">music</a>
 <a href="about.html">About</a>
 <a href="chat room.html">chat room</a>
 </nav>
 
+<!-- GALLERY -->
+<div class="gallery">
+<img src="samiam.png">
+<img src="tam.png">
+</div>
+
+<!-- COMMENTS SYSTEM -->
 <div class="container">
 
 <h1>💙 Chris Legend of Shadows System 💙</h1>
@@ -207,7 +236,7 @@ for(let i=0;i<60;i++){
   rain.appendChild(drop);
 }
 
-/* ===== STORM CANVAS ===== */
+/* ===== STORM FLAMES ===== */
 const flameCanvas = document.getElementById("flameCanvas");
 const fctx = flameCanvas.getContext("2d");
 
@@ -283,13 +312,11 @@ messagingSenderId: "383513452214",
 appId: "1:383513452214:web:a86ee2969a3fc9e3459017"
 };
 
-const ADMIN_KEY = "legend123"; // 🔐 CHANGE THIS SECRET
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const commentsRef = ref(db, "comments");
 
-/* POST COMMENT */
+/* POST */
 document.getElementById("sendBtn").addEventListener("click", async () => {
 
 const name = document.getElementById("name").value.trim();
@@ -309,7 +336,7 @@ time: Date.now()
 document.getElementById("message").value = "";
 });
 
-/* LOAD COMMENTS */
+/* LOAD */
 onValue(commentsRef, (snapshot) => {
 
 const data = snapshot.val();
@@ -334,14 +361,9 @@ Delete
 
 });
 
-/* 🔐 SECURE DELETE */
 window.deleteComment = async function(id){
-const key = prompt("Enter admin key to delete:");
-
-if(key !== ADMIN_KEY){
-alert("❌ Not allowed");
-return;
-}
+const ok = confirm("Delete this comment?");
+if(!ok) return;
 
 await remove(ref(db, "comments/" + id));
 };
