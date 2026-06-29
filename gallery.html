@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Legend Gallery + Storm Mode</title>
+<title>Chris Legend of Shadows System</title>
 
 <style>
 html, body{
 margin:0;
 padding:0;
 width:100%;
-height:100%;
+min-height:100%;
 overflow-x:hidden;
 font-family:Arial,sans-serif;
 color:#cfefff;
@@ -18,6 +18,7 @@ background: radial-gradient(circle at top, #050b18, #000);
 position:relative;
 }
 
+/* DARK OVERLAY */
 body::before{
 content:"";
 position:fixed;
@@ -29,6 +30,7 @@ z-index:0;
 pointer-events:none;
 }
 
+/* ===== FLAME CANVAS (STORM MODE) ===== */
 #flameCanvas{
 position:fixed;
 top:0;
@@ -36,14 +38,36 @@ left:0;
 width:100vw;
 height:100vh;
 pointer-events:none;
+z-index:1;
+}
+
+/* ===== BLUE RAIN ===== */
+.rain{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
 z-index:2;
+overflow:hidden;
 }
 
-nav, .gallery{
-position:relative;
-z-index:10;
+.drop{
+position:absolute;
+bottom:100%;
+width:2px;
+height:90px;
+background:linear-gradient(to bottom, transparent, #00aaff);
+animation:fall linear infinite;
+opacity:0.5;
 }
 
+@keyframes fall{
+to{ transform:translateY(120vh); }
+}
+
+/* ===== NAV ===== */
 nav{
 position:fixed;
 top:0;
@@ -54,14 +78,24 @@ gap:20px;
 padding:14px;
 background:rgba(0,0,0,.5);
 backdrop-filter:blur(10px);
+z-index:10;
 }
 
 nav a{
 color:#7fd3ff;
 text-decoration:none;
 font-weight:bold;
+padding:8px 14px;
+border-radius:20px;
 }
 
+nav a:hover{
+background:#00aaff;
+color:black;
+box-shadow:0 0 15px #00aaff;
+}
+
+/* ===== GALLERY ===== */
 .gallery{
 max-width:1100px;
 margin:120px auto 40px;
@@ -69,6 +103,8 @@ display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:20px;
 padding:20px;
+position:relative;
+z-index:5;
 }
 
 .gallery img{
@@ -76,25 +112,131 @@ width:100%;
 border-radius:14px;
 border:1px solid rgba(0,200,255,.25);
 }
+
+/* ===== COMMENTS SYSTEM ===== */
+.container{
+max-width:800px;
+margin:40px auto;
+padding:20px;
+position:relative;
+z-index:5;
+}
+
+h1{
+text-align:center;
+color:#00aaff;
+text-shadow:0 0 20px #00aaff;
+}
+
+input, textarea{
+width:100%;
+padding:15px;
+margin:10px 0;
+border:none;
+border-radius:12px;
+background:#0a1a2b;
+color:white;
+font-size:16px;
+outline:none;
+}
+
+textarea{ height:120px; }
+
+button{
+background:#00aaff;
+color:black;
+border:none;
+padding:14px 24px;
+border-radius:30px;
+font-size:18px;
+cursor:pointer;
+font-weight:bold;
+width:100%;
+}
+
+button:hover{
+box-shadow:0 0 20px #00aaff;
+}
+
+.comment{
+margin-top:15px;
+padding:15px;
+background:rgba(255,255,255,.05);
+border:1px solid rgba(0,170,255,.3);
+border-radius:15px;
+}
+
+.comment strong{
+color:#00aaff;
+}
+
+.deleteBtn{
+margin-top:10px;
+background:red;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:8px;
+cursor:pointer;
+opacity:0;
+transform:translateY(5px);
+transition:0.2s;
+}
+
+.comment:hover .deleteBtn{
+opacity:1;
+transform:translateY(0);
+}
 </style>
 </head>
 
 <body>
 
+<!-- STORM CANVAS -->
 <canvas id="flameCanvas"></canvas>
 
+<!-- BLUE RAIN -->
+<div class="rain" id="rain"></div>
+
+<!-- NAV -->
 <nav>
 <a href="music.html">music</a>
 <a href="about.html">About</a>
 <a href="chat room.html">chat room</a>
 </nav>
 
+<!-- GALLERY -->
 <div class="gallery">
 <img src="samiam.png">
 <img src="tam.png">
 </div>
 
+<!-- COMMENTS SYSTEM -->
+<div class="container">
+
+<h1>💙 Chris Legend of Shadows System 💙</h1>
+
+<input id="name" placeholder="Your name">
+<textarea id="message" placeholder="Write something positive..."></textarea>
+<button id="sendBtn">Post Comment</button>
+
+<div id="comments"></div>
+
+</div>
+
 <script>
+/* ===== BLUE RAIN ===== */
+const rain = document.getElementById("rain");
+
+for(let i=0;i<60;i++){
+  const drop = document.createElement("div");
+  drop.classList.add("drop");
+  drop.style.left = Math.random()*100 + "vw";
+  drop.style.animationDuration = (0.5 + Math.random()*1.5) + "s";
+  rain.appendChild(drop);
+}
+
+/* ===== STORM FLAMES ===== */
 const flameCanvas = document.getElementById("flameCanvas");
 const fctx = flameCanvas.getContext("2d");
 
@@ -127,7 +269,7 @@ if(this.life<=0 || this.y<-50) this.reset();
 
 draw(){
 const g = fctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size*2);
-g.addColorStop(0, `rgba(0,180,255,${this.alpha})`);
+g.addColorStop(0, `rgba(0,170,255,${this.alpha})`);
 g.addColorStop(1,"rgba(0,0,0,0)");
 
 fctx.fillStyle = g;
@@ -148,6 +290,83 @@ flames.forEach(f=>{ f.update(); f.draw(); });
 requestAnimationFrame(animate);
 }
 animate();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import {
+getDatabase,
+ref,
+push,
+onValue,
+remove
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyAHwNhzonlsFbZFFrc1nvEqpl0ayM8N42c",
+authDomain: "bue12-f6a1f.firebaseapp.com",
+databaseURL: "https://bue12-f6a1f-default-rtdb.firebaseio.com",
+projectId: "bue12-f6a1f",
+storageBucket: "bue12-f6a1f.firebasestorage.app",
+messagingSenderId: "383513452214",
+appId: "1:383513452214:web:a86ee2969a3fc9e3459017"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const commentsRef = ref(db, "comments");
+
+/* POST */
+document.getElementById("sendBtn").addEventListener("click", async () => {
+
+const name = document.getElementById("name").value.trim();
+const message = document.getElementById("message").value.trim();
+
+if (!name || !message) {
+alert("Please fill in both fields.");
+return;
+}
+
+await push(commentsRef, {
+name,
+message,
+time: Date.now()
+});
+
+document.getElementById("message").value = "";
+});
+
+/* LOAD */
+onValue(commentsRef, (snapshot) => {
+
+const data = snapshot.val();
+const box = document.getElementById("comments");
+
+box.innerHTML = "";
+if (!data) return;
+
+Object.entries(data).reverse().forEach(([id, c]) => {
+
+box.innerHTML += `
+<div class="comment">
+<strong>${c.name}</strong>
+<p>${c.message}</p>
+
+<button class="deleteBtn" onclick="deleteComment('${id}')">
+Delete
+</button>
+</div>
+`;
+});
+
+});
+
+window.deleteComment = async function(id){
+const ok = confirm("Delete this comment?");
+if(!ok) return;
+
+await remove(ref(db, "comments/" + id));
+};
 </script>
 
 </body>
