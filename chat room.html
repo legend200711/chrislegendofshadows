@@ -19,6 +19,7 @@ html, body{
     color:white;
 }
 
+/* NAV */
 nav{
     display:flex;
     justify-content:center;
@@ -36,12 +37,14 @@ nav a{
     border-radius:10px;
 }
 
+/* HEADER */
 header{
     text-align:center;
     padding:12px;
     background:rgba(0,30,40,0.7);
 }
 
+/* ROOM SCREEN */
 #roomScreen{
     position:fixed;
     inset:0;
@@ -71,12 +74,14 @@ header{
     background:linear-gradient(90deg,#00aaff,#00ffaa);
 }
 
+/* CHAT */
 #chat{
     height:calc(100vh - 140px);
     overflow-y:auto;
     padding:12px;
 }
 
+/* MESSAGE */
 .msg{
     background:linear-gradient(145deg,#001a2a,#002b3a,#001018);
     padding:12px;
@@ -86,7 +91,7 @@ header{
     position:relative;
 }
 
-/* 💀 DELETE BUTTON (HIDDEN BY DEFAULT) */
+/* DELETE BUTTON */
 .delBtn{
     position:absolute;
     right:10px;
@@ -98,31 +103,23 @@ header{
     color:white;
     cursor:pointer;
     font-size:12px;
-
     opacity:0;
-    transform:scale(0.8);
-    transition:0.2s ease;
+    transition:0.2s;
 }
 
-/* SHOW ON HOVER (DESKTOP) */
-.msg:hover .delBtn{
+.msg:hover .delBtn,
+.msg.showDelete .delBtn{
     opacity:1;
-    transform:scale(1);
 }
 
-/* SHOW ON TOUCH (MOBILE) */
-.msg:active .delBtn{
-    opacity:1;
-    transform:scale(1);
-}
-
+/* INPUT BAR */
 .bottom{
     position:fixed;
     bottom:0;
     left:0;
     right:0;
     display:flex;
-    gap:8px;
+    gap:6px;
     padding:10px;
     background:rgba(0,20,30,0.75);
 }
@@ -143,6 +140,31 @@ button{
     border:none;
     border-radius:10px;
     background:linear-gradient(90deg,#00aaff,#00ffaa);
+    cursor:pointer;
+}
+
+/* EMOTES */
+#emotePanel{
+    position:fixed;
+    bottom:70px;
+    right:10px;
+    background:rgba(0,20,35,0.95);
+    border:1px solid rgba(0,170,255,0.3);
+    border-radius:12px;
+    padding:10px;
+    display:none;
+    flex-wrap:wrap;
+    gap:6px;
+    width:160px;
+    z-index:9999;
+}
+
+.emote{
+    font-size:20px;
+    cursor:pointer;
+}
+.emote:hover{
+    transform:scale(1.2);
 }
 </style>
 <style>
@@ -194,9 +216,14 @@ body {
 
 <div id="chat"></div>
 
+<!-- EMOTES -->
+<div id="emotePanel"></div>
+
 <div class="bottom">
     <input id="name" placeholder="Name">
     <input id="message" placeholder="Message">
+
+    <button onclick="toggleEmotes()">😄</button>
     <button onclick="sendMessage()">Send</button>
 </div>
 
@@ -207,6 +234,7 @@ import {
   ref,
   push,
   onChildAdded,
+  onChildRemoved,
   set,
   onDisconnect,
   onValue,
@@ -228,9 +256,27 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let chatRef = null;
-let presenceRef = null;
 let currentRoom = "LOBBY";
 let userId = Math.random().toString(36).substring(2, 10);
+
+const emotes = ["💀","🔥","😂","😈","👻","💯","❤️","⚡","🥶","👑"];
+
+/* EMOTES UI */
+const panel = document.getElementById("emotePanel");
+
+emotes.forEach(e=>{
+    const span = document.createElement("span");
+    span.className = "emote";
+    span.innerText = e;
+    span.onclick = () => {
+        document.getElementById("message").value += e;
+    };
+    panel.appendChild(span);
+});
+
+window.toggleEmotes = function(){
+    panel.style.display = panel.style.display === "flex" ? "none" : "flex";
+};
 
 /* JOIN */
 window.joinLobby = function(){
@@ -253,9 +299,9 @@ function enterRoom(room, name){
     autoDeleteOldMessages();
 }
 
-/* ONLINE */
+/* PRESENCE */
 function setupPresence(room, name){
-    presenceRef = ref(db, "rooms/" + room + "/presence/" + userId);
+    const presenceRef = ref(db, "rooms/" + room + "/presence/" + userId);
 
     set(presenceRef, { name, online: true });
     onDisconnect(presenceRef).remove();
@@ -264,25 +310,23 @@ function setupPresence(room, name){
 
     onValue(allPresence, (snap)=>{
         const data = snap.val() || {};
-        const count = Object.keys(data).length;
-
         document.getElementById("roomTitle").innerText =
-            "💀 Room: " + room + " | 👥 Online: " + count;
+            "💀 Room: " + room + " | 👥 Online: " + Object.keys(data).length;
     });
 }
 
-/* 💬 MESSAGES */
+/* MESSAGES (FIXED) */
 function listenMessages(){
     const chatBox = document.getElementById("chat");
     chatBox.innerHTML = "";
 
     const messagesRef = ref(db, "rooms/" + currentRoom + "/messages");
 
+    const messageMap = {};
+
     onChildAdded(messagesRef, (snap)=>{
         const d = snap.val();
         const key = snap.key;
-
-        if(!d) return;
 
         const div = document.createElement("div");
         div.className = "msg";
@@ -294,31 +338,36 @@ function listenMessages(){
         btn.className = "delBtn";
         btn.innerText = "Delete";
 
-        btn.addEventListener("click", async () => {
-            try {
-                await remove(ref(db, `rooms/${currentRoom}/messages/${key}`));
-                div.remove();
-            } catch (err) {
-                console.error("Delete failed:", err);
-                alert("Delete failed (check Firebase rules)");
-            }
-        });
+        btn.onclick = async (e) => {
+            e.stopPropagation();
+            await remove(ref(db, `rooms/${currentRoom}/messages/${key}`));
+        };
 
         div.appendChild(text);
         div.appendChild(btn);
         chatBox.appendChild(div);
 
+        messageMap[key] = div;
+
         chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    /* THIS FIXES DELETE BUG COMPLETELY */
+    onChildRemoved(messagesRef, (snap)=>{
+        const key = snap.key;
+        if(messageMap[key]){
+            messageMap[key].remove();
+            delete messageMap[key];
+        }
     });
 }
 
-/* SEND MESSAGE */
+/* SEND */
 window.sendMessage = function(){
     const name = document.getElementById("name").value || "Ghost";
     const message = document.getElementById("message").value;
 
-    if(!chatRef) return;
-    if(!message.trim()) return;
+    if(!chatRef || !message.trim()) return;
 
     push(chatRef, {
         name,
@@ -334,15 +383,14 @@ function autoDeleteOldMessages(){
     const messagesRef = ref(db, "rooms/" + currentRoom + "/messages");
 
     setInterval(async () => {
-        const snap = await new Promise(res => onValue(messagesRef, res, { onlyOnce: true }));
+        const snap = await new Promise(res =>
+            onValue(messagesRef, res, { onlyOnce: true })
+        );
+
         const data = snap.val() || {};
 
-        for (const [key, msg] of Object.entries(data)) {
-            if (!msg.time) continue;
-
-            const age = Date.now() - msg.time;
-
-            if (age > 20 * 60 * 1000) {
+        for(const [key, msg] of Object.entries(data)){
+            if(msg.time && Date.now() - msg.time > 20 * 60 * 1000){
                 await remove(ref(db, `rooms/${currentRoom}/messages/${key}`));
             }
         }
