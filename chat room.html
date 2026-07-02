@@ -91,7 +91,7 @@ header{
     position:relative;
 }
 
-/* DELETE BUTTON */
+/* DELETE */
 .delBtn{
     position:absolute;
     right:10px;
@@ -107,8 +107,7 @@ header{
     transition:0.2s;
 }
 
-.msg:hover .delBtn,
-.msg.showDelete .delBtn{
+.msg:hover .delBtn{
     opacity:1;
 }
 
@@ -163,8 +162,30 @@ button{
     font-size:20px;
     cursor:pointer;
 }
-.emote:hover{
-    transform:scale(1.2);
+.emote:hover{ transform:scale(1.2); }
+
+/* REACTIONS */
+.reactions{
+    margin-top:8px;
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.reactBtn{
+    padding:4px 8px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    background:#001a2a;
+    color:white;
+    font-size:14px;
+}
+
+.reactCount{
+    margin-top:6px;
+    font-size:12px;
+    opacity:0.8;
 }
 </style>
 <style>
@@ -259,9 +280,8 @@ let chatRef = null;
 let currentRoom = "LOBBY";
 let userId = Math.random().toString(36).substring(2, 10);
 
+/* EMOTES */
 const emotes = ["💀","🔥","😂","😈","👻","💯","❤️","⚡","🥶","👑"];
-
-/* EMOTES UI */
 const panel = document.getElementById("emotePanel");
 
 emotes.forEach(e=>{
@@ -315,7 +335,22 @@ function setupPresence(room, name){
     });
 }
 
-/* MESSAGES (FIXED) */
+/* REACTION TOGGLE */
+function toggleReaction(messageId, emoji){
+    const reactionRef = ref(db,
+        `rooms/${currentRoom}/messages/${messageId}/reactions/${emoji}/${userId}`
+    );
+
+    onValue(reactionRef, (snap)=>{
+        if(snap.exists()){
+            remove(reactionRef);
+        } else {
+            set(reactionRef, true);
+        }
+    }, { onlyOnce: true });
+}
+
+/* MESSAGES */
 function listenMessages(){
     const chatBox = document.getElementById("chat");
     chatBox.innerHTML = "";
@@ -334,29 +369,62 @@ function listenMessages(){
         const text = document.createElement("div");
         text.innerHTML = `<b>${d.name || "Ghost"}</b><br>${d.message || ""}`;
 
-        const btn = document.createElement("button");
-        btn.className = "delBtn";
-        btn.innerText = "Delete";
+        /* REACTIONS */
+        const reactions = document.createElement("div");
+        reactions.className = "reactions";
 
-        btn.onclick = async (e) => {
+        const countBox = document.createElement("div");
+        countBox.className = "reactCount";
+
+        ["🔥","😂","💀"].forEach(e=>{
+            const btn = document.createElement("button");
+            btn.className = "reactBtn";
+            btn.innerText = e;
+            btn.onclick = ()=> toggleReaction(key, e);
+            reactions.appendChild(btn);
+        });
+
+        function updateCounts(data){
+            let out = "";
+            ["🔥","😂","💀"].forEach(e=>{
+                const c = data?.[e] ? Object.keys(data[e]).length : 0;
+                if(c > 0) out += `${e} ${c} `;
+            });
+            countBox.innerText = out;
+        }
+
+        /* DELETE */
+        const del = document.createElement("button");
+        del.className = "delBtn";
+        del.innerText = "Delete";
+        del.onclick = async (e)=>{
             e.stopPropagation();
             await remove(ref(db, `rooms/${currentRoom}/messages/${key}`));
         };
 
         div.appendChild(text);
-        div.appendChild(btn);
+        div.appendChild(reactions);
+        div.appendChild(countBox);
+        div.appendChild(del);
+
         chatBox.appendChild(div);
 
-        messageMap[key] = div;
+        messageMap[key] = { div, updateCounts };
+
+        /* LIVE REACTIONS */
+        const msgRef = ref(db, `rooms/${currentRoom}/messages/${key}`);
+        onValue(msgRef, (snap2)=>{
+            const data = snap2.val();
+            if(data) updateCounts(data.reactions || {});
+        });
 
         chatBox.scrollTop = chatBox.scrollHeight;
     });
 
-    /* THIS FIXES DELETE BUG COMPLETELY */
     onChildRemoved(messagesRef, (snap)=>{
         const key = snap.key;
         if(messageMap[key]){
-            messageMap[key].remove();
+            messageMap[key].div.remove();
             delete messageMap[key];
         }
     });
@@ -382,7 +450,7 @@ window.sendMessage = function(){
 function autoDeleteOldMessages(){
     const messagesRef = ref(db, "rooms/" + currentRoom + "/messages");
 
-    setInterval(async () => {
+    setInterval(async ()=>{
         const snap = await new Promise(res =>
             onValue(messagesRef, res, { onlyOnce: true })
         );
@@ -390,7 +458,7 @@ function autoDeleteOldMessages(){
         const data = snap.val() || {};
 
         for(const [key, msg] of Object.entries(data)){
-            if(msg.time && Date.now() - msg.time > 20 * 60 * 1000){
+            if(msg.time && Date.now() - msg.time > 20*60*1000){
                 await remove(ref(db, `rooms/${currentRoom}/messages/${key}`));
             }
         }
