@@ -60,6 +60,7 @@ header{
     border-radius:10px;
     background:#001a2a;
     color:white;
+    text-align:center;
 }
 
 #roomScreen button{
@@ -126,7 +127,7 @@ button{
 
 <header id="roomTitle">💀 Legend Chat Pro 💀 | 👥 Online: 0</header>
 
-<!-- ROOM -->
+<!-- ROOM SCREEN -->
 <div id="roomScreen">
     <h2>💀 Enter The Legend Room</h2>
     <input id="nameInput" placeholder="Your Name">
@@ -212,7 +213,7 @@ function setupPresence(room, name){
     });
 }
 
-/* 💬 FIXED MESSAGE SYSTEM (THIS WAS THE ISSUE) */
+/* 💬 MESSAGES */
 function listenMessages(){
     if(!chatRef) return;
 
@@ -225,7 +226,6 @@ function listenMessages(){
 
         const div = document.createElement("div");
         div.className = "msg";
-
         div.innerHTML = `<b>${d.name || "Ghost"}</b><br>${d.message || ""}`;
 
         chatBox.appendChild(div);
@@ -233,7 +233,7 @@ function listenMessages(){
     });
 }
 
-/* 💬 SEND MESSAGE (TEXT ONLY) */
+/* 💬 SEND (TEXT ONLY) */
 window.sendMessage = function(){
     if(!chatRef) return;
 
@@ -257,21 +257,26 @@ window.sendMessage = function(){
     document.getElementById("message").value = "";
 };
 
-/* ⏳ AUTO DELETE AFTER 25 MIN */
+/* ⏳ AUTO DELETE AFTER 20 MIN */
 function autoDeleteOldMessages(){
     const roomRef = ref(db, "rooms/" + currentRoom + "/messages");
 
-    onValue(roomRef, (snap)=>{
-        const data = snap.val() || {};
+    setInterval(() => {
+        onValue(roomRef, (snap)=>{
+            const data = snap.val() || {};
 
-        Object.entries(data).forEach(([key, msg])=>{
-            if(!msg.time) return;
+            Object.entries(data).forEach(([key, msg])=>{
+                if(!msg.time) return;
 
-            if(Date.now() - msg.time > 25 * 60 * 1000){
-                remove(ref(db, "rooms/" + currentRoom + "/messages/" + key));
-            }
-        });
-    });
+                const age = Date.now() - msg.time;
+
+                // ⏳ 20 minutes = 1,200,000 ms
+                if(age > 20 * 60 * 1000){
+                    remove(ref(db, "rooms/" + currentRoom + "/messages/" + key));
+                }
+            });
+        }, { onlyOnce: true });
+    }, 30000);
 }
 </script>
 
