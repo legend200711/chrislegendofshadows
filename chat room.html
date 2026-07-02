@@ -9,31 +9,6 @@
 <meta name="theme-color" content="#001a2a">
 
 <style>
-    nav{
-    position:relative;
-    z-index:2;
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    padding:10px;
-    background:rgba(0,20,35,0.75);
-    border-bottom:1px solid rgba(0,170,255,0.25);
-    backdrop-filter:blur(6px);
-}
-
-nav a{
-    color:#00d9ff;
-    text-decoration:none;
-    font-weight:bold;
-    padding:8px 12px;
-    border-radius:10px;
-    transition:0.3s;
-}
-
-nav a:hover{
-    background:rgba(0,170,255,0.15);
-    transform:scale(1.05);
-}
 html, body{
     margin:0;
     padding:0;
@@ -44,49 +19,29 @@ html, body{
     color:white;
 }
 
-/* 🌧️ BLUE RAIN (FULL SCREEN) */
-#rainCanvas{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    z-index:9999;
-    pointer-events:none;
-    mix-blend-mode:screen;
-    opacity:0.85;
+nav{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    padding:10px;
+    background:rgba(0,20,35,0.75);
+    border-bottom:1px solid rgba(0,170,255,0.25);
 }
 
-/* 🔥 BLUE FLAME ATMOSPHERE */
-#flameLayer{
-    position:fixed;
-    inset:0;
-    z-index:1;
-    pointer-events:none;
-    background:radial-gradient(circle at bottom,
-        rgba(0,170,255,0.25),
-        rgba(0,80,255,0.08),
-        transparent 70%);
-    filter:blur(2px);
-    animation:flameFlicker 2s infinite alternate;
+nav a{
+    color:#00d9ff;
+    text-decoration:none;
+    font-weight:bold;
+    padding:8px 12px;
+    border-radius:10px;
 }
 
-@keyframes flameFlicker{
-    0%{opacity:0.6; transform:scale(1);}
-    100%{opacity:1; transform:scale(1.02);}
-}
-
-/* HEADER */
 header{
-    position:relative;
-    z-index:2;
     text-align:center;
     padding:12px;
-    font-weight:bold;
     background:rgba(0,30,40,0.7);
-    border-bottom:1px solid rgba(0,255,200,0.4);
 }
 
-/* ROOM SCREEN */
 #roomScreen{
     position:fixed;
     inset:0;
@@ -100,28 +55,22 @@ header{
 
 #roomScreen input{
     padding:12px;
-    border-radius:10px;
-    border:none;
-    outline:none;
     margin-top:10px;
+    border:none;
+    border-radius:10px;
     background:#001a2a;
     color:white;
-    text-align:center;
 }
 
 #roomScreen button{
     margin-top:10px;
-    padding:12px 18px;
+    padding:12px;
     border:none;
     border-radius:10px;
     background:linear-gradient(90deg,#00aaff,#00ffaa);
-    font-weight:bold;
 }
 
-/* CHAT */
 #chat{
-    position:relative;
-    z-index:2;
     height:calc(100vh - 140px);
     overflow-y:auto;
     padding:12px;
@@ -135,7 +84,6 @@ header{
     border:1px solid rgba(0,170,255,0.25);
 }
 
-/* INPUT BAR */
 .bottom{
     position:fixed;
     bottom:0;
@@ -145,14 +93,12 @@ header{
     gap:8px;
     padding:10px;
     background:rgba(0,20,30,0.75);
-    z-index:3;
 }
 
 input{
-    border:none;
     padding:12px;
     border-radius:10px;
-    outline:none;
+    border:none;
     background:#001a2a;
     color:white;
 }
@@ -165,78 +111,27 @@ button{
     border:none;
     border-radius:10px;
     background:linear-gradient(90deg,#00aaff,#00ffaa);
-    font-weight:bold;
-}
-
-/* 💧 RIPPLE EFFECT */
-.ripple{
-    position:fixed;
-    width:20px;
-    height:20px;
-    border-radius:50%;
-    border:2px solid rgba(0,170,255,0.8);
-    transform:translate(-50%,-50%);
-    animation:ripple 0.8s ease-out forwards;
-    pointer-events:none;
-    z-index:9999;
-}
-
-@keyframes ripple{
-    0%{transform:translate(-50%,-50%) scale(1); opacity:1;}
-    100%{transform:translate(-50%,-50%) scale(10); opacity:0;}
 }
 </style>
-<style>
-/* FULL PAGE BACKGROUND IMAGE */
-body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-
-    background-image: url("wolf.png"); /* <-- your image file */
-    background-size: cover;            /* makes it fill screen */
-    background-position: center;       /* centers image */
-    background-repeat: no-repeat;      /* stops tiling */
-    background-attachment: fixed;      /* keeps it still when scrolling */
-
-    font-family: Arial, sans-serif;
-    color: white;
-}
-
-/* optional overlay so text is readable */
-.overlay {
-    background: rgba(0, 0, 0, 0.6);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-</style>
-
 
 </head>
 
 <body>
 
-<canvas id="rainCanvas"></canvas>
-<div id="flameLayer"></div>
 <nav>
 <a href="music.html">Music</a>
 <a href="gallery.html">Gallery</a>
-      <a href="about.html">about</a>
+<a href="about.html">About</a>
 </nav>
 
+<header id="roomTitle">💀 Legend Chat Pro 💀 | 👥 Online: 0</header>
+
+<!-- ROOM -->
 <div id="roomScreen">
     <h2>💀 Enter The Legend Room</h2>
-
-
     <input id="nameInput" placeholder="Your Name">
-
-    <button onclick="joinLobby()">Enter Lobby (Public Chat)</button>
+    <button onclick="joinLobby()">Enter Lobby</button>
 </div>
-
-<header id="Legend chat">💀 Legend Chat Pro 💀 | 👥 Online: 0</header>
 
 <div id="chat"></div>
 
@@ -248,55 +143,62 @@ body {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, remove, set, onDisconnect, onValue }
-from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+import {
+  getDatabase,
+  ref,
+  push,
+  onChildAdded,
+  set,
+  onDisconnect,
+  onValue,
+  remove
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
+/* 🔥 FIREBASE */
 const firebaseConfig = {
-  apiKey: "AIzaSyBDTQ4_06Z3dt-c_GYgvrTmsKng7C42rS8",
-  authDomain: "legendsamiam.firebaseapp.com",
-  databaseURL: "https://legendsamiam-default-rtdb.firebaseio.com",
-  projectId: "legendsamiam",
-  storageBucket: "legendsamiam.firebasestorage.app",
-  messagingSenderId: "770205565259",
-  appId: "1:770205565259:web:c49a750cc2ceba041228ce"
+  apiKey: "AIzaSyByZRmp6R9HY17T2_WdJUFWeeaLNOP6y2Y",
+  authDomain: "horr-a08f4.firebaseapp.com",
+  databaseURL: "https://horr-a08f4-default-rtdb.firebaseio.com",
+  projectId: "horr-a08f4",
+  storageBucket: "horr-a08f4.firebasestorage.app",
+  messagingSenderId: "933810617818",
+  appId: "1:933810617818:web:efb24f123337dd987c14e3"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let currentRoom = null;
 let chatRef = null;
 let presenceRef = null;
-
+let currentRoom = "LOBBY";
 let userId = Math.random().toString(36).substring(2, 10);
 
-/* ROOM */
-window.joinRoom = function(){
-    const room = document.getElementById("roomInput").value.trim().toUpperCase();
-    const name = document.getElementById("nameInput").value.trim() || "Ghost";
-    if(!room) return;
-    enterRoom(room, name);
-};
-
+/* JOIN */
 window.joinLobby = function(){
-    const name = document.getElementById("nameInput").value.trim() || "Ghost";
+    const name = document.getElementById("nameInput").value || "Ghost";
     enterRoom("LOBBY", name);
 };
 
-function clearRoom(room){
-    const roomRef = ref(db, "rooms/" + room + "/messages");
-    remove(roomRef);
+function enterRoom(room, name){
+    currentRoom = room;
+
+    document.getElementById("roomScreen").style.display = "none";
+    document.getElementById("name").value = name;
+
+    document.getElementById("chat").innerHTML = "Loading...";
+
+    chatRef = ref(db, "rooms/" + room + "/messages");
+
+    setupPresence(room, name);
+    listenMessages();
+    autoDeleteOldMessages();
 }
 
-/* 👥 PRESENCE SYSTEM */
+/* 👥 ONLINE */
 function setupPresence(room, name){
     presenceRef = ref(db, "rooms/" + room + "/presence/" + userId);
 
-    set(presenceRef, {
-        name,
-        online: true
-    });
-
+    set(presenceRef, { name, online: true });
     onDisconnect(presenceRef).remove();
 
     const allPresence = ref(db, "rooms/" + room + "/presence");
@@ -306,41 +208,32 @@ function setupPresence(room, name){
         const count = Object.keys(data).length;
 
         document.getElementById("roomTitle").innerText =
-        "💀 Room: " + room + " | 👥 Online: " + count;
+            "💀 Room: " + room + " | 👥 Online: " + count;
     });
 }
 
-function enterRoom(room, name){
-    currentRoom = room;
-
-    document.getElementById("roomScreen").style.display = "none";
-    document.getElementById("name").value = name;
-
-    document.getElementById("roomTitle").innerText =
-        "💀 Room: " + room + " | 👥 Online: 0";
-
-    document.getElementById("chat").innerHTML = "";
-
-    chatRef = ref(db, "rooms/" + room + "/messages");
-
-    clearRoom(room);
-    setupPresence(room, name);
-    listenMessages();
-}
-
+/* 💬 FIXED MESSAGE SYSTEM (THIS WAS THE ISSUE) */
 function listenMessages(){
+    if(!chatRef) return;
+
+    const chatBox = document.getElementById("chat");
+    chatBox.innerHTML = "";
+
     onChildAdded(chatRef, (snap)=>{
         const d = snap.val();
+        if(!d) return;
 
         const div = document.createElement("div");
         div.className = "msg";
-        div.innerHTML = `<b>${d.name}</b><br>${d.message}`;
 
-        document.getElementById("chat").appendChild(div);
-        document.getElementById("chat").scrollTop = 999999;
+        div.innerHTML = `<b>${d.name || "Ghost"}</b><br>${d.message || ""}`;
+
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
     });
 }
 
+/* 💬 SEND MESSAGE (TEXT ONLY) */
 window.sendMessage = function(){
     if(!chatRef) return;
 
@@ -349,7 +242,13 @@ window.sendMessage = function(){
 
     if(!message.trim()) return;
 
-    push(chatRef,{
+    // 🚫 block image links
+    if(message.match(/\.(jpg|jpeg|png|gif|webp)$/i)){
+        alert("Text only chat. No images allowed.");
+        return;
+    }
+
+    push(chatRef, {
         name,
         message,
         time: Date.now()
@@ -358,66 +257,22 @@ window.sendMessage = function(){
     document.getElementById("message").value = "";
 };
 
-/* 🌧️ RAIN */
-const canvas = document.getElementById("rainCanvas");
-const ctx = canvas.getContext("2d");
+/* ⏳ AUTO DELETE AFTER 25 MIN */
+function autoDeleteOldMessages(){
+    const roomRef = ref(db, "rooms/" + currentRoom + "/messages");
 
-function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener("resize", resize);
+    onValue(roomRef, (snap)=>{
+        const data = snap.val() || {};
 
-let drops = [];
+        Object.entries(data).forEach(([key, msg])=>{
+            if(!msg.time) return;
 
-function initRain(){
-    drops = [];
-    for(let i=0;i<180;i++){
-        drops.push({
-            x: Math.random()*canvas.width,
-            y: Math.random()*canvas.height,
-            len: Math.random()*25 + 10,
-            speed: Math.random()*7 + 4,
-            thick: Math.random()*1.5 + 0.5
+            if(Date.now() - msg.time > 25 * 60 * 1000){
+                remove(ref(db, "rooms/" + currentRoom + "/messages/" + key));
+            }
         });
-    }
+    });
 }
-initRain();
-
-function drawRain(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    for(let d of drops){
-        ctx.beginPath();
-        ctx.strokeStyle = "rgba(0,170,255,0.6)";
-        ctx.lineWidth = d.thick;
-
-        ctx.moveTo(d.x, d.y);
-        ctx.lineTo(d.x, d.y + d.len);
-        ctx.stroke();
-
-        d.y += d.speed;
-
-        if(d.y > canvas.height){
-            d.y = -20;
-            d.x = Math.random()*canvas.width;
-        }
-    }
-
-    requestAnimationFrame(drawRain);
-}
-drawRain();
-
-/* RIPPLE */
-document.addEventListener("click", (e)=>{
-    const ripple = document.createElement("div");
-    ripple.className = "ripple";
-    ripple.style.left = e.clientX + "px";
-    ripple.style.top = e.clientY + "px";
-    document.body.appendChild(ripple);
-    setTimeout(()=> ripple.remove(), 800);
-});
 </script>
 
 </body>
