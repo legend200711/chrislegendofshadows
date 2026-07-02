@@ -1,104 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Legend Chat Pro</title>
+<title>Legend Chat Pro - Storm Mode</title>
 
 <meta name="theme-color" content="#001a2a">
 
 <style>
+    nav{
+    position:relative;
+    z-index:2;
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    padding:10px;
+    background:rgba(0,20,35,0.75);
+    border-bottom:1px solid rgba(0,170,255,0.25);
+    backdrop-filter:blur(6px);
+}
+
+nav a{
+    color:#00d9ff;
+    text-decoration:none;
+    font-weight:bold;
+    padding:8px 12px;
+    border-radius:10px;
+    transition:0.3s;
+}
+
+nav a:hover{
+    background:rgba(0,170,255,0.15);
+    transform:scale(1.05);
+}
 html, body{
     margin:0;
     padding:0;
     height:100%;
     overflow:hidden;
     font-family:Arial;
+    background:#000a14;
     color:white;
-    background:#000814;
 }
 
-/* 🌧️ BLUE RAIN BACKGROUND */
-body{
-    background: linear-gradient(180deg,#001a33,#000814,#000);
-}
-
-body::before{
-    content:"";
+/* 🌧️ BLUE RAIN (FULL SCREEN) */
+#rainCanvas{
     position:fixed;
     inset:0;
-    background-image:
-      repeating-linear-gradient(
-        180deg,
-        rgba(0,150,255,0.15) 0px,
-        rgba(0,150,255,0.15) 1px,
-        transparent 1px,
-        transparent 8px
-      );
-    animation: rain 0.4s linear infinite;
+    width:100%;
+    height:100%;
+    z-index:9999;
     pointer-events:none;
-    opacity:0.4;
+    mix-blend-mode:screen;
+    opacity:0.85;
 }
 
-@keyframes rain{
-    from{ transform:translateY(0); }
-    to{ transform:translateY(8px); }
+/* 🔥 BLUE FLAME ATMOSPHERE */
+#flameLayer{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:radial-gradient(circle at bottom,
+        rgba(0,170,255,0.25),
+        rgba(0,80,255,0.08),
+        transparent 70%);
+    filter:blur(2px);
+    animation:flameFlicker 2s infinite alternate;
+}
+
+@keyframes flameFlicker{
+    0%{opacity:0.6; transform:scale(1);}
+    100%{opacity:1; transform:scale(1.02);}
 }
 
 /* HEADER */
 header{
+    position:relative;
+    z-index:2;
     text-align:center;
-    padding:14px;
-    font-weight:bold;
-    background:rgba(0,30,60,0.7);
-    backdrop-filter:blur(14px);
-    border-bottom:1px solid rgba(0,140,255,0.6);
-    text-shadow:0 0 10px #00aaff;
-}
-
-/* NAV */
-.pop-nav{
-    display:flex;
-    justify-content:center;
-    gap:14px;
     padding:12px;
-    margin:10px auto;
-    background:rgba(0, 140, 255, 0.15);
-    border:1px solid rgba(0, 180, 255, 0.6);
-    border-radius:14px;
-    backdrop-filter:blur(12px);
-    box-shadow:0 0 18px rgba(0, 170, 255, 0.4);
-    width:fit-content;
-}
-
-.pop-nav a{
-    color:#00c3ff;
-    text-decoration:none;
     font-weight:bold;
-    padding:6px 12px;
-    border-radius:10px;
-    transition:0.2s;
+    background:rgba(0,30,40,0.7);
+    border-bottom:1px solid rgba(0,255,200,0.4);
 }
 
-.pop-nav a:hover{
-    background:rgba(0, 195, 255, 0.2);
-    transform:scale(1.1);
+/* ROOM SCREEN */
+#roomScreen{
+    position:fixed;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,0.9);
+    z-index:999;
+}
+
+#roomScreen input{
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    outline:none;
+    margin-top:10px;
+    background:#001a2a;
+    color:white;
+    text-align:center;
+}
+
+#roomScreen button{
+    margin-top:10px;
+    padding:12px 18px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(90deg,#00aaff,#00ffaa);
+    font-weight:bold;
 }
 
 /* CHAT */
 #chat{
+    position:relative;
+    z-index:2;
     height:calc(100vh - 140px);
     overflow-y:auto;
     padding:12px;
 }
 
-/* MESSAGE */
 .msg{
-    background:rgba(0,20,40,0.8);
+    background:linear-gradient(145deg,#001a2a,#002b3a,#001018);
     padding:12px;
     margin-bottom:10px;
     border-radius:14px;
-    border:1px solid rgba(0,150,255,0.4);
+    border:1px solid rgba(0,170,255,0.25);
 }
 
 /* INPUT BAR */
@@ -110,9 +144,8 @@ header{
     display:flex;
     gap:8px;
     padding:10px;
-    background:rgba(0,10,25,0.8);
-    backdrop-filter:blur(14px);
-    border-top:1px solid rgba(0,140,255,0.5);
+    background:rgba(0,20,30,0.75);
+    z-index:3;
 }
 
 input{
@@ -120,7 +153,7 @@ input{
     padding:12px;
     border-radius:10px;
     outline:none;
-    background:#001a33;
+    background:#001a2a;
     color:white;
 }
 
@@ -131,22 +164,79 @@ button{
     padding:12px 14px;
     border:none;
     border-radius:10px;
-    background:linear-gradient(90deg,#0077ff,#00c3ff);
-    color:white;
+    background:linear-gradient(90deg,#00aaff,#00ffaa);
     font-weight:bold;
 }
+
+/* 💧 RIPPLE EFFECT */
+.ripple{
+    position:fixed;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    border:2px solid rgba(0,170,255,0.8);
+    transform:translate(-50%,-50%);
+    animation:ripple 0.8s ease-out forwards;
+    pointer-events:none;
+    z-index:9999;
+}
+
+@keyframes ripple{
+    0%{transform:translate(-50%,-50%) scale(1); opacity:1;}
+    100%{transform:translate(-50%,-50%) scale(10); opacity:0;}
+}
 </style>
+<style>
+/* FULL PAGE BACKGROUND IMAGE */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+
+    background-image: url("wolf.png"); /* <-- your image file */
+    background-size: cover;            /* makes it fill screen */
+    background-position: center;       /* centers image */
+    background-repeat: no-repeat;      /* stops tiling */
+    background-attachment: fixed;      /* keeps it still when scrolling */
+
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+/* optional overlay so text is readable */
+.overlay {
+    background: rgba(0, 0, 0, 0.6);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+</style>
+
+
 </head>
 
 <body>
 
-<header>💙 Legend Chat Pro 💙</header>
-
-<nav class="pop-nav">
-    <a href="music.html">music</a>
-    <a href="about.html">About</a>
-    <a href="gallery.html">gallery</a>
+<canvas id="rainCanvas"></canvas>
+<div id="flameLayer"></div>
+<nav>
+<a href="music.html">Music</a>
+<a href="gallery.html">Gallery</a>
+      <a href="about.html">about</a>
 </nav>
+
+<div id="roomScreen">
+    <h2>💀 Enter The Legend Room</h2>
+
+
+    <input id="nameInput" placeholder="Your Name">
+
+    <button onclick="joinLobby()">Enter Lobby (Public Chat)</button>
+</div>
+
+<header id="roomTitle">💀 Legend Chat Pro 💀 | 👥 Online: 0</header>
 
 <div id="chat"></div>
 
@@ -158,29 +248,102 @@ button{
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded }
+import { getDatabase, ref, push, onChildAdded, remove, set, onDisconnect, onValue }
 from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
-/* 🔥 Firebase */
 const firebaseConfig = {
-  apiKey: "AIzaSyAOnAtWjIx-L5suOt6_26eAbgf3k4ggmb4",
-  authDomain: "legend-chat-246fd.firebaseapp.com",
-  databaseURL: "https://legend-chat-246fd-default-rtdb.firebaseio.com",
-  projectId: "legend-chat-246fd",
-  storageBucket: "legend-chat-246fd.firebasestorage.app",
-  messagingSenderId: "365662264136",
-  appId: "1:365662264136:web:5a8cbc749e5ba1bca1f17d"
+  apiKey: "AIzaSyBDTQ4_06Z3dt-c_GYgvrTmsKng7C42rS8",
+  authDomain: "legendsamiam.firebaseapp.com",
+  databaseURL: "https://legendsamiam-default-rtdb.firebaseio.com",
+  projectId: "legendsamiam",
+  storageBucket: "legendsamiam.firebasestorage.app",
+  messagingSenderId: "770205565259",
+  appId: "1:770205565259:web:c49a750cc2ceba041228ce"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const chatRef = ref(db, "chat");
 
-/* 🔥 SESSION START (KEY FIX) */
-const sessionStart = Date.now();
+let currentRoom = null;
+let chatRef = null;
+let presenceRef = null;
 
-/* SEND MESSAGE */
+let userId = Math.random().toString(36).substring(2, 10);
+
+/* ROOM */
+window.joinRoom = function(){
+    const room = document.getElementById("roomInput").value.trim().toUpperCase();
+    const name = document.getElementById("nameInput").value.trim() || "Ghost";
+    if(!room) return;
+    enterRoom(room, name);
+};
+
+window.joinLobby = function(){
+    const name = document.getElementById("nameInput").value.trim() || "Ghost";
+    enterRoom("LOBBY", name);
+};
+
+function clearRoom(room){
+    const roomRef = ref(db, "rooms/" + room + "/messages");
+    remove(roomRef);
+}
+
+/* 👥 PRESENCE SYSTEM */
+function setupPresence(room, name){
+    presenceRef = ref(db, "rooms/" + room + "/presence/" + userId);
+
+    set(presenceRef, {
+        name,
+        online: true
+    });
+
+    onDisconnect(presenceRef).remove();
+
+    const allPresence = ref(db, "rooms/" + room + "/presence");
+
+    onValue(allPresence, (snap)=>{
+        const data = snap.val() || {};
+        const count = Object.keys(data).length;
+
+        document.getElementById("roomTitle").innerText =
+        "💀 Room: " + room + " | 👥 Online: " + count;
+    });
+}
+
+function enterRoom(room, name){
+    currentRoom = room;
+
+    document.getElementById("roomScreen").style.display = "none";
+    document.getElementById("name").value = name;
+
+    document.getElementById("roomTitle").innerText =
+        "💀 Room: " + room + " | 👥 Online: 0";
+
+    document.getElementById("chat").innerHTML = "";
+
+    chatRef = ref(db, "rooms/" + room + "/messages");
+
+    clearRoom(room);
+    setupPresence(room, name);
+    listenMessages();
+}
+
+function listenMessages(){
+    onChildAdded(chatRef, (snap)=>{
+        const d = snap.val();
+
+        const div = document.createElement("div");
+        div.className = "msg";
+        div.innerHTML = `<b>${d.name}</b><br>${d.message}`;
+
+        document.getElementById("chat").appendChild(div);
+        document.getElementById("chat").scrollTop = 999999;
+    });
+}
+
 window.sendMessage = function(){
+    if(!chatRef) return;
+
     const name = document.getElementById("name").value || "Ghost";
     const message = document.getElementById("message").value;
 
@@ -192,23 +355,68 @@ window.sendMessage = function(){
         time: Date.now()
     });
 
-    document.getElementById("message").value="";
+    document.getElementById("message").value = "";
 };
 
-/* RECEIVE MESSAGES */
-onChildAdded(chatRef, (snap)=>{
-    const d = snap.val();
+/* 🌧️ RAIN */
+const canvas = document.getElementById("rainCanvas");
+const ctx = canvas.getContext("2d");
 
-    /* 🚫 IGNORE OLD MESSAGES FROM BEFORE YOU ENTERED */
-    if(d.time < sessionStart) return;
+function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
 
-    const div = document.createElement("div");
-    div.className="msg";
-    div.innerHTML = `<b>${d.name}</b><br>${d.message}`;
+let drops = [];
 
-    const chat = document.getElementById("chat");
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
+function initRain(){
+    drops = [];
+    for(let i=0;i<180;i++){
+        drops.push({
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
+            len: Math.random()*25 + 10,
+            speed: Math.random()*7 + 4,
+            thick: Math.random()*1.5 + 0.5
+        });
+    }
+}
+initRain();
+
+function drawRain(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    for(let d of drops){
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(0,170,255,0.6)";
+        ctx.lineWidth = d.thick;
+
+        ctx.moveTo(d.x, d.y);
+        ctx.lineTo(d.x, d.y + d.len);
+        ctx.stroke();
+
+        d.y += d.speed;
+
+        if(d.y > canvas.height){
+            d.y = -20;
+            d.x = Math.random()*canvas.width;
+        }
+    }
+
+    requestAnimationFrame(drawRain);
+}
+drawRain();
+
+/* RIPPLE */
+document.addEventListener("click", (e)=>{
+    const ripple = document.createElement("div");
+    ripple.className = "ripple";
+    ripple.style.left = e.clientX + "px";
+    ripple.style.top = e.clientY + "px";
+    document.body.appendChild(ripple);
+    setTimeout(()=> ripple.remove(), 800);
 });
 </script>
 
