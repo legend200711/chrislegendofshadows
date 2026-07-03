@@ -1,497 +1,388 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Legend Chat Pro - Storm Mode</title>
 
-<meta name="theme-color" content="#001a2a">
+<!-- FIXED MOBILE APP FIT VIEWPORT -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Welcome in Legends</title>
 
 <style>
 
-/* 🌌 GLOBAL RESET */
-html, body{
-    margin:0;
-    padding:0;
-    height:100%;
-    overflow:hidden;
-    font-family:Arial;
-    color:white;
-    background:#000a14;
+/* =========================
+   AUTO FIT SYSTEM (ADDED)
+   ========================= */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
-/* 🐺 BACKGROUND */
+body {
+  transform-origin: center center;
+}
+
+/* ORIGINAL CODE STARTS */
+
+#aboutNode{transform:rotate(0deg) translateX(200px);}
+#galleryNode{transform:rotate(90deg) translateX(200px);}
+#musicNode{transform:rotate(180deg) translateX(200px);}
+#chatNode{transform:rotate(270deg) translateX(200px);}
+
+/* Phones */
+@media (max-width:600px){
+
+html,body{
+overflow:hidden;
+height:100%;
+width:100%;
+}
+
+h1{
+font-size:18px;
+letter-spacing:2px;
+margin-top:15px;
+padding:0 10px;
+}
+
+#core{
+width:90px;
+height:90px;
+}
+
+.portal{
+width:70px;
+height:70px;
+font-size:10px;
+letter-spacing:1px;
+}
+
+#aboutNode{transform:rotate(0deg) translateX(100px);}
+#galleryNode{transform:rotate(90deg) translateX(100px);}
+#musicNode{transform:rotate(180deg) translateX(100px);}
+#chatNode{transform:rotate(270deg) translateX(100px);}
+}
+
+/* Tablets */
+@media (max-width:900px){
+
+h1{
+font-size:34px;
+letter-spacing:4px;
+margin-top:40px;
+}
+
+#core{
+width:150px;
+height:150px;
+}
+
+.portal{
+width:120px;
+height:120px;
+font-size:14px;
+}
+
+#aboutNode{transform:rotate(0deg) translateX(200px);}
+#galleryNode{transform:rotate(90deg) translateX(200px);}
+#musicNode{transform:rotate(180deg) translateX(200px);}
+#chatNode{transform:rotate(270deg) translateX(200px);}
+}
+
+body{
+margin:0;
+overflow:hidden;
+background:#000;
+font-family:Arial,sans-serif;
+color:#bff6ff;
+}
+
+/* CORE BACKGROUND */
 body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    background-image:url("wolf.png");
-    background-size:cover;
-    background-position:center;
-    z-index:-3;
-    filter:brightness(0.7) contrast(1.1);
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at 50% 50%, rgba(0,255,255,.25), transparent 35%),
+radial-gradient(circle at 20% 80%, rgba(0,80,255,.15), transparent 60%),
+radial-gradient(circle at 80% 20%, rgba(0,200,255,.12), transparent 60%);
+animation:dangerPulse 3s infinite alternate;
+z-index:-10;
+filter:contrast(1.2);
 }
 
-/* 🌧 RAIN CANVAS */
-#rainCanvas{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    z-index:9999;
-    pointer-events:none;
-    mix-blend-mode:screen;
-    opacity:0.75;
+@keyframes dangerPulse{
+0%{filter:brightness(1) contrast(1.2)}
+100%{filter:brightness(1.8) contrast(1.6)}
 }
 
-/* 🔥 FLAME LAYER */
-#flameLayer{
-    position:fixed;
-    inset:0;
-    z-index:-1;
-    pointer-events:none;
-    background:radial-gradient(circle at bottom,
-        rgba(0,170,255,0.25),
-        rgba(0,80,255,0.08),
-        transparent 70%);
-    filter:blur(2px);
-    animation:flameFlicker 2s infinite alternate;
+/* TITLE */
+h1{
+text-align:center;
+margin-top:60px;
+font-size:46px;
+letter-spacing:6px;
+text-shadow:
+0 0 10px #00f0ff,
+0 0 30px #0088ff,
+0 0 60px #00ffff;
+animation:glitch 1.5s infinite;
 }
 
-/* ✨ FLAME ANIMATION */
-@keyframes flameFlicker{
-    0%{opacity:0.6; transform:scale(1);}
-    100%{opacity:1; transform:scale(1.02);}
+@keyframes glitch{
+0%{transform:translate(0)}
+20%{transform:translate(-2px,2px)}
+40%{transform:translate(2px,-2px)}
+60%{transform:translate(-1px,1px)}
+80%{transform:translate(1px,-1px)}
+100%{transform:translate(0)}
 }
 
-/* 🧭 HEADER */
-header{
-    position:relative;
-    z-index:2;
-    text-align:center;
-    padding:12px;
-    font-weight:bold;
-    background:rgba(0,30,40,0.7);
-    border-bottom:1px solid rgba(0,255,200,0.4);
-    backdrop-filter: blur(6px);
+/* CORE */
+#core{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:190px;
+height:190px;
+border-radius:50%;
+background:radial-gradient(circle,#00f0ff,#0044ff,transparent);
+box-shadow:
+0 0 120px #00f0ff,
+0 0 200px #0066ff,
+inset 0 0 40px rgba(255,255,255,.2);
+animation:coreFlicker 0.8s infinite alternate;
 }
 
-/* 🧊 ROOM SCREEN */
-#roomScreen{
-    position:fixed;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    background:rgba(0,0,0,0.9);
-    z-index:999;
+@keyframes coreFlicker{
+0%{transform:translate(-50%,-50%) scale(1)}
+100%{transform:translate(-50%,-50%) scale(1.15)}
 }
 
-/* ✍️ INPUTS */
-#roomScreen input{
-    padding:12px;
-    border-radius:10px;
-    border:none;
-    margin-top:10px;
-    background:#001a2a;
-    color:white;
-    text-align:center;
+/* PORTALS */
+.portal{
+position:absolute;
+width:150px;
+height:150px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:#cfffff;
+text-decoration:none;
+background:radial-gradient(circle,rgba(0,255,255,.25),transparent);
+border:1px solid rgba(0,255,255,.5);
+box-shadow:
+0 0 25px rgba(0,255,255,.3),
+0 0 60px rgba(0,100,255,.2);
+transition:.2s;
+font-weight:bold;
+letter-spacing:2px;
 }
 
-/* 🚪 BUTTONS */
-#roomScreen button{
-    margin-top:10px;
-    padding:12px 18px;
-    border:none;
-    border-radius:10px;
-    background:linear-gradient(90deg,#00aaff,#00ffaa);
-    font-weight:bold;
+/* ORBIT */
+.orbitWrap{
+position:absolute;
+top:50%;
+left:50%;
+width:0;
+height:0;
+animation:orbit 10s linear infinite;
+transform-origin:center;
 }
 
-/* 💬 CHAT */
-#chat{
-    position:relative;
-    z-index:2;
-    height:calc(100vh - 140px);
-    overflow-y:auto;
-    padding:12px;
+.node{
+position:absolute;
+top:0;
+left:0;
 }
 
-/* 📩 MESSAGE */
-.msg{
-    background:linear-gradient(145deg,#001a2a,#002b3a,#001018);
-    padding:12px;
-    margin-bottom:10px;
-    border-radius:14px;
-    border:1px solid rgba(0,170,255,0.25);
-    word-break:break-word;
+#aboutNode{transform:rotate(0deg) translateX(260px);}
+#galleryNode{transform:rotate(90deg) translateX(260px);}
+#musicNode{transform:rotate(180deg) translateX(260px);}
+#chatNode{transform:rotate(270deg) translateX(260px);}
+
+@keyframes orbit{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
 }
 
-/* ⚡ REACTIONS */
-.reactions{
-    margin-top:8px;
-    display:flex;
-    gap:6px;
-    flex-wrap:wrap;
+.portal:hover{
+transform:scale(1.25);
+box-shadow:
+0 0 80px rgba(0,255,255,.8),
+0 0 120px rgba(0,120,255,.4);
 }
 
-/* 😄 BUTTONS */
-.reactions button{
-    font-size:14px;
-    padding:4px 8px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
-    background:rgba(0,170,255,0.15);
-    color:white;
+#cursor{
+position:fixed;
+width:14px;
+height:14px;
+border-radius:50%;
+background:#00f0ff;
+box-shadow:0 0 25px #00f0ff;
+pointer-events:none;
+transform:translate(-50%,-50%);
 }
 
-/* 📊 COUNT */
-.reaction-count{
-    font-size:12px;
-    margin-left:4px;
+#rain{
+position:fixed;
+inset:0;
+z-index:-3;
 }
 
-/* ⌨️ INPUT BAR */
-.bottom{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    display:flex;
-    gap:8px;
-    padding:10px;
-    background:rgba(0,20,30,0.75);
-    z-index:3;
-    backdrop-filter: blur(8px);
+.drop{
+position:absolute;
+width:2px;
+height:60px;
+background:linear-gradient(to bottom,#00f0ff,transparent);
+animation:fall linear infinite;
+opacity:.7;
 }
 
-/* 🧾 INPUTS */
-.bottom input{
-    border:none;
-    padding:12px;
-    border-radius:10px;
-    outline:none;
-    background:#001a2a;
-    color:white;
+@keyframes fall{
+0%{transform:translateY(-100vh);opacity:0}
+10%{opacity:1}
+100%{transform:translateY(100vh);opacity:0}
 }
 
-/* 👤 NAME */
-#name{ width:90px; }
-
-/* ✉️ MESSAGE */
-#message{ flex:1; }
-
-/* 🚀 BUTTON */
-button{
-    padding:12px 14px;
-    border:none;
-    border-radius:10px;
-    background:linear-gradient(90deg,#00aaff,#00ffaa);
-    font-weight:bold;
+#flames{
+position:fixed;
+inset:0;
+z-index:-4;
 }
-
-/* 💥 EMOJI BURST ANIMATION */
-@keyframes emojiPop {
-    0% { transform: translateY(0) scale(0.6); opacity: 1; }
-    100% { transform: translateY(-40px) scale(1.4); opacity: 0; }
-}
-
-.emoji-float {
-    position: absolute;
-    font-size: 22px;
-    animation: emojiPop 800ms ease-out forwards;
-    pointer-events: none;
-    z-index: 99999;
-}
-
-
-#emojiPicker{position:fixed;bottom:70px;left:10px;right:10px;display:none;flex-wrap:wrap;gap:6px;padding:10px;background:rgba(0,20,35,.95);border:1px solid rgba(0,170,255,.35);border-radius:12px;max-height:180px;overflow-y:auto;z-index:9999}
-#emojiPicker span{font-size:28px;cursor:pointer}
-#emojiBtn{width:52px;font-size:22px}
 
 </style>
-
 </head>
 
 <body>
 
-<canvas id="rainCanvas"></canvas>
-<div id="flameLayer"></div>
+<h1>WELCOME IN LEGENDS</h1>
 
-<div id="roomScreen">
-    <h2>💀 Enter Room Code</h2>
-    <input id="roomInput" placeholder="ROOM123">
-    <input id="nameInput" placeholder="Your Name">
-    <button onclick="joinRoom()">Join Room</button>
-    <button onclick="joinLobby()">Enter Lobby</button>
+<div id="core"></div>
+
+<div class="orbitWrap">
+
+  <div class="node" id="aboutNode">
+    <a href="about.html" class="portal">ABOUT</a>
+  </div>
+
+  <div class="node" id="galleryNode">
+    <a href="gallery.html" class="portal">GALLERY</a>
+  </div>
+
+  <div class="node" id="musicNode">
+    <a href="music.html" class="portal">MUSIC</a>
+  </div>
+
+  <div class="node" id="chatNode">
+    <a href="chat room.html" class="portal">CHAT</a>
+  </div>
+
 </div>
 
-<header id="roomTitle">💀 Legend Chat Pro 💀 | 👥 Online: 0</header>
-
-<div id="chat"></div>
-
-<div class="bottom">
-    <input id="name" placeholder="Name">
-    <input id="message" placeholder="Message">
-    <button id="emojiBtn" type="button">😊</button>
-    <button onclick="sendMessage()">Send</button>
-</div>
-
-<div id="emojiPicker"></div>
+<div id="rain"></div>
+<div id="flames"></div>
+<div id="cursor"></div>
 
 <script>
 
-/* 🌧 RAIN SYSTEM */
-const canvas = document.getElementById("rainCanvas");
-const ctx = canvas.getContext("2d");
+/* CURSOR */
+const cursor=document.getElementById("cursor");
+document.addEventListener("mousemove",e=>{
+cursor.style.left=e.clientX+"px";
+cursor.style.top=e.clientY+"px";
+});
+
+/* RAIN */
+const rain=document.getElementById("rain");
+for(let i=0;i<100;i++){
+let d=document.createElement("div");
+d.className="drop";
+d.style.left=Math.random()*100+"vw";
+d.style.animationDuration=(Math.random()*1.2+0.4)+"s";
+rain.appendChild(d);
+}
+
+/* FLAMES */
+const canvas=document.createElement("canvas");
+document.getElementById("flames").appendChild(canvas);
+const ctx=canvas.getContext("2d");
 
 function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+canvas.width=innerWidth;
+canvas.height=innerHeight;
 }
 resize();
-window.addEventListener("resize", resize);
+window.onresize=resize;
 
-const drops = Array.from({length: 120}, () => ({
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    len: Math.random() * 20 + 10,
-    speed: Math.random() * 6 + 4
-}));
-
-function drawRain(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.strokeStyle = "rgba(0,170,255,0.6)";
-    ctx.lineWidth = 1;
-
-    for (let d of drops){
-        ctx.beginPath();
-        ctx.moveTo(d.x, d.y);
-        ctx.lineTo(d.x, d.y + d.len);
-        ctx.stroke();
-
-        d.y += d.speed;
-
-        if (d.y > canvas.height){
-            d.y = -20;
-            d.x = Math.random() * canvas.width;
-        }
-    }
-
-    requestAnimationFrame(drawRain);
+class Flame{
+constructor(){this.reset();}
+reset(){
+this.x=Math.random()*canvas.width;
+this.y=canvas.height+50;
+this.s=Math.random()*6+2;
+this.vy=Math.random()*2.5+1;
+this.vx=(Math.random()-0.5)*1.5;
 }
-drawRain();
-
-/* 💥 EMOJI SYSTEM */
-function spawnEmoji(x, y, emoji){
-    const el = document.createElement("div");
-    el.className = "emoji-float";
-    el.textContent = emoji;
-
-    el.style.left = x + "px";
-    el.style.top = y + "px";
-
-    document.body.appendChild(el);
-
-    setTimeout(() => el.remove(), 800);
+update(){
+this.x+=this.vx;
+this.y-=this.vy;
+if(this.y<-50)this.reset();
+}
+draw(){
+ctx.fillStyle="rgba(0,255,255,.35)";
+ctx.beginPath();
+ctx.arc(this.x,this.y,this.s,0,Math.PI*2);
+ctx.fill();
+}
 }
 
+let flames=[];
+for(let i=0;i<140;i++)flames.push(new Flame());
 
-const picker=document.getElementById("emojiPicker");
-const emojiBtn=document.getElementById("emojiBtn");
-const messageBox=document.getElementById("message");
-if(picker&&emojiBtn&&messageBox){
-const emojis=["😀","😁","😂","🤣","😊","😍","😘","🥰","😎","🤩","🥳","😭","😡","🤯","😱","👍","👏","🙌","🙏","❤️","🔥","💀","⚡","✨","🎉","🎵","🚀","🐺"];
-emojis.forEach(e=>{let s=document.createElement("span");s.textContent=e;s.onclick=()=>{messageBox.value+=e;messageBox.focus();};picker.appendChild(s);});
-emojiBtn.onclick=(ev)=>{ev.stopPropagation();picker.style.display=picker.style.display==="flex"?"none":"flex";};
-document.addEventListener("click",e=>{if(!picker.contains(e.target)&&e.target!==emojiBtn)picker.style.display="none";});
+function animate(){
+ctx.fillStyle="rgba(0,0,0,.25)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+flames.forEach(f=>{f.update();f.draw();});
+requestAnimationFrame(animate);
 }
+animate();
+
+/* =========================
+   MOBILE APP AUTO FIT (ADDED)
+   ========================= */
+function autoFit() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    let scale = Math.min(w / 420, h / 800);
+    scale = Math.max(0.6, Math.min(scale, 1));
+
+    document.body.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", autoFit);
+window.addEventListener("load", autoFit);
 
 </script>
-
-<script type="module">
-
-/* ⚡ FIREBASE */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import {
-  getDatabase, ref, push, onChildAdded,
-  remove, set, onDisconnect, onValue,
-  off
-} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAOnAtWJ...",
-  authDomain: "legend-chat-246fd.firebaseapp.com",
-  databaseURL: "https://legend-chat-246fd-default-rtdb.firebaseio.com",
-  projectId: "legend-chat-246fd",
-  storageBucket: "legend-chat-246fd.firebasestorage.app",
-  messagingSenderId: "365662264136",
-  appId: "1:365662264136:web:1c7cfb6db3f09a6fa1f17d"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-let chatRef = null;
-let presenceRef = null;
-let presenceListenerRef = null;
-let currentRoom = null;
-
-let userId = crypto.randomUUID();
-
-/* 🚪 JOIN */
-window.joinRoom = function(){
-    const room = document.getElementById("roomInput").value.trim().toUpperCase();
-    const name = document.getElementById("nameInput").value.trim() || "Ghost";
-    if(!room) return;
-    enterRoom(room, name);
-};
-
-window.joinLobby = function(){
-    const name = document.getElementById("nameInput").value.trim() || "Ghost";
-    enterRoom("LOBBY", name);
-};
-
-function enterRoom(room, name){
-
-    if(chatRef) off(chatRef);
-    if(presenceListenerRef) off(presenceListenerRef);
-
-    currentRoom = room;
-
-    document.getElementById("roomScreen").style.display = "none";
-    document.getElementById("chat").innerHTML = "";
-
-    document.getElementById("name").value = name;
-
-    document.getElementById("roomTitle").innerText =
-        `💀 Room: ${room} | 👥 Online: 0`;
-
-    chatRef = ref(db, "rooms/" + room + "/messages");
-
-    setupPresence(room, name);
-    listenMessages();
-}
-
-/* 👥 PRESENCE */
-function setupPresence(room, name){
-    presenceRef = ref(db, `rooms/${room}/presence/${userId}`);
-
-    set(presenceRef, { name, online: true });
-    onDisconnect(presenceRef).remove();
-
-    presenceListenerRef = ref(db, `rooms/${room}/presence`);
-
-    onValue(presenceListenerRef, (snap)=>{
-        const data = snap.val() || {};
-        const count = Object.keys(data).length;
-
-        document.getElementById("roomTitle").innerText =
-        `💀 Room: ${room} | 👥 Online: ${count}`;
-    });
-}
-
-/* 💬 MESSAGES */
-function listenMessages(){
-
-    onChildAdded(chatRef, (snap)=>{
-
-        const d = snap.val();
-        const msgId = snap.key;
-
-        const div = document.createElement("div");
-        div.className = "msg";
-        div.innerHTML = `<b>${escapeHtml(d.name)}</b><br>${escapeHtml(d.message)}`;
-
-        const box = document.createElement("div");
-        box.className = "reactions";
-
-        ["😄","🔥","💀","❤️","⚡"].forEach(emo=>{
-
-            const btn = document.createElement("button");
-            const count = document.createElement("span");
-            count.className = "reaction-count";
-            count.textContent = "0";
-
-            btn.textContent = emo + " ";
-
-            btn.onclick = (e) => {
-
-                const userReactRef = ref(
-                    db,
-                    `rooms/${currentRoom}/messages/${msgId}/reactions/${emo}/${userId}`
-                );
-                set(userReactRef, true);
-
-                /* 💥 EMOJI BURST */
-                const rect = e.target.getBoundingClientRect();
-                spawnEmoji(rect.left + rect.width/2, rect.top, emo);
-            };
-
-            const liveRef = ref(
-                db,
-                `rooms/${currentRoom}/messages/${msgId}/reactions/${emo}`
-            );
-
-            onValue(liveRef, (s)=>{
-                const data = s.val() || {};
-                count.textContent = Object.keys(data).length;
-            });
-
-            btn.appendChild(count);
-            box.appendChild(btn);
-        });
-
-        div.appendChild(box);
-        document.getElementById("chat").appendChild(div);
-
-        const deleteTime = d.expiresAt || (d.time + 10 * 60 * 1000);
-        const timeLeft = deleteTime - Date.now();
-
-        setTimeout(() => {
-            const msgRef = ref(db, `rooms/${currentRoom}/messages/${msgId}`);
-            remove(msgRef);
-        }, Math.max(timeLeft, 0));
-
-        document.getElementById("chat").scrollTop =
-            document.getElementById("chat").scrollHeight;
-    });
-}
-
-/* 🧼 ESCAPE */
-function escapeHtml(text){
-    return (text || "").replace(/[&<>"']/g, m => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#039;"
-    }[m]));
-}
-
-/* 🚀 SEND */
-window.sendMessage = function(){
-    if(!chatRef) return;
-
-    const name = document.getElementById("name").value || "Ghost";
-    const message = document.getElementById("message").value;
-
-    if(!message.trim()) return;
-
-    push(chatRef,{
-        name,
-        message,
-        time: Date.now(),
-        expiresAt: Date.now() + 10 * 60 * 1000
-    });
-
-    document.getElementById("message").value = "";
-};
-
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a3d7e9f94471a1d4dea3800/1js03d87e';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
 </script>
-
+<!--End of Tawk.to Script-->
 </body>
-</html>
+</html
