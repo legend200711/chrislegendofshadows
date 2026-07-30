@@ -5,251 +5,255 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Legend Chat Pro - Storm Mode</title>
-
 <meta name="theme-color" content="#001a2a">
 
+<!-- Web App Manifest -->
+<link rel="manifest" href="manifest.json">
+<!-- Preconnect to Firebase -->
+<link rel="preconnect" href="https://www.gstatic.com">
+
 <style>
-html, body{
-    margin:0;
-    padding:0;
-    height:100%;
-    overflow:hidden;
-    font-family:Arial;
-    background:#000a14;
-    color:white;
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: #000a14;
+  color: white;
 }
 
 /* NAV */
-nav{
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    padding:10px;
-    background:rgba(0,20,35,0.75);
-    border-bottom:1px solid rgba(0,170,255,0.25);
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 10px;
+  background: rgba(0,20,35,0.75);
+  border-bottom: 1px solid rgba(0,170,255,0.25);
+  flex-wrap: wrap;
 }
 
-nav a{
-    color:#00d9ff;
-    text-decoration:none;
-    font-weight:bold;
-    padding:8px 12px;
-    border-radius:10px;
+nav a {
+  color: #00d9ff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 8px 12px;
+  border-radius: 10px;
 }
 
 /* HEADER */
-header{
-    text-align:center;
-    padding:12px;
-    background:rgba(0,30,40,0.7);
+header {
+  text-align: center;
+  padding: 10px;
+  background: rgba(0,30,40,0.7);
+  font-size: 15px;
 }
 
 /* ROOM SCREEN */
-#roomScreen{
-    position:fixed;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    background:rgba(0,0,0,0.9);
-    z-index:999;
+#roomScreen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.92);
+  z-index: 999;
 }
 
-#roomScreen input{
-    padding:12px;
-    margin-top:10px;
-    border:none;
-    border-radius:10px;
-    background:#001a2a;
-    color:white;
-    text-align:center;
+#roomScreen input {
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #001a2a;
+  color: white;
+  text-align: center;
+  font-size: 16px;
+  width: 220px;
 }
 
-#roomScreen button{
-    margin-top:10px;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:linear-gradient(90deg,#00aaff,#00ffaa);
+#roomScreen button {
+  margin-top: 12px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #00aaff, #00ffaa);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
 }
 
 /* CHAT */
-#chat{
-    height:calc(100vh - 140px);
-    overflow-y:auto;
-    padding:12px;
+#chat {
+  height: calc(100vh - 170px);
+  margin-top: 110px;
+  overflow-y: auto;
+  padding: 12px;
+  padding-bottom: 70px;
+  -webkit-overflow-scrolling: touch;
+  /* smooth momentum scrolling on iOS */
 }
 
 /* MESSAGE */
-.msg{
-    background:linear-gradient(145deg,#001a2a,#002b3a,#001018);
-    padding:12px;
-    margin-bottom:10px;
-    border-radius:14px;
-    border:1px solid rgba(0,170,255,0.25);
-    position:relative;
+.msg {
+  background: linear-gradient(145deg, #001a2a, #002b3a, #001018);
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,170,255,0.25);
+  position: relative;
 }
 
 /* DELETE */
-.delBtn{
-    position:absolute;
-    right:10px;
-    top:10px;
-    padding:6px 10px;
-    border:none;
-    border-radius:8px;
-    background:#ff0033;
-    color:white;
-    cursor:pointer;
-    font-size:12px;
-    opacity:0;
-    transition:0.2s;
+.delBtn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  padding: 5px 9px;
+  border: none;
+  border-radius: 8px;
+  background: #ff0033;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0;
+  transition: 0.2s;
 }
 
-.msg:hover .delBtn{
-    opacity:1;
+.msg:hover .delBtn { opacity: 1; }
+
+/* Touch devices: always show delete button */
+@media (pointer: coarse) {
+  .delBtn { opacity: 0.7; }
 }
 
 /* INPUT BAR */
-.bottom{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    display:flex;
-    gap:6px;
-    padding:10px;
-    background:rgba(0,20,30,0.75);
+.bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: none;
+  gap: 6px;
+  padding: 10px;
+  background: rgba(0,20,30,0.85);
 }
 
-input{
-    padding:12px;
-    border-radius:10px;
-    border:none;
-    background:#001a2a;
-    color:white;
+input {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #001a2a;
+  color: white;
+  font-size: 15px;
 }
 
-#name{ width:90px; }
-#message{ flex:1; }
+#name    { width: 85px; }
+#message { flex: 1; min-width: 0; }
 
-button{
-    padding:12px 14px;
-    border:none;
-    border-radius:10px;
-    background:linear-gradient(90deg,#00aaff,#00ffaa);
-    cursor:pointer;
+button {
+  padding: 12px 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #00aaff, #00ffaa);
+  cursor: pointer;
+  font-weight: bold;
+  white-space: nowrap;
 }
 
 /* EMOTES */
-#emotePanel{
-    position:fixed;
-    bottom:70px;
-    right:10px;
-    background:rgba(0,20,35,0.95);
-    border:1px solid rgba(0,170,255,0.3);
-    border-radius:12px;
-    padding:10px;
-    display:none;
-    flex-wrap:wrap;
-    gap:6px;
-    width:160px;
-    z-index:9999;
+#emotePanel {
+  position: fixed;
+  bottom: 70px;
+  right: 10px;
+  background: rgba(0,20,35,0.97);
+  border: 1px solid rgba(0,170,255,0.3);
+  border-radius: 12px;
+  padding: 10px;
+  display: none;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 160px;
+  z-index: 9999;
 }
 
-.emote{
-    font-size:20px;
-    cursor:pointer;
+.emote {
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
 }
-.emote:hover{ transform:scale(1.2); }
+
+.emote:hover { background: rgba(0,170,255,0.2); }
 
 /* REACTIONS */
-.reactions{
-    margin-top:8px;
-    display:flex;
-    gap:6px;
-    flex-wrap:wrap;
+.reactions {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.reactBtn{
-    padding:4px 8px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
-    background:#001a2a;
-    color:white;
-    font-size:14px;
+.reactBtn {
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #001a2a;
+  color: white;
+  font-size: 14px;
 }
 
-.reactCount{
-    margin-top:6px;
-    font-size:12px;
-    opacity:0.8;
+.reactCount {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.75;
 }
-</style>
-<style>
-/* FULL PAGE BACKGROUND IMAGE */
+
+/* BACKGROUND IMAGE */
 body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-
-    background-image: url("wolf.png"); /* <-- your image file */
-    background-size: cover;            /* makes it fill screen */
-    background-position: center;       /* centers image */
-    background-repeat: no-repeat;      /* stops tiling */
-    background-attachment: fixed;      /* keeps it still when scrolling */
-
-    font-family: Arial, sans-serif;
-    color: white;
-}
-
-/* optional overlay so text is readable */
-.overlay {
-    background: rgba(0, 0, 0, 0.6);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+  background-image: url("wolf.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 </style>
-
 
 </head>
 
 <body>
 
 <nav>
-<a href="music.html">Music</a>
-<a href="gallery.html">Gallery</a>
-<a href="about.html">About</a>
+  <a href="index.html">Home</a>
+  <a href="music.html">Music</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="about.html">About</a>
 </nav>
 
 <header id="roomTitle">💀 Legend Chat Pro 💀 | 👥 Online: 0</header>
 
 <div id="roomScreen">
-    <h2>💀 Enter The Legend Room</h2>
-    <input id="nameInput" placeholder="Your Name">
-    <button onclick="joinLobby()">Enter Lobby</button>
+  <h2>💀 Enter The Legend Room</h2>
+  <input id="nameInput" placeholder="Your Name" maxlength="30" autocomplete="off">
+  <button onclick="joinLobby()">Enter Lobby</button>
 </div>
 
 <div id="chat"></div>
 
-<!-- EMOTES -->
 <div id="emotePanel"></div>
 
 <div class="bottom">
-    <input id="name" placeholder="Name">
-    <input id="message" placeholder="Message">
-
-    <button onclick="toggleEmotes()">😄</button>
-    <button onclick="sendMessage()">Send</button>
+  <input id="name" placeholder="Name" maxlength="30" autocomplete="off">
+  <input id="message" placeholder="Message" maxlength="300" autocomplete="off">
+  <button onclick="toggleEmotes()">😄</button>
+  <button onclick="sendMessage()">Send</button>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getDatabase,
   ref,
@@ -259,10 +263,11 @@ import {
   set,
   onDisconnect,
   onValue,
-  remove
-} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+  remove,
+  off
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* FIREBASE */
+/* ── FIREBASE CONFIG ── */
 const firebaseConfig = {
   apiKey: "AIzaSyByZRmp6R9HY17T2_WdJUFWeeaLNOP6y2Y",
   authDomain: "horr-a08f4.firebaseapp.com",
@@ -274,195 +279,210 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const db  = getDatabase(app);
 
-let chatRef = null;
+let chatRef    = null;
 let currentRoom = "LOBBY";
-let userId = Math.random().toString(36).substring(2, 10);
+const userId   = Math.random().toString(36).substring(2, 10);
 
-/* EMOTES */
+/* Track per-message onValue listeners so we can detach them on delete */
+const msgListeners = {};
+
+/* ── EMOTES ── */
 const emotes = ["💀","🔥","😂","😈","👻","💯","❤️","⚡","🥶","👑"];
-const panel = document.getElementById("emotePanel");
+const panel  = document.getElementById("emotePanel");
 
-emotes.forEach(e=>{
-    const span = document.createElement("span");
-    span.className = "emote";
-    span.innerText = e;
-    span.onclick = () => {
-        document.getElementById("message").value += e;
-    };
-    panel.appendChild(span);
+emotes.forEach(e => {
+  const span = document.createElement("span");
+  span.className = "emote";
+  span.textContent = e;
+  span.onclick = () => {
+    document.getElementById("message").value += e;
+    panel.style.display = "none";
+  };
+  panel.appendChild(span);
 });
 
 window.toggleEmotes = function(){
-    panel.style.display = panel.style.display === "flex" ? "none" : "flex";
+  panel.style.display = panel.style.display === "flex" ? "none" : "flex";
 };
 
-/* JOIN */
+/* ── JOIN ── */
 window.joinLobby = function(){
-    const name = document.getElementById("nameInput").value || "Ghost";
-    enterRoom("LOBBY", name);
+  const name = document.getElementById("nameInput").value.trim() || "Ghost";
+  enterRoom("LOBBY", name);
 };
 
 function enterRoom(room, name){
-    currentRoom = room;
+  currentRoom = room;
+  document.getElementById("roomScreen").style.display = "none";
+  document.getElementById("name").value = name;
+  document.querySelector(".bottom").style.display = "flex";
+  document.getElementById("chat").innerHTML = "";
 
-    document.getElementById("roomScreen").style.display = "none";
-    document.getElementById("name").value = name;
+  chatRef = ref(db, "rooms/" + room + "/messages");
 
-    document.getElementById("chat").innerHTML = "Loading...";
-
-    chatRef = ref(db, "rooms/" + room + "/messages");
-
-    setupPresence(room, name);
-    listenMessages();
-    autoDeleteOldMessages();
+  setupPresence(room, name);
+  listenMessages();
+  autoDeleteOldMessages();
 }
 
-/* PRESENCE */
+/* ── PRESENCE ── */
 function setupPresence(room, name){
-    const presenceRef = ref(db, "rooms/" + room + "/presence/" + userId);
+  const presenceRef  = ref(db, "rooms/" + room + "/presence/" + userId);
+  const allPresence  = ref(db, "rooms/" + room + "/presence");
 
-    set(presenceRef, { name, online: true });
-    onDisconnect(presenceRef).remove();
+  set(presenceRef, { name, online: true });
+  onDisconnect(presenceRef).remove();
 
-    const allPresence = ref(db, "rooms/" + room + "/presence");
-
-    onValue(allPresence, (snap)=>{
-        const data = snap.val() || {};
-        document.getElementById("roomTitle").innerText =
-            "💀 Room: " + room + " | 👥 Online: " + Object.keys(data).length;
-    });
+  onValue(allPresence, snap => {
+    const data = snap.val() || {};
+    document.getElementById("roomTitle").textContent =
+      "💀 Room: " + room + " | 👥 Online: " + Object.keys(data).length;
+  });
 }
 
-/* REACTION TOGGLE */
+/* ── REACTION TOGGLE ── */
 function toggleReaction(messageId, emoji){
-    const reactionRef = ref(db,
-        `rooms/${currentRoom}/messages/${messageId}/reactions/${emoji}/${userId}`
-    );
-
-    onValue(reactionRef, (snap)=>{
-        if(snap.exists()){
-            remove(reactionRef);
-        } else {
-            set(reactionRef, true);
-        }
-    }, { onlyOnce: true });
+  const reactionRef = ref(db,
+    `rooms/${currentRoom}/messages/${messageId}/reactions/${emoji}/${userId}`
+  );
+  onValue(reactionRef, snap => {
+    snap.exists() ? remove(reactionRef) : set(reactionRef, true);
+  }, { onlyOnce: true });
 }
 
-/* MESSAGES */
+/* ── MESSAGES ── */
 function listenMessages(){
-    const chatBox = document.getElementById("chat");
-    chatBox.innerHTML = "";
+  const chatBox = document.getElementById("chat");
+  const messagesRef = ref(db, "rooms/" + currentRoom + "/messages");
+  const messageMap  = {};
 
-    const messagesRef = ref(db, "rooms/" + currentRoom + "/messages");
+  onChildAdded(messagesRef, snap => {
+    const d   = snap.val();
+    const key = snap.key;
 
-    const messageMap = {};
+    /* Build message DOM safely */
+    const div = document.createElement("div");
+    div.className = "msg";
 
-    onChildAdded(messagesRef, (snap)=>{
-        const d = snap.val();
-        const key = snap.key;
+    const text = document.createElement("div");
+    const bold = document.createElement("b");
+    bold.textContent = d.name || "Ghost";
+    text.appendChild(bold);
+    text.appendChild(document.createElement("br"));
+    text.appendChild(document.createTextNode(d.message || ""));
 
-        const div = document.createElement("div");
-        div.className = "msg";
+    const reactions = document.createElement("div");
+    reactions.className = "reactions";
 
-        const text = document.createElement("div");
-        text.innerHTML = `<b>${d.name || "Ghost"}</b><br>${d.message || ""}`;
+    const countBox = document.createElement("div");
+    countBox.className = "reactCount";
 
-        /* REACTIONS */
-        const reactions = document.createElement("div");
-        reactions.className = "reactions";
-
-        const countBox = document.createElement("div");
-        countBox.className = "reactCount";
-
-        ["🔥","😂","💀"].forEach(e=>{
-            const btn = document.createElement("button");
-            btn.className = "reactBtn";
-            btn.innerText = e;
-            btn.onclick = ()=> toggleReaction(key, e);
-            reactions.appendChild(btn);
-        });
-
-        function updateCounts(data){
-            let out = "";
-            ["🔥","😂","💀"].forEach(e=>{
-                const c = data?.[e] ? Object.keys(data[e]).length : 0;
-                if(c > 0) out += `${e} ${c} `;
-            });
-            countBox.innerText = out;
-        }
-
-        /* DELETE */
-        const del = document.createElement("button");
-        del.className = "delBtn";
-        del.innerText = "Delete";
-        del.onclick = async (e)=>{
-            e.stopPropagation();
-            await remove(ref(db, `rooms/${currentRoom}/messages/${key}`));
-        };
-
-        div.appendChild(text);
-        div.appendChild(reactions);
-        div.appendChild(countBox);
-        div.appendChild(del);
-
-        chatBox.appendChild(div);
-
-        messageMap[key] = { div, updateCounts };
-
-        /* LIVE REACTIONS */
-        const msgRef = ref(db, `rooms/${currentRoom}/messages/${key}`);
-        onValue(msgRef, (snap2)=>{
-            const data = snap2.val();
-            if(data) updateCounts(data.reactions || {});
-        });
-
-        chatBox.scrollTop = chatBox.scrollHeight;
+    ["🔥","😂","💀"].forEach(e => {
+      const btn = document.createElement("button");
+      btn.className = "reactBtn";
+      btn.textContent = e;
+      btn.onclick = () => toggleReaction(key, e);
+      reactions.appendChild(btn);
     });
 
-    onChildRemoved(messagesRef, (snap)=>{
-        const key = snap.key;
-        if(messageMap[key]){
-            messageMap[key].div.remove();
-            delete messageMap[key];
-        }
-    });
+    function updateCounts(data){
+      let out = "";
+      ["🔥","😂","💀"].forEach(e => {
+        const c = data?.[e] ? Object.keys(data[e]).length : 0;
+        if(c > 0) out += `${e} ${c}  `;
+      });
+      countBox.textContent = out;
+    }
+
+    const del = document.createElement("button");
+    del.className = "delBtn";
+    del.textContent = "Delete";
+    del.onclick = async ev => {
+      ev.stopPropagation();
+      await remove(ref(db, `rooms/${currentRoom}/messages/${key}`));
+    };
+
+    div.appendChild(text);
+    div.appendChild(reactions);
+    div.appendChild(countBox);
+    div.appendChild(del);
+    chatBox.appendChild(div);
+
+    /* Live reaction updates — store ref so we can detach on remove */
+    const msgRef = ref(db, `rooms/${currentRoom}/messages/${key}`);
+    const handler = snap2 => {
+      const data = snap2.val();
+      if(data) updateCounts(data.reactions || {});
+    };
+    onValue(msgRef, handler);
+    msgListeners[key] = { ref: msgRef, handler };
+
+    messageMap[key] = div;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+
+  onChildRemoved(messagesRef, snap => {
+    const key = snap.key;
+    if(messageMap[key]){
+      messageMap[key].remove();
+      delete messageMap[key];
+    }
+    /* Detach orphaned listener to prevent memory leak */
+    if(msgListeners[key]){
+      off(msgListeners[key].ref, "value", msgListeners[key].handler);
+      delete msgListeners[key];
+    }
+  });
 }
 
-/* SEND */
+/* ── SEND ── */
 window.sendMessage = function(){
-    const name = document.getElementById("name").value || "Ghost";
-    const message = document.getElementById("message").value;
+  const name    = document.getElementById("name").value.trim() || "Ghost";
+  const message = document.getElementById("message").value.trim();
+  if(!chatRef || !message) return;
 
-    if(!chatRef || !message.trim()) return;
-
-    push(chatRef, {
-        name,
-        message,
-        time: Date.now()
-    });
-
-    document.getElementById("message").value = "";
+  push(chatRef, { name, message, time: Date.now() });
+  document.getElementById("message").value = "";
 };
 
-/* AUTO DELETE */
+/* Enter key to send */
+document.getElementById("message").addEventListener("keydown", e => {
+  if(e.key === "Enter") window.sendMessage();
+});
+
+/* Close emote panel on outside click */
+document.addEventListener("click", e => {
+  if(!panel.contains(e.target) && e.target.textContent !== "😄"){
+    panel.style.display = "none";
+  }
+}, { passive: true });
+
+/* ── AUTO DELETE OLD MESSAGES (20 min) ── */
 function autoDeleteOldMessages(){
-    const messagesRef = ref(db, "rooms/" + currentRoom + "/messages");
+  const messagesRef = ref(db, "rooms/" + currentRoom + "/messages");
 
-    setInterval(async ()=>{
-        const snap = await new Promise(res =>
-            onValue(messagesRef, res, { onlyOnce: true })
-        );
-
-        const data = snap.val() || {};
-
-        for(const [key, msg] of Object.entries(data)){
-            if(msg.time && Date.now() - msg.time > 20*60*1000){
-                await remove(ref(db, `rooms/${currentRoom}/messages/${key}`));
-            }
+  /* Run once after 30s, then every 2 minutes (was every 30s) */
+  setTimeout(function tick(){
+    onValue(messagesRef, snap => {
+      const data = snap.val() || {};
+      for(const [key, msg] of Object.entries(data)){
+        if(msg.time && Date.now() - msg.time > 20 * 60 * 1000){
+          remove(ref(db, `rooms/${currentRoom}/messages/${key}`));
         }
-    }, 30000);
+      }
+    }, { onlyOnce: true });
+    setTimeout(tick, 2 * 60 * 1000);
+  }, 30000);
+}
+</script>
+
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () =>
+    navigator.serviceWorker.register("/sw.js").catch(() => {})
+  );
 }
 </script>
 

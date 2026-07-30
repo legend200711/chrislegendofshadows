@@ -1,0 +1,17 @@
+{
+  "name": "Chris Legend of Shadows",
+  "short_name": "Legends",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000a14",
+  "theme_color": "#001a2a",
+  "description": "Chris Legend of Shadows — Music, Gallery, and Chat",
+  "icons": [
+    {
+      "src": "wolf.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

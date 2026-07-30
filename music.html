@@ -2,132 +2,127 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Legend Music Hub</title>
 
+<!-- Web App Manifest -->
+<link rel="manifest" href="manifest.json">
+<!-- Preconnect to embed providers so iframes load faster -->
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://open.spotify.com">
+<link rel="preconnect" href="https://elfsightcdn.com">
+<link rel="dns-prefetch" href="https://elfsightcdn.com">
+
 <style>
-html,body{
-margin:0;
-padding:0;
-background:#000;
-color:#cfefff;
-font-family:Arial,sans-serif;
-overflow-x:hidden;
-perspective:1000px; /* 👈 adds 3D depth */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #cfefff;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
 }
 
-/* CINEMATIC BACKGROUND */
-body::before{
-content:"";
-position:fixed;
-inset:0;
-background:
-radial-gradient(circle at 20% 20%,rgba(0,200,255,.35),transparent 45%),
-radial-gradient(circle at 80% 70%,rgba(0,120,255,.25),transparent 50%);
-animation:glow 4s infinite alternate;
-z-index:-20;
-transform:scale(1.1);
+/* CINEMATIC BACKGROUND — static gradient, no animation */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(0,200,255,.25), transparent 45%),
+    radial-gradient(circle at 80% 70%, rgba(0,120,255,.18), transparent 50%);
+  z-index: -20;
 }
 
-@keyframes glow{
-0%{filter:brightness(1) blur(0px);}
-100%{filter:brightness(1.8) blur(1px);}
+/* HEADER */
+header {
+  text-align: center;
+  padding: 60px 20px 10px;
 }
 
-/* HEADER POP */
-header{
-text-align:center;
-padding:60px 20px 10px;
-transform:translateZ(60px);
+h1 {
+  font-size: 46px;
+  text-shadow:
+    0 0 20px #00c8ff,
+    0 0 50px #0099ff;
+  animation: floatTitle 4s ease-in-out infinite;
+  /* Slowed: was 3s */
 }
 
-h1{
-font-size:58px;
-text-shadow:
-0 0 25px #00c8ff,
-0 0 60px #0099ff,
-0 0 120px #0066ff;
-animation:floatTitle 3s ease-in-out infinite;
+@media (max-width: 600px) {
+  h1 { font-size: 28px; }
+  .box { margin: 15px; padding: 14px; }
 }
 
-@keyframes floatTitle{
-0%,100%{transform:translateY(0px);}
-50%{transform:translateY(-8px);}
+@keyframes floatTitle {
+  0%,100% { transform: translateY(0px); }
+  50%      { transform: translateY(-7px); }
 }
 
-/* BOXES POP OUT HARD */
-.box{
-max-width:900px;
-margin:25px auto;
-padding:20px;
-background:rgba(0,0,0,.75);
-border:1px solid #00c8ff;
-border-radius:16px;
-box-shadow:
-0 0 25px rgba(0,200,255,.25),
-0 20px 60px rgba(0,0,0,.8);
-backdrop-filter:blur(12px);
-transition:0.35s ease;
-transform:translateZ(0px);
+/* BOXES */
+.box {
+  max-width: 900px;
+  margin: 25px auto;
+  padding: 20px;
+  background: rgba(0,0,0,.75);
+  border: 1px solid #00c8ff;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0,200,255,.2);
+  backdrop-filter: blur(10px);
+  transition: 0.3s ease;
+  will-change: transform;
 }
 
-.box:hover{
-transform:translateY(-15px) scale(1.04) rotateX(2deg) rotateY(-2deg);
-box-shadow:
-0 0 35px #00c8ff,
-0 30px 90px rgba(0,0,0,.9);
+.box:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 0 30px #00c8ff;
 }
 
-/* NAV MORE NEON POP */
-nav{
-display:flex;
-justify-content:center;
-gap:20px;
-margin-top:15px;
+/* iframe lazy container */
+.box iframe {
+  display: block;
+  border: 0;
+  border-radius: 10px;
 }
 
-nav a{
-color:#00c8ff;
-text-decoration:none;
-padding:12px 18px;
-border-radius:12px;
-border:1px solid rgba(0,200,255,.4);
-background:rgba(0,0,0,.6);
-transition:0.3s;
-box-shadow:0 0 10px rgba(0,200,255,.2);
+/* NAV */
+nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 15px;
 }
 
-nav a:hover{
-transform:translateY(-10px) scale(1.1);
-box-shadow:0 0 30px #00c8ff, 0 0 60px #0099ff;
-background:rgba(0,200,255,.2);
-color:#fff;
+nav a {
+  color: #00c8ff;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,200,255,.35);
+  background: rgba(0,0,0,.6);
+  transition: 0.25s;
+  box-shadow: 0 0 8px rgba(0,200,255,.15);
+}
+
+nav a:hover {
+  transform: translateY(-6px) scale(1.08);
+  box-shadow: 0 0 25px #00c8ff;
+  background: rgba(0,200,255,.15);
+  color: #fff;
 }
 
 /* CANVAS LAYERS */
-#rainCanvas,#fireCanvas,#vortexCanvas,#lightningCanvas{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-pointer-events:none;
+#rainCanvas, #fireCanvas, #vortexCanvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
 }
 
-#rainCanvas{z-index:-10;}
-#fireCanvas{z-index:-9;}
-#vortexCanvas{z-index:-8;}
-#lightningCanvas{z-index:-7;}
-
-/* subtle screen glow pulse */
-body{
-animation:screenPulse 6s infinite ease-in-out;
-}
-
-@keyframes screenPulse{
-0%,100%{filter:brightness(1);}
-50%{filter:brightness(1.08);}
-}
+#rainCanvas  { z-index: -10; }
+#fireCanvas  { z-index: -9; }
+#vortexCanvas{ z-index: -8; }
 </style>
 </head>
 
@@ -136,163 +131,155 @@ animation:screenPulse 6s infinite ease-in-out;
 <canvas id="rainCanvas"></canvas>
 <canvas id="fireCanvas"></canvas>
 <canvas id="vortexCanvas"></canvas>
-<canvas id="lightningCanvas"></canvas>
 
 <header>
-<h1>🎧 LEGEND MUSIC HUB</h1>
-
-<nav>
-<a href="gallery.html">Gallery</a>
-<a href="about.html">About</a>
-<a href="chat room.html">chat room</a>
-</nav>
+  <h1>🎧 LEGEND MUSIC HUB</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="about.html">About</a>
+    <a href="chat room.html">Chat Room</a>
+  </nav>
 </header>
 
 <div class="box">
-<h2>🎬 YouTube Music</h2>
-<iframe width="100%" height="360"
-src="https://www.youtube.com/embed/videoseries?list=UUE_cbs14G_QUfPOvByU1q9w"
-allowfullscreen></iframe>
+  <h2>🎬 YouTube Music</h2>
+  <!-- loading="lazy" defers iframe until in view -->
+  <iframe width="100%" height="315"
+    src="https://www.youtube.com/embed/videoseries?list=UUE_cbs14G_QUfPOvByU1q9w"
+    loading="lazy"
+    allowfullscreen></iframe>
 </div>
 
 <div class="box">
-<h2>🎧 Spotify Artist</h2>
-<iframe width="100%" height="352"
-src="https://open.spotify.com/embed/artist/010qnpDsNjUeyIkyV2Fnlr"
-allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-</iframe>
+  <h2>🎧 Spotify Artist</h2>
+  <iframe width="100%" height="352"
+    src="https://open.spotify.com/embed/artist/010qnpDsNjUeyIkyV2Fnlr"
+    loading="lazy"
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
 </div>
-<!-- Elfsight Audio Player | Untitled Audio Player -->
-<script src="https://elfsightcdn.com/platform.js" async></script>
+
+<!-- Elfsight Audio Player — async so it doesn't block page -->
+<script src="https://elfsightcdn.com/platform.js" async defer></script>
 <div class="elfsight-app-3d43432f-da69-4ed7-9dcb-1a8bcd38b575" data-elfsight-app-lazy></div>
+
 <script>
+const isMobile = window.innerWidth < 600;
 
+/* Shared beat value — throttled to 4fps instead of every 250ms */
 let beat = 0;
-setInterval(()=>{ beat = Math.random(); }, 250);
+setInterval(() => { beat = Math.random(); }, isMobile ? 500 : 250);
 
-/* RAIN */
-const rain = document.getElementById("rainCanvas");
-const rctx = rain.getContext("2d");
-rain.width = innerWidth;
-rain.height = innerHeight;
-
-let drops=[];
-for(let i=0;i<200;i++){
-drops.push({
-x:Math.random()*rain.width,
-y:Math.random()*rain.height,
-len:10+Math.random()*20,
-speed:4+Math.random()*8
-});
+/* Helper: resize canvas to window */
+function fitCanvas(c){
+  c.width  = innerWidth;
+  c.height = innerHeight;
 }
 
-/* FIRE */
-const fire = document.getElementById("fireCanvas");
-const fctx = fire.getContext("2d");
-fire.width = innerWidth;
-fire.height = innerHeight;
+/* ── RAIN ── */
+const rain  = document.getElementById("rainCanvas");
+const rctx  = rain.getContext("2d");
+fitCanvas(rain);
 
-let flames=[];
-for(let i=0;i<100;i++){
-flames.push({
-x:Math.random()*fire.width,
-y:fire.height+Math.random()*200
-});
-}
+const dropCount = isMobile ? 80 : 160; /* was 200 */
+const drops = Array.from({ length: dropCount }, () => ({
+  x: Math.random() * rain.width,
+  y: Math.random() * rain.height,
+  len: 10 + Math.random() * 20,
+  speed: 4 + Math.random() * 8
+}));
 
-/* VORTEX (CENTER ENERGY) */
-const vortex = document.getElementById("vortexCanvas");
-const vctx = vortex.getContext("2d");
-vortex.width = innerWidth;
-vortex.height = innerHeight;
-
-/* RAIN DRAW */
 function drawRain(){
-rctx.clearRect(0,0,rain.width,rain.height);
-
-for(let d of drops){
-rctx.strokeStyle="rgba(0,200,255,0.9)";
-rctx.shadowBlur = 12;
-rctx.shadowColor = "#00c8ff";
-
-rctx.beginPath();
-rctx.moveTo(d.x,d.y);
-rctx.lineTo(d.x, d.y + d.len);
-rctx.stroke();
-
-d.y += d.speed + beat*5;
-d.x += -1 + beat*2;
-
-if(d.y > rain.height){
-d.y = 0;
-d.x = Math.random()*rain.width;
-}
-}
-requestAnimationFrame(drawRain);
+  rctx.clearRect(0, 0, rain.width, rain.height);
+  rctx.strokeStyle = "rgba(0,200,255,0.8)";
+  rctx.shadowBlur  = 8;
+  rctx.shadowColor = "#00c8ff";
+  for(const d of drops){
+    rctx.beginPath();
+    rctx.moveTo(d.x, d.y);
+    rctx.lineTo(d.x, d.y + d.len);
+    rctx.stroke();
+    d.y += d.speed + beat * 4;
+    d.x += -1 + beat * 1.5;
+    if(d.y > rain.height){ d.y = 0; d.x = Math.random() * rain.width; }
+  }
+  requestAnimationFrame(drawRain);
 }
 
-/* FIRE DRAW */
+/* ── FIRE ── */
+const fire  = document.getElementById("fireCanvas");
+const fctx  = fire.getContext("2d");
+fitCanvas(fire);
+
+const flameCount = isMobile ? 50 : 80; /* was 100 */
+const flames = Array.from({ length: flameCount }, () => ({
+  x: Math.random() * fire.width,
+  y: fire.height + Math.random() * 200
+}));
+
 function drawFire(){
-fctx.clearRect(0,0,fire.width,fire.height);
-
-for(let f of flames){
-
-let glow = 0.3 + beat;
-
-let g = fctx.createRadialGradient(f.x,f.y,2,f.x,f.y,50);
-g.addColorStop(0,`rgba(0,200,255,${glow})`);
-g.addColorStop(0.5,"rgba(0,120,255,0.2)");
-g.addColorStop(1,"transparent");
-
-fctx.shadowBlur = 30;
-fctx.shadowColor = "#00c8ff";
-fctx.fillStyle = g;
-
-fctx.beginPath();
-fctx.arc(f.x,f.y,40,0,Math.PI*2);
-fctx.fill();
-
-f.y -= 2 + beat*7;
-
-if(f.y < -60){
-f.y = fire.height + 60;
-f.x = Math.random()*fire.width;
-}
+  fctx.clearRect(0, 0, fire.width, fire.height);
+  for(const f of flames){
+    const glow = 0.25 + beat * 0.6;
+    const g = fctx.createRadialGradient(f.x, f.y, 2, f.x, f.y, 45);
+    g.addColorStop(0, `rgba(0,200,255,${glow})`);
+    g.addColorStop(0.5, "rgba(0,120,255,0.15)");
+    g.addColorStop(1, "transparent");
+    fctx.fillStyle = g;
+    fctx.beginPath();
+    fctx.arc(f.x, f.y, 40, 0, Math.PI * 2);
+    fctx.fill();
+    f.y -= 2 + beat * 6;
+    if(f.y < -60){ f.y = fire.height + 60; f.x = Math.random() * fire.width; }
+  }
+  requestAnimationFrame(drawFire);
 }
 
-requestAnimationFrame(drawFire);
-}
+/* ── VORTEX ── */
+const vortex = document.getElementById("vortexCanvas");
+const vctx   = vortex.getContext("2d");
+fitCanvas(vortex);
 
-/* VORTEX DRAW (SIMPLE SPIN GLOW) */
+/* Only render vortex on desktop — too heavy for mobile */
 function drawVortex(){
-vctx.clearRect(0,0,vortex.width,vortex.height);
-
-let cx = vortex.width/2;
-let cy = vortex.height/2;
-
-for(let i=0;i<40;i++){
-let angle = (i/40)*Math.PI*2 + Date.now()*0.0005;
-let radius = 120 + Math.sin(Date.now()*0.002+i)*40;
-
-let x = cx + Math.cos(angle)*radius;
-let y = cy + Math.sin(angle)*radius;
-
-vctx.fillStyle="rgba(0,200,255,0.08)";
-vctx.shadowBlur = 20;
-vctx.shadowColor="#00c8ff";
-
-vctx.beginPath();
-vctx.arc(x,y,6,0,Math.PI*2);
-vctx.fill();
+  vctx.clearRect(0, 0, vortex.width, vortex.height);
+  const cx = vortex.width / 2;
+  const cy = vortex.height / 2;
+  const count = isMobile ? 20 : 40; /* was 40 always */
+  for(let i = 0; i < count; i++){
+    const angle  = (i / count) * Math.PI * 2 + Date.now() * 0.0004;
+    const radius = 110 + Math.sin(Date.now() * 0.0015 + i) * 35;
+    const x = cx + Math.cos(angle) * radius;
+    const y = cy + Math.sin(angle) * radius;
+    vctx.fillStyle  = "rgba(0,200,255,0.06)";
+    vctx.shadowBlur = 15;
+    vctx.shadowColor = "#00c8ff";
+    vctx.beginPath();
+    vctx.arc(x, y, 5, 0, Math.PI * 2);
+    vctx.fill();
+  }
+  requestAnimationFrame(drawVortex);
 }
 
-requestAnimationFrame(drawVortex);
-}
-
+/* Start all loops */
 drawRain();
 drawFire();
 drawVortex();
 
+/* Resize canvases on window resize */
+window.addEventListener("resize", () => {
+  fitCanvas(rain);
+  fitCanvas(fire);
+  fitCanvas(vortex);
+}, { passive: true });
+</script>
+
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () =>
+    navigator.serviceWorker.register("/sw.js").catch(() => {})
+  );
+}
 </script>
 
 </body>

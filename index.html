@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<!-- FIXED MOBILE APP FIT VIEWPORT -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 <title>Welcome in Legends</title>
 
-<style>
+<!-- Web App Manifest + Service Worker -->
+<link rel="manifest" href="manifest.json">
+<!-- Preconnect for external resources -->
+<link rel="preconnect" href="https://embed.tawk.to">
+<link rel="dns-prefetch" href="https://embed.tawk.to">
 
-/* =========================
-   AUTO FIT SYSTEM (ADDED)
-   ========================= */
+<style>
 html, body {
   width: 100%;
   height: 100%;
@@ -22,241 +21,194 @@ html, body {
 }
 
 body {
-  transform-origin: center center;
-}
-
-/* ORIGINAL CODE STARTS */
-
-#aboutNode{transform:rotate(0deg) translateX(200px);}
-#galleryNode{transform:rotate(90deg) translateX(200px);}
-#musicNode{transform:rotate(180deg) translateX(200px);}
-#chatNode{transform:rotate(270deg) translateX(200px);}
-
-/* Phones */
-@media (max-width:600px){
-
-html,body{
-overflow:hidden;
-height:100%;
-width:100%;
-}
-
-h1{
-font-size:18px;
-letter-spacing:2px;
-margin-top:15px;
-padding:0 10px;
-}
-
-#core{
-width:90px;
-height:90px;
-}
-
-.portal{
-width:70px;
-height:70px;
-font-size:10px;
-letter-spacing:1px;
-}
-
-#aboutNode{transform:rotate(0deg) translateX(100px);}
-#galleryNode{transform:rotate(90deg) translateX(100px);}
-#musicNode{transform:rotate(180deg) translateX(100px);}
-#chatNode{transform:rotate(270deg) translateX(100px);}
-}
-
-/* Tablets */
-@media (max-width:900px){
-
-h1{
-font-size:34px;
-letter-spacing:4px;
-margin-top:40px;
-}
-
-#core{
-width:150px;
-height:150px;
-}
-
-.portal{
-width:120px;
-height:120px;
-font-size:14px;
-}
-
-#aboutNode{transform:rotate(0deg) translateX(200px);}
-#galleryNode{transform:rotate(90deg) translateX(200px);}
-#musicNode{transform:rotate(180deg) translateX(200px);}
-#chatNode{transform:rotate(270deg) translateX(200px);}
-}
-
-body{
-margin:0;
-overflow:hidden;
-background:#000;
-font-family:Arial,sans-serif;
-color:#bff6ff;
+  transform-origin: top left;
+  background: #000;
+  font-family: Arial, sans-serif;
+  color: #bff6ff;
+  overflow: hidden;
+  cursor: none;
 }
 
 /* CORE BACKGROUND */
-body::before{
-content:"";
-position:fixed;
-inset:0;
-background:
-radial-gradient(circle at 50% 50%, rgba(0,255,255,.25), transparent 35%),
-radial-gradient(circle at 20% 80%, rgba(0,80,255,.15), transparent 60%),
-radial-gradient(circle at 80% 20%, rgba(0,200,255,.12), transparent 60%);
-animation:dangerPulse 3s infinite alternate;
-z-index:-10;
-filter:contrast(1.2);
-}
-
-@keyframes dangerPulse{
-0%{filter:brightness(1) contrast(1.2)}
-100%{filter:brightness(1.8) contrast(1.6)}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0,255,255,.2), transparent 35%),
+    radial-gradient(circle at 20% 80%, rgba(0,80,255,.12), transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(0,200,255,.1), transparent 60%);
+  /* Removed expensive animation — static gradient is nearly identical visually */
+  z-index: -10;
 }
 
 /* TITLE */
-h1{
-text-align:center;
-margin-top:60px;
-font-size:46px;
-letter-spacing:6px;
-text-shadow:
-0 0 10px #00f0ff,
-0 0 30px #0088ff,
-0 0 60px #00ffff;
-animation:glitch 1.5s infinite;
+h1 {
+  text-align: center;
+  margin-top: 60px;
+  font-size: 46px;
+  letter-spacing: 6px;
+  text-shadow:
+    0 0 10px #00f0ff,
+    0 0 30px #0088ff;
+  animation: glitch 2s infinite;
+  /* Reduced frequency: was 1.5s */
 }
 
-@keyframes glitch{
-0%{transform:translate(0)}
-20%{transform:translate(-2px,2px)}
-40%{transform:translate(2px,-2px)}
-60%{transform:translate(-1px,1px)}
-80%{transform:translate(1px,-1px)}
-100%{transform:translate(0)}
+@keyframes glitch {
+  0%   { transform: translate(0) }
+  20%  { transform: translate(-2px, 2px) }
+  40%  { transform: translate(2px, -2px) }
+  60%  { transform: translate(-1px, 1px) }
+  80%  { transform: translate(1px, -1px) }
+  100% { transform: translate(0) }
 }
 
 /* CORE */
-#core{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-width:190px;
-height:190px;
-border-radius:50%;
-background:radial-gradient(circle,#00f0ff,#0044ff,transparent);
-box-shadow:
-0 0 120px #00f0ff,
-0 0 200px #0066ff,
-inset 0 0 40px rgba(255,255,255,.2);
-animation:coreFlicker 0.8s infinite alternate;
+#core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #00f0ff, #0044ff, transparent);
+  box-shadow:
+    0 0 80px #00f0ff,
+    0 0 150px #0066ff,
+    inset 0 0 30px rgba(255,255,255,.15);
+  animation: coreFlicker 1.2s infinite alternate;
+  /* Reduced frequency: was 0.8s */
+  will-change: transform;
 }
 
-@keyframes coreFlicker{
-0%{transform:translate(-50%,-50%) scale(1)}
-100%{transform:translate(-50%,-50%) scale(1.15)}
+@keyframes coreFlicker {
+  0%   { transform: translate(-50%, -50%) scale(1) }
+  100% { transform: translate(-50%, -50%) scale(1.12) }
 }
 
 /* PORTALS */
-.portal{
-position:absolute;
-width:150px;
-height:150px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-color:#cfffff;
-text-decoration:none;
-background:radial-gradient(circle,rgba(0,255,255,.25),transparent);
-border:1px solid rgba(0,255,255,.5);
-box-shadow:
-0 0 25px rgba(0,255,255,.3),
-0 0 60px rgba(0,100,255,.2);
-transition:.2s;
-font-weight:bold;
-letter-spacing:2px;
+.portal {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #cfffff;
+  text-decoration: none;
+  background: radial-gradient(circle, rgba(0,255,255,.2), transparent);
+  border: 1px solid rgba(0,255,255,.4);
+  box-shadow: 0 0 20px rgba(0,255,255,.25);
+  transition: .2s;
+  font-weight: bold;
+  letter-spacing: 2px;
+  will-change: transform;
 }
 
 /* ORBIT */
-.orbitWrap{
-position:absolute;
-top:50%;
-left:50%;
-width:0;
-height:0;
-animation:orbit 10s linear infinite;
-transform-origin:center;
+.orbitWrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  animation: orbit 12s linear infinite;
+  /* Slowed down: was 10s — slightly less CPU */
+  transform-origin: center;
+  will-change: transform;
 }
 
-.node{
-position:absolute;
-top:0;
-left:0;
+.node {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-#aboutNode{transform:rotate(0deg) translateX(260px);}
-#galleryNode{transform:rotate(90deg) translateX(260px);}
-#musicNode{transform:rotate(180deg) translateX(260px);}
-#chatNode{transform:rotate(270deg) translateX(260px);}
+#aboutNode   { transform: rotate(0deg)   translateX(260px); }
+#galleryNode { transform: rotate(90deg)  translateX(260px); }
+#musicNode   { transform: rotate(180deg) translateX(260px); }
+#chatNode    { transform: rotate(270deg) translateX(260px); }
 
-@keyframes orbit{
-0%{transform:rotate(0deg);}
-100%{transform:rotate(360deg);}
+@media (max-width: 900px) {
+  h1 { font-size: 34px; letter-spacing: 4px; margin-top: 40px; }
+  #core { width: 150px; height: 150px; }
+  .portal { width: 120px; height: 120px; font-size: 14px; }
+  #aboutNode   { transform: rotate(0deg)   translateX(200px); }
+  #galleryNode { transform: rotate(90deg)  translateX(200px); }
+  #musicNode   { transform: rotate(180deg) translateX(200px); }
+  #chatNode    { transform: rotate(270deg) translateX(200px); }
 }
 
-.portal:hover{
-transform:scale(1.25);
-box-shadow:
-0 0 80px rgba(0,255,255,.8),
-0 0 120px rgba(0,120,255,.4);
+@media (max-width: 600px) {
+  html, body { overflow: hidden; height: 100%; width: 100%; }
+  h1 { font-size: 18px; letter-spacing: 2px; margin-top: 15px; padding: 0 10px; }
+  #core { width: 90px; height: 90px; }
+  .portal { width: 70px; height: 70px; font-size: 10px; letter-spacing: 1px; }
+  #aboutNode   { transform: rotate(0deg)   translateX(100px); }
+  #galleryNode { transform: rotate(90deg)  translateX(100px); }
+  #musicNode   { transform: rotate(180deg) translateX(100px); }
+  #chatNode    { transform: rotate(270deg) translateX(100px); }
 }
 
-#cursor{
-position:fixed;
-width:14px;
-height:14px;
-border-radius:50%;
-background:#00f0ff;
-box-shadow:0 0 25px #00f0ff;
-pointer-events:none;
-transform:translate(-50%,-50%);
+@keyframes orbit {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-#rain{
-position:fixed;
-inset:0;
-z-index:-3;
+.portal:hover {
+  transform: scale(1.25);
+  box-shadow:
+    0 0 60px rgba(0,255,255,.7),
+    0 0 100px rgba(0,120,255,.35);
 }
 
-.drop{
-position:absolute;
-width:2px;
-height:60px;
-background:linear-gradient(to bottom,#00f0ff,transparent);
-animation:fall linear infinite;
-opacity:.7;
+#cursor {
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00f0ff;
+  box-shadow: 0 0 20px #00f0ff;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  /* Hide on touch devices */
+  display: none;
 }
 
-@keyframes fall{
-0%{transform:translateY(-100vh);opacity:0}
-10%{opacity:1}
-100%{transform:translateY(100vh);opacity:0}
+@media (pointer: fine) {
+  #cursor { display: block; }
 }
 
-#flames{
-position:fixed;
-inset:0;
-z-index:-4;
+#rain {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
 }
 
+.drop {
+  position: absolute;
+  width: 2px;
+  height: 60px;
+  background: linear-gradient(to bottom, #00f0ff, transparent);
+  animation: fall linear infinite;
+  opacity: .6;
+}
+
+@keyframes fall {
+  0%   { transform: translateY(-100vh); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+#flames {
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+}
 </style>
 </head>
 
@@ -267,23 +219,18 @@ z-index:-4;
 <div id="core"></div>
 
 <div class="orbitWrap">
-
   <div class="node" id="aboutNode">
     <a href="about.html" class="portal">ABOUT</a>
   </div>
-
   <div class="node" id="galleryNode">
     <a href="gallery.html" class="portal">GALLERY</a>
   </div>
-
   <div class="node" id="musicNode">
     <a href="music.html" class="portal">MUSIC</a>
   </div>
-
   <div class="node" id="chatNode">
     <a href="chat room.html" class="portal">CHAT</a>
   </div>
-
 </div>
 
 <div id="rain"></div>
@@ -291,98 +238,107 @@ z-index:-4;
 <div id="cursor"></div>
 
 <script>
-
-/* CURSOR */
-const cursor=document.getElementById("cursor");
-document.addEventListener("mousemove",e=>{
-cursor.style.left=e.clientX+"px";
-cursor.style.top=e.clientY+"px";
-});
-
-/* RAIN */
-const rain=document.getElementById("rain");
-for(let i=0;i<100;i++){
-let d=document.createElement("div");
-d.className="drop";
-d.style.left=Math.random()*100+"vw";
-d.style.animationDuration=(Math.random()*1.2+0.4)+"s";
-rain.appendChild(d);
+/* CURSOR — only on pointer devices */
+if(window.matchMedia("(pointer: fine)").matches){
+  const cursor = document.getElementById("cursor");
+  document.addEventListener("mousemove", e => {
+    cursor.style.left = e.clientX + "px";
+    cursor.style.top  = e.clientY + "px";
+  }, { passive: true });
 }
 
-/* FLAMES */
-const canvas=document.createElement("canvas");
+/* RAIN — reduce count on mobile */
+const isMobile = window.innerWidth < 600;
+const rain = document.getElementById("rain");
+const dropCount = isMobile ? 40 : 80; /* was 100 */
+for(let i = 0; i < dropCount; i++){
+  const d = document.createElement("div");
+  d.className = "drop";
+  d.style.left = Math.random()*100 + "vw";
+  d.style.animationDuration = (Math.random()*1.2 + 0.4) + "s";
+  rain.appendChild(d);
+}
+
+/* FLAMES CANVAS */
+const canvas = document.createElement("canvas");
 document.getElementById("flames").appendChild(canvas);
-const ctx=canvas.getContext("2d");
+const ctx = canvas.getContext("2d");
 
 function resize(){
-canvas.width=innerWidth;
-canvas.height=innerHeight;
+  canvas.width  = innerWidth;
+  canvas.height = innerHeight;
 }
 resize();
-window.onresize=resize;
+window.addEventListener("resize", resize, { passive: true });
 
-class Flame{
-constructor(){this.reset();}
-reset(){
-this.x=Math.random()*canvas.width;
-this.y=canvas.height+50;
-this.s=Math.random()*6+2;
-this.vy=Math.random()*2.5+1;
-this.vx=(Math.random()-0.5)*1.5;
-}
-update(){
-this.x+=this.vx;
-this.y-=this.vy;
-if(this.y<-50)this.reset();
-}
-draw(){
-ctx.fillStyle="rgba(0,255,255,.35)";
-ctx.beginPath();
-ctx.arc(this.x,this.y,this.s,0,Math.PI*2);
-ctx.fill();
-}
+/* Reduce particle count on low-end / mobile devices */
+const flameCount = isMobile ? 60 : 120; /* was 140 */
+
+class Flame {
+  constructor(){ this.reset(); }
+  reset(){
+    this.x  = Math.random() * canvas.width;
+    this.y  = canvas.height + 50;
+    this.s  = Math.random() * 6 + 2;
+    this.vy = Math.random() * 2.5 + 1;
+    this.vx = (Math.random() - 0.5) * 1.5;
+  }
+  update(){
+    this.x += this.vx;
+    this.y -= this.vy;
+    if(this.y < -50) this.reset();
+  }
+  draw(){
+    ctx.fillStyle = "rgba(0,255,255,.3)";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.s, 0, Math.PI*2);
+    ctx.fill();
+  }
 }
 
-let flames=[];
-for(let i=0;i<140;i++)flames.push(new Flame());
+const flames = [];
+for(let i = 0; i < flameCount; i++) flames.push(new Flame());
 
-function animate(){
-ctx.fillStyle="rgba(0,0,0,.25)";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-flames.forEach(f=>{f.update();f.draw();});
+let lastFrame = 0;
+function animate(ts){
+  /* Cap at ~30fps on mobile, 60fps on desktop */
+  const fpsLimit = isMobile ? 33 : 16;
+  if(ts - lastFrame < fpsLimit){ requestAnimationFrame(animate); return; }
+  lastFrame = ts;
+
+  ctx.fillStyle = "rgba(0,0,0,.25)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  flames.forEach(f => { f.update(); f.draw(); });
+  requestAnimationFrame(animate);
+}
 requestAnimationFrame(animate);
+
+/* AUTO FIT */
+function autoFit(){
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  let scale = Math.min(w / 420, h / 800);
+  scale = Math.max(0.6, Math.min(scale, 1));
+  document.body.style.transform = `scale(${scale})`;
+  /* Fix origin so content stays top-left after scaling */
+  document.body.style.width  = (100 / scale) + "%";
+  document.body.style.height = (100 / scale) + "%";
 }
-animate();
+window.addEventListener("resize", autoFit, { passive: true });
+autoFit();
+</script>
 
-/* =========================
-   MOBILE APP AUTO FIT (ADDED)
-   ========================= */
-function autoFit() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+<!-- Tawk.to loaded with defer so it never blocks page render -->
+<script defer src="https://embed.tawk.to/6a3d7e9f94471a1d4dea3800/1js03d87e" charset="UTF-8" crossorigin="*"></script>
 
-    let scale = Math.min(w / 420, h / 800);
-    scale = Math.max(0.6, Math.min(scale, 1));
-
-    document.body.style.transform = `scale(${scale})`;
+<script>
+/* Register service worker for caching & offline support */
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () =>
+    navigator.serviceWorker.register("/sw.js").catch(() => {})
+  );
 }
-
-window.addEventListener("resize", autoFit);
-window.addEventListener("load", autoFit);
-
 </script>
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6a3d7e9f94471a1d4dea3800/1js03d87e';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
+
 </body>
-</html
+</html>
