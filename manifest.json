@@ -1,17 +1,50 @@
 {
   "name": "Chris Legend of Shadows",
-  "short_name": "Legends",
-  "start_url": "/",
+  "short_name": "Legend",
+  "start_url": "https://chrislegendofshadows.com/",
+  "scope": "https://chrislegendofshadows.com/",
   "display": "standalone",
-  "background_color": "#000a14",
-  "theme_color": "#001a2a",
-  "description": "Chris Legend of Shadows — Music, Gallery, and Chat",
+  "orientation": "portrait-primary",
+  "background_color": "#000000",
+  "theme_color": "#000510",
+  "description": "Enter the Shadow Realm — Music, Gallery & more from Chris Legend of Shadows. Stay Legendary.",
+  "lang": "en",
+  "categories": ["music", "entertainment"],
   "icons": [
     {
       "src": "wolf.png",
       "sizes": "any",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "wolf.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Music",
+      "short_name": "Music",
+      "description": "Shadow Music Hub",
+      "url": "https://chrislegendofshadows.com/music.html",
+      "icons": [{ "src": "wolf.png", "sizes": "any" }]
+    },
+    {
+      "name": "Gallery",
+      "short_name": "Gallery",
+      "description": "Shadow Gallery",
+      "url": "https://chrislegendofshadows.com/gallery.html",
+      "icons": [{ "src": "wolf.png", "sizes": "any" }]
+    },
+    {
+      "name": "About",
+      "short_name": "About",
+      "description": "About Chris Legend of Shadows",
+      "url": "https://chrislegendofshadows.com/about.html",
+      "icons": [{ "src": "wolf.png", "sizes": "any" }]
     }
   ]
 }

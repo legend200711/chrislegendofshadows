@@ -4,7 +4,7 @@
    Firebase API calls (which we never want to cache).
    ============================================================ */
 
-const CACHE_NAME = "legends-v1";
+const CACHE_NAME = "legends-v3";
 
 /* Assets to pre-cache on install */
 const PRECACHE = [
@@ -13,7 +13,6 @@ const PRECACHE = [
   "/about.html",
   "/gallery.html",
   "/music.html",
-  "/chat room.html",
   "/samiam.png",
   "/tam.png",
   "/wolf.png"
