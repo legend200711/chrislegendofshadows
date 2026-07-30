@@ -3,275 +3,301 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Legend Music Hub</title>
-
-<!-- Web App Manifest -->
+<title>Music | Chris Legend of Shadows</title>
 <link rel="manifest" href="manifest.json">
-<!-- Preconnect to embed providers so iframes load faster -->
 <link rel="preconnect" href="https://www.youtube.com">
 <link rel="preconnect" href="https://open.spotify.com">
 <link rel="preconnect" href="https://elfsightcdn.com">
 <link rel="dns-prefetch" href="https://elfsightcdn.com">
-
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 html, body {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  color: #cfefff;
-  font-family: Arial, sans-serif;
+  min-height: 100%;
   overflow-x: hidden;
+  background: #000;
+  color: #c0deff;
+  font-family: 'Cinzel', Georgia, serif;
 }
 
-/* CINEMATIC BACKGROUND — static gradient, no animation */
+/* ── SHADOW REALM BG ── */
 body::before {
   content: "";
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background:
-    radial-gradient(circle at 20% 20%, rgba(0,200,255,.25), transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(0,120,255,.18), transparent 50%);
+    radial-gradient(ellipse at 50% -10%, rgba(0,20,70,.9),  transparent 50%),
+    radial-gradient(ellipse at 0%   50%, rgba(0,0,50,.8),   transparent 55%),
+    radial-gradient(ellipse at 100% 50%, rgba(5,0,40,.8),   transparent 55%),
+    radial-gradient(ellipse at 50% 110%,rgba(0,10,50,.9),   transparent 60%);
   z-index: -20;
-}
-
-/* HEADER */
-header {
-  text-align: center;
-  padding: 60px 20px 10px;
-}
-
-h1 {
-  font-size: 46px;
-  text-shadow:
-    0 0 20px #00c8ff,
-    0 0 50px #0099ff;
-  animation: floatTitle 4s ease-in-out infinite;
-  /* Slowed: was 3s */
-}
-
-@media (max-width: 600px) {
-  h1 { font-size: 28px; }
-  .box { margin: 15px; padding: 14px; }
-}
-
-@keyframes floatTitle {
-  0%,100% { transform: translateY(0px); }
-  50%      { transform: translateY(-7px); }
-}
-
-/* BOXES */
-.box {
-  max-width: 900px;
-  margin: 25px auto;
-  padding: 20px;
-  background: rgba(0,0,0,.75);
-  border: 1px solid #00c8ff;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(0,200,255,.2);
-  backdrop-filter: blur(10px);
-  transition: 0.3s ease;
-  will-change: transform;
-}
-
-.box:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 0 30px #00c8ff;
-}
-
-/* iframe lazy container */
-.box iframe {
-  display: block;
-  border: 0;
-  border-radius: 10px;
-}
-
-/* NAV */
-nav {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 15px;
-}
-
-nav a {
-  color: #00c8ff;
-  text-decoration: none;
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(0,200,255,.35);
-  background: rgba(0,0,0,.6);
-  transition: 0.25s;
-  box-shadow: 0 0 8px rgba(0,200,255,.15);
-}
-
-nav a:hover {
-  transform: translateY(-6px) scale(1.08);
-  box-shadow: 0 0 25px #00c8ff;
-  background: rgba(0,200,255,.15);
-  color: #fff;
-}
-
-/* CANVAS LAYERS */
-#rainCanvas, #fireCanvas, #vortexCanvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
   pointer-events: none;
 }
 
-#rainCanvas  { z-index: -10; }
-#fireCanvas  { z-index: -9; }
-#vortexCanvas{ z-index: -8; }
+/* ── MOONLIGHT ── */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 220px; height: 50vh;
+  background: linear-gradient(to bottom, rgba(60,140,255,.08), transparent 80%);
+  clip-path: polygon(28% 0%, 72% 0%, 100% 100%, 0% 100%);
+  pointer-events: none;
+  z-index: -5;
+  animation: moonBeam 10s ease-in-out infinite;
+}
+@keyframes moonBeam {
+  0%,100% { opacity: .4; }
+  50%     { opacity: .8; }
+}
+
+/* ── CANVAS ── */
+#smokeCanvas, #flameCanvas {
+  position: fixed; inset: 0;
+  pointer-events: none;
+}
+#smokeCanvas { z-index: -12; }
+#flameCanvas { z-index: -8; }
+
+/* ── RAIN ── */
+.rain { position: fixed; inset: 0; pointer-events: none; z-index: -6; overflow: hidden; }
+.drop {
+  position: absolute; bottom: 100%;
+  width: 1px; height: 70px;
+  background: linear-gradient(to bottom, transparent, rgba(0,140,255,.45));
+  animation: fall linear infinite;
+}
+@keyframes fall { to { transform: translateY(115vh); } }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0;
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 6px; padding: 12px 16px;
+  background: rgba(0,0,10,.65);
+  backdrop-filter: blur(14px);
+  z-index: 100;
+  border-bottom: 1px solid rgba(0,120,255,.2);
+}
+nav a {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: 3px;
+  color: rgba(130,190,255,.7);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: 1px solid rgba(0,100,255,.2);
+  background: rgba(0,0,20,.4);
+  transition: .25s;
+  text-transform: uppercase;
+}
+nav a:hover {
+  color: #fff;
+  background: rgba(0,70,180,.3);
+  border-color: rgba(0,150,255,.5);
+  box-shadow: 0 0 14px rgba(0,120,255,.4);
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  padding: 50px 20px 10px;
+  position: relative; z-index: 2;
+}
+header h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(22px, 5vw, 46px);
+  letter-spacing: 5px;
+  color: #80c0ff;
+  text-shadow: 0 0 15px rgba(0,120,255,.8), 0 0 40px rgba(0,80,200,.5);
+  animation: titleShimmer 6s ease-in-out infinite;
+}
+header .sub {
+  font-size: 12px;
+  letter-spacing: 6px;
+  color: rgba(120,180,255,.4);
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+@keyframes titleShimmer {
+  0%,100% { text-shadow: 0 0 15px rgba(0,120,255,.8), 0 0 40px rgba(0,80,200,.5); }
+  50%     { text-shadow: 0 0 25px rgba(0,180,255,.9), 0 0 60px rgba(0,120,255,.7), 0 0 100px rgba(0,60,200,.4); }
+}
+
+/* ── GLASS BOXES ── */
+.box {
+  max-width: 900px;
+  margin: 28px auto;
+  padding: 24px 28px;
+  background: rgba(0,10,30,.55);
+  border: 1px solid rgba(0,120,255,.25);
+  border-radius: 18px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 25px rgba(0,80,200,.12), inset 0 0 30px rgba(0,20,60,.3);
+  transition: .3s ease;
+  position: relative; overflow: hidden;
+  z-index: 2;
+}
+/* Neon top edge */
+.box::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(0,160,255,.6), transparent);
+}
+.box:hover {
+  transform: translateY(-8px) scale(1.015);
+  box-shadow: 0 0 40px rgba(0,120,255,.3), inset 0 0 40px rgba(0,30,80,.4);
+  border-color: rgba(0,160,255,.45);
+}
+.box h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(14px, 2.5vw, 20px);
+  letter-spacing: 3px;
+  color: #70b8ff;
+  margin-bottom: 18px;
+  text-shadow: 0 0 12px rgba(0,120,255,.5);
+}
+.box iframe {
+  display: block; border: 0;
+  border-radius: 12px;
+}
+
+/* ── STAY LEGENDARY FOOTER ── */
+.legendFooter {
+  text-align: center;
+  padding: 30px 20px 50px;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(11px, 2vw, 14px);
+  letter-spacing: 6px;
+  color: rgba(80,160,255,.5);
+  text-transform: uppercase;
+  animation: footerPulse 5s ease-in-out infinite;
+  position: relative; z-index: 2;
+}
+@keyframes footerPulse {
+  0%,100% { opacity: .5; }
+  50%     { opacity: 1; text-shadow: 0 0 20px rgba(0,120,255,.5); }
+}
+
+@media (max-width: 600px) {
+  .box { margin: 16px; padding: 16px; }
+  header { padding: 30px 14px 6px; }
+}
 </style>
 </head>
-
 <body>
 
-<canvas id="rainCanvas"></canvas>
-<canvas id="fireCanvas"></canvas>
-<canvas id="vortexCanvas"></canvas>
+<canvas id="smokeCanvas"></canvas>
+<canvas id="flameCanvas"></canvas>
+<div class="rain" id="rain"></div>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="about.html">About</a>
+</nav>
 
 <header>
-  <h1>🎧 LEGEND MUSIC HUB</h1>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="gallery.html">Gallery</a>
-    <a href="about.html">About</a>
-    <a href="chat room.html">Chat Room</a>
-  </nav>
+  <h1>SHADOW MUSIC HUB</h1>
+  <div class="sub">Chris Legend of Shadows</div>
 </header>
 
 <div class="box">
-  <h2>🎬 YouTube Music</h2>
-  <!-- loading="lazy" defers iframe until in view -->
+  <h2>☽ YouTube Music</h2>
   <iframe width="100%" height="315"
     src="https://www.youtube.com/embed/videoseries?list=UUE_cbs14G_QUfPOvByU1q9w"
-    loading="lazy"
-    allowfullscreen></iframe>
+    loading="lazy" allowfullscreen></iframe>
 </div>
 
 <div class="box">
-  <h2>🎧 Spotify Artist</h2>
+  <h2>⚔ Spotify Artist</h2>
   <iframe width="100%" height="352"
     src="https://open.spotify.com/embed/artist/010qnpDsNjUeyIkyV2Fnlr"
     loading="lazy"
     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
 </div>
 
-<!-- Elfsight Audio Player — async so it doesn't block page -->
 <script src="https://elfsightcdn.com/platform.js" async defer></script>
 <div class="elfsight-app-3d43432f-da69-4ed7-9dcb-1a8bcd38b575" data-elfsight-app-lazy></div>
 
+<div class="legendFooter">⚔ Stay Legendary ⚔</div>
+
 <script>
 const isMobile = window.innerWidth < 600;
-
-/* Shared beat value — throttled to 4fps instead of every 250ms */
-let beat = 0;
-setInterval(() => { beat = Math.random(); }, isMobile ? 500 : 250);
-
-/* Helper: resize canvas to window */
-function fitCanvas(c){
-  c.width  = innerWidth;
-  c.height = innerHeight;
-}
+const W = () => innerWidth, H = () => innerHeight;
+function fitCanvas(c){ c.width = W(); c.height = H(); }
 
 /* ── RAIN ── */
-const rain  = document.getElementById("rainCanvas");
-const rctx  = rain.getContext("2d");
-fitCanvas(rain);
-
-const dropCount = isMobile ? 80 : 160; /* was 200 */
-const drops = Array.from({ length: dropCount }, () => ({
-  x: Math.random() * rain.width,
-  y: Math.random() * rain.height,
-  len: 10 + Math.random() * 20,
-  speed: 4 + Math.random() * 8
-}));
-
-function drawRain(){
-  rctx.clearRect(0, 0, rain.width, rain.height);
-  rctx.strokeStyle = "rgba(0,200,255,0.8)";
-  rctx.shadowBlur  = 8;
-  rctx.shadowColor = "#00c8ff";
-  for(const d of drops){
-    rctx.beginPath();
-    rctx.moveTo(d.x, d.y);
-    rctx.lineTo(d.x, d.y + d.len);
-    rctx.stroke();
-    d.y += d.speed + beat * 4;
-    d.x += -1 + beat * 1.5;
-    if(d.y > rain.height){ d.y = 0; d.x = Math.random() * rain.width; }
-  }
-  requestAnimationFrame(drawRain);
+const rain = document.getElementById("rain");
+const dropCount = isMobile ? 28 : 55;
+for(let i = 0; i < dropCount; i++){
+  const d = document.createElement("div");
+  d.className = "drop";
+  d.style.left = Math.random()*100 + "vw";
+  d.style.animationDuration = (.6 + Math.random()*1.4) + "s";
+  d.style.animationDelay = (Math.random()*2) + "s";
+  rain.appendChild(d);
 }
 
-/* ── FIRE ── */
-const fire  = document.getElementById("fireCanvas");
-const fctx  = fire.getContext("2d");
-fitCanvas(fire);
-
-const flameCount = isMobile ? 50 : 80; /* was 100 */
-const flames = Array.from({ length: flameCount }, () => ({
-  x: Math.random() * fire.width,
-  y: fire.height + Math.random() * 200
+/* ── SMOKE ── */
+const smokeC = document.getElementById("smokeCanvas");
+const mctx = smokeC.getContext("2d");
+fitCanvas(smokeC);
+const smokePs = Array.from({ length: isMobile ? 20 : 45 }, () => ({
+  x: Math.random()*W(), y: H()+Math.random()*100,
+  r: 25+Math.random()*70, vy: -(0.2+Math.random()*.6),
+  vx: (Math.random()-.5)*.4, alpha: .025+Math.random()*.06,
+  life: Math.random()*180
 }));
+function drawSmoke(){
+  mctx.clearRect(0,0,W(),H());
+  for(const p of smokePs){
+    const g = mctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+    g.addColorStop(0,`rgba(8,25,70,${p.alpha})`);
+    g.addColorStop(1,"transparent");
+    mctx.fillStyle=g; mctx.beginPath(); mctx.arc(p.x,p.y,p.r,0,Math.PI*2); mctx.fill();
+    p.x+=p.vx; p.y+=p.vy; p.life--;
+    if(p.life<=0||p.y<-p.r*2){ p.x=Math.random()*W(); p.y=H()+p.r; p.life=130+Math.random()*150; }
+  }
+  requestAnimationFrame(drawSmoke);
+}
+drawSmoke();
 
-function drawFire(){
-  fctx.clearRect(0, 0, fire.width, fire.height);
+/* ── BLUE FLAMES ── */
+const flameC = document.getElementById("flameCanvas");
+const fctx = flameC.getContext("2d");
+fitCanvas(flameC);
+const flames = Array.from({ length: isMobile ? 40 : 80 }, () => ({
+  x: Math.random()*W(), y: H()+Math.random()*60,
+  s: 2+Math.random()*7, vy: .8+Math.random()*2,
+  vx: (Math.random()-.5)*1.1, alpha: .15+Math.random()*.4,
+  hue: 195+Math.random()*35
+}));
+let lastF = 0, beat = 0;
+setInterval(() => { beat = Math.random(); }, isMobile ? 500 : 250);
+
+function drawFlames(ts){
+  if(ts-lastF<(isMobile?33:16)){ requestAnimationFrame(drawFlames); return; }
+  lastF=ts;
+  fctx.fillStyle="rgba(0,0,0,.15)"; fctx.fillRect(0,0,W(),H());
   for(const f of flames){
-    const glow = 0.25 + beat * 0.6;
-    const g = fctx.createRadialGradient(f.x, f.y, 2, f.x, f.y, 45);
-    g.addColorStop(0, `rgba(0,200,255,${glow})`);
-    g.addColorStop(0.5, "rgba(0,120,255,0.15)");
-    g.addColorStop(1, "transparent");
-    fctx.fillStyle = g;
-    fctx.beginPath();
-    fctx.arc(f.x, f.y, 40, 0, Math.PI * 2);
-    fctx.fill();
-    f.y -= 2 + beat * 6;
-    if(f.y < -60){ f.y = fire.height + 60; f.x = Math.random() * fire.width; }
+    const g=fctx.createRadialGradient(f.x,f.y,0,f.x,f.y,(f.s+beat*4)*3);
+    g.addColorStop(0,`hsla(${f.hue},100%,65%,${f.alpha})`);
+    g.addColorStop(.6,`hsla(${f.hue},100%,45%,${f.alpha*.3})`);
+    g.addColorStop(1,"transparent");
+    fctx.fillStyle=g; fctx.beginPath(); fctx.arc(f.x,f.y,(f.s+beat*4)*3,0,Math.PI*2); fctx.fill();
+    f.x+=f.vx; f.y-=f.vy+beat*3;
+    if(f.y<-60){ f.y=H()+60; f.x=Math.random()*W(); }
   }
-  requestAnimationFrame(drawFire);
+  requestAnimationFrame(drawFlames);
 }
+requestAnimationFrame(drawFlames);
 
-/* ── VORTEX ── */
-const vortex = document.getElementById("vortexCanvas");
-const vctx   = vortex.getContext("2d");
-fitCanvas(vortex);
-
-/* Only render vortex on desktop — too heavy for mobile */
-function drawVortex(){
-  vctx.clearRect(0, 0, vortex.width, vortex.height);
-  const cx = vortex.width / 2;
-  const cy = vortex.height / 2;
-  const count = isMobile ? 20 : 40; /* was 40 always */
-  for(let i = 0; i < count; i++){
-    const angle  = (i / count) * Math.PI * 2 + Date.now() * 0.0004;
-    const radius = 110 + Math.sin(Date.now() * 0.0015 + i) * 35;
-    const x = cx + Math.cos(angle) * radius;
-    const y = cy + Math.sin(angle) * radius;
-    vctx.fillStyle  = "rgba(0,200,255,0.06)";
-    vctx.shadowBlur = 15;
-    vctx.shadowColor = "#00c8ff";
-    vctx.beginPath();
-    vctx.arc(x, y, 5, 0, Math.PI * 2);
-    vctx.fill();
-  }
-  requestAnimationFrame(drawVortex);
-}
-
-/* Start all loops */
-drawRain();
-drawFire();
-drawVortex();
-
-/* Resize canvases on window resize */
-window.addEventListener("resize", () => {
-  fitCanvas(rain);
-  fitCanvas(fire);
-  fitCanvas(vortex);
-}, { passive: true });
+window.addEventListener("resize", ()=>{ fitCanvas(smokeC); fitCanvas(flameC); }, { passive:true });
 </script>
 
 <script>
@@ -281,6 +307,5 @@ if("serviceWorker" in navigator){
   );
 }
 </script>
-
 </body>
 </html>

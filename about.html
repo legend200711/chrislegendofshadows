@@ -4,311 +4,452 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About | Chris Legend of Shadows</title>
-
-<!-- Web App Manifest -->
 <link rel="manifest" href="manifest.json">
-<!-- Preconnect to Firebase -->
 <link rel="preconnect" href="https://www.gstatic.com">
 <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
-
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 html, body {
-  height: 100%;
-  margin: 0;
+  min-height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
   scroll-behavior: smooth;
   background: #000;
-  color: #cfefff;
-  font-family: Arial, sans-serif;
+  color: #c0deff;
+  font-family: 'Cinzel', Georgia, serif;
   cursor: none;
 }
 
-@media (max-width: 768px) {
-  html, body { cursor: auto; }
-  .container { margin: 90px 12px; padding: 12px; }
-  nav { flex-wrap: wrap; gap: 10px; padding: 10px; font-size: 14px; }
-  #platforms { width: 95%; font-size: 13px; padding: 10px; }
-  h1 { font-size: 24px; }
-  .box { padding: 14px; }
-  #intro h1 { font-size: 28px; text-align: center; }
-  #cursor { display: none; }
-}
-
-/* NAV */
-nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  padding: 14px;
-  background: rgba(0,0,0,.4);
-  backdrop-filter: blur(12px);
-  z-index: 100;
-  border-bottom: 1px solid rgba(0,200,255,0.2);
-  box-sizing: border-box;
-}
-
-nav a {
-  color: #7fd3ff;
-  text-decoration: none;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-nav a:hover {
-  color: #00e5ff;
-  text-shadow: 0 0 12px #00e5ff;
-}
-
-/* PLATFORM BADGE BAR */
-#platforms {
-  margin-top: 70px;
-  text-align: center;
-  padding: 12px 18px;
-  font-weight: bold;
-  color: #00c8ff;
-  text-shadow: 0 0 15px #00c8ff;
-  background: rgba(0,200,255,0.08);
-  border: 1px solid rgba(0,200,255,0.25);
-  backdrop-filter: blur(10px);
-  width: 90%;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 14px;
-  animation: floatGlow 5s infinite ease-in-out;
-  /* Slowed: was 4s */
-}
-
-@keyframes floatGlow {
-  0%,100% { transform: translateY(0); box-shadow: 0 0 10px rgba(0,200,255,0.2); }
-  50%      { transform: translateY(-5px); box-shadow: 0 0 25px rgba(0,200,255,0.5); }
-}
-
-/* FADE */
-#fade {
-  position: fixed;
-  inset: 0;
-  background: black;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 9999;
-  transition: 0.6s ease;
-}
-
-/* BACKGROUND LAYERS */
-#ghosts, #starfield, #blueRainCanvas {
-  position: fixed;
-  inset: 0;
+/* ── SHADOW REALM BG ── */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%,   rgba(0,20,60,.8),  transparent 50%),
+    radial-gradient(ellipse at 15% 60%,  rgba(0,0,40,.7),   transparent 55%),
+    radial-gradient(ellipse at 85% 60%,  rgba(5,0,30,.7),   transparent 55%),
+    radial-gradient(ellipse at 50% 100%, rgba(0,10,40,.9),  transparent 60%);
+  z-index: -20;
   pointer-events: none;
 }
 
-/* CURSOR */
+/* ── MOONLIGHT BEAM ── */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 250px; height: 60vh;
+  background: linear-gradient(to bottom, rgba(80,160,255,.1), transparent 80%);
+  clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+  pointer-events: none;
+  z-index: -5;
+  animation: moonBeam 10s ease-in-out infinite;
+}
+@keyframes moonBeam {
+  0%,100% { opacity: .4; }
+  50%     { opacity: .8; }
+}
+
+/* ── CANVAS ── */
+#smokeCanvas, #flameCanvas, #starCanvas {
+  position: fixed; inset: 0;
+  pointer-events: none;
+}
+#starCanvas  { z-index: -15; }
+#smokeCanvas { z-index: -12; }
+#flameCanvas { z-index: -8; }
+
+/* ── CURSOR ── */
 #cursor {
   position: fixed;
-  width: 16px;
-  height: 16px;
+  width: 16px; height: 16px;
   border-radius: 50%;
-  background: #00c8ff;
-  box-shadow: 0 0 20px #00c8ff;
+  background: rgba(0,150,255,.8);
+  box-shadow: 0 0 14px #0090ff, 0 0 28px rgba(0,80,200,.5);
   pointer-events: none;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%,-50%);
   z-index: 10000;
   display: none;
 }
+@media (pointer: fine) { #cursor { display: block; } }
 
-@media (pointer: fine) {
-  #cursor { display: block; }
-}
-
-/* ENERGY GLOW */
-.energy {
+/* ── NAV ── */
+nav {
   position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(0,200,255,0.08), transparent 60%);
-  pointer-events: none;
-  z-index: -1;
-  animation: pulse 6s infinite ease-in-out;
-  /* Slowed: was 5s */
+  top: 0; width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 16px;
+  background: rgba(0,0,10,.6);
+  backdrop-filter: blur(14px);
+  z-index: 100;
+  border-bottom: 1px solid rgba(0,120,255,.2);
+}
+nav a {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: rgba(140,200,255,.7);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: 1px solid rgba(0,120,255,.2);
+  background: rgba(0,0,20,.4);
+  transition: .25s;
+  text-transform: uppercase;
+}
+nav a:hover {
+  color: #fff;
+  background: rgba(0,80,200,.3);
+  border-color: rgba(0,160,255,.5);
+  box-shadow: 0 0 16px rgba(0,120,255,.4);
 }
 
-@keyframes pulse {
-  0%,100% { opacity: 0.3; }
-  50%      { opacity: 0.7; }
+/* ── PLATFORMS BADGE ── */
+#platforms {
+  margin-top: 80px;
+  text-align: center;
+  padding: 14px 24px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: #80c8ff;
+  background: rgba(0,20,60,.5);
+  border: 1px solid rgba(0,120,255,.3);
+  backdrop-filter: blur(12px);
+  width: 90%;
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 14px;
+  box-shadow: 0 0 20px rgba(0,80,200,.2), inset 0 0 30px rgba(0,30,80,.3);
+  animation: platformFloat 6s ease-in-out infinite;
+}
+@keyframes platformFloat {
+  0%,100% { transform: translateY(0);   box-shadow: 0 0 15px rgba(0,100,255,.2); }
+  50%     { transform: translateY(-6px); box-shadow: 0 0 30px rgba(0,140,255,.5); }
 }
 
-.bluePulse {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(0,200,255,0.2), transparent 70%);
-  pointer-events: none;
-  z-index: -1;
-  animation: strongPulse 4s infinite ease-in-out;
-  /* Slowed: was 3s */
-}
-
-@keyframes strongPulse {
-  0%,100% { opacity: 0.2; transform: scale(1); }
-  50%      { opacity: 0.6; transform: scale(1.04); }
-}
-
-/* INTRO */
+/* ── INTRO OVERLAY ── */
 #intro {
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 16px;
   z-index: 1000;
-  animation: fadeOut 3.5s forwards;
+  animation: introFade 4s forwards;
   pointer-events: none;
 }
-
 #intro h1 {
-  font-size: 42px;
-  color: #00c8ff;
-  text-shadow: 0 0 25px #00c8ff, 0 0 60px #0066ff;
-  animation: pop 2.5s ease;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(24px, 5vw, 44px);
+  color: #70b8ff;
+  text-shadow: 0 0 30px #0070ff, 0 0 70px rgba(0,60,200,.7);
+  animation: introPop 2.5s ease;
+  letter-spacing: 6px;
 }
-
-@keyframes pop {
-  0%   { transform: scale(0.5); opacity: 0; filter: blur(10px); }
-  50%  { opacity: 1; }
-  70%  { transform: scale(1.2); }
+#intro .sub {
+  font-size: 13px;
+  letter-spacing: 6px;
+  color: rgba(100,160,255,.5);
+  text-transform: uppercase;
+}
+@keyframes introPop {
+  0%   { transform: scale(.5); opacity: 0; filter: blur(14px); }
+  60%  { opacity: 1; }
+  80%  { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
-
-@keyframes fadeOut {
-  0%   { opacity: 1; }
-  80%  { opacity: 1; }
-  100% { opacity: 0; visibility: hidden; }
+@keyframes introFade {
+  0%,75% { opacity: 1; }
+  100%   { opacity: 0; visibility: hidden; }
 }
 
-/* MAIN CONTENT */
+/* ── MAIN CONTAINER ── */
 .container {
   max-width: 900px;
-  margin: 120px auto;
+  margin: 130px auto 80px;
   padding: 20px;
   position: relative;
   z-index: 2;
 }
 
+/* ── PAGE TITLE ── */
+.pageTitle {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(20px, 4vw, 38px);
+  text-align: center;
+  color: #90c8ff;
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(0,120,255,.7), 0 0 50px rgba(0,60,180,.4);
+  margin-bottom: 40px;
+  animation: titleGlow 5s ease-in-out infinite;
+}
+@keyframes titleGlow {
+  0%,100% { text-shadow: 0 0 20px rgba(0,120,255,.7); }
+  50%     { text-shadow: 0 0 35px rgba(0,180,255,.9), 0 0 70px rgba(0,100,255,.5); }
+}
+
+/* ── GLASS PANELS ── */
 .box {
-  background: rgba(10,10,20,.45);
-  border: 1px solid rgba(0,200,255,.25);
-  padding: 22px;
-  margin-bottom: 20px;
-  border-radius: 16px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 0 20px rgba(0,200,255,0.12);
-  transition: 0.3s;
+  background: rgba(0,10,30,.55);
+  border: 1px solid rgba(0,120,255,.25);
+  padding: 28px 30px;
+  margin-bottom: 24px;
+  border-radius: 18px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 25px rgba(0,80,200,.12), inset 0 0 30px rgba(0,20,60,.3);
+  transition: .3s ease;
+  position: relative;
+  overflow: hidden;
 }
-
+/* Neon glow top edge */
+.box::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(0,160,255,.6), transparent);
+}
 .box:hover {
-  transform: translateY(-5px) scale(1.015);
-  box-shadow: 0 0 35px rgba(0,200,255,0.3);
+  transform: translateY(-6px) scale(1.012);
+  box-shadow: 0 0 40px rgba(0,120,255,.3), inset 0 0 40px rgba(0,30,80,.4);
+  border-color: rgba(0,160,255,.45);
 }
 
-/* TYPEWRITER */
+.box h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(14px, 2.5vw, 20px);
+  letter-spacing: 3px;
+  color: #70b8ff;
+  margin-bottom: 16px;
+  text-shadow: 0 0 12px rgba(0,120,255,.5);
+}
+
+/* ── TYPEWRITER ── */
 #typing {
   min-height: 120px;
-  line-height: 1.6;
-  text-shadow: 0 0 10px #00c8ff;
+  line-height: 1.9;
+  font-size: 14px;
+  color: #a0c8f0;
   white-space: pre-wrap;
+  text-shadow: 0 0 8px rgba(0,100,200,.3);
 }
 
-h1 {
+/* ── FACTS LIST ── */
+.box ul {
+  list-style: none;
+  padding: 0;
+}
+.box ul li {
+  padding: 10px 0 10px 28px;
+  border-bottom: 1px solid rgba(0,100,200,.1);
+  font-size: 14px;
+  color: #90b8e0;
+  position: relative;
+  letter-spacing: 1px;
+}
+.box ul li:last-child { border-bottom: none; }
+.box ul li::before {
+  content: "◆";
+  position: absolute;
+  left: 0;
+  color: rgba(0,140,255,.6);
+  font-size: 10px;
+  top: 12px;
+}
+
+/* ── STAY LEGENDARY FOOTER ── */
+.legendFooter {
   text-align: center;
-  text-shadow: 0 0 25px #00c8ff;
-  animation: headerGlow 4s infinite ease-in-out;
+  padding: 30px 20px;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(11px, 2vw, 15px);
+  letter-spacing: 6px;
+  color: rgba(80,160,255,.5);
+  text-transform: uppercase;
+  border-top: 1px solid rgba(0,100,200,.15);
+  animation: footerPulse 5s ease-in-out infinite;
+}
+@keyframes footerPulse {
+  0%,100% { opacity: .5; }
+  50%     { opacity: 1; color: rgba(100,180,255,.8); text-shadow: 0 0 20px rgba(0,120,255,.5); }
 }
 
-@keyframes headerGlow {
-  0%,100% { text-shadow: 0 0 15px #00c8ff; }
-  50%      { text-shadow: 0 0 35px #00e5ff; }
-}
-
-.ghost {
-  position: fixed;
-  width: 5px;
-  height: 5px;
-  background: rgba(200,255,255,0.6);
-  border-radius: 50%;
-  box-shadow: 0 0 10px #00e5ff;
-  pointer-events: none;
-  animation: floatGhost linear infinite;
-}
-
-@keyframes floatGhost {
-  from { transform: translateY(100vh); opacity: 0; }
-  10%  { opacity: 1; }
-  to   { transform: translateY(-10vh) translateX(40px); opacity: 0; }
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  html, body { cursor: auto; }
+  #cursor { display: none !important; }
+  .container { margin: 100px 12px 60px; padding: 12px; }
+  nav { gap: 6px; font-size: 12px; }
+  nav a { padding: 6px 12px; font-size: 11px; }
 }
 </style>
 </head>
-
 <body>
 
-<div id="fade"></div>
-<div id="intro"><h1>ENTERING LEGEND WORLD</h1></div>
+<canvas id="starCanvas"></canvas>
+<canvas id="smokeCanvas"></canvas>
+<canvas id="flameCanvas"></canvas>
 
-<div class="energy"></div>
-<div class="bluePulse"></div>
-
-<canvas id="starfield"></canvas>
-<canvas id="blueRainCanvas"></canvas>
-<div id="ghosts"></div>
-
-<div id="platforms">
-  🔥 Find me on Spotify • YouTube Music • Amazon Music • Apple Music — search <b>Chris Legend of Shadows</b>
+<div id="intro">
+  <h1>ENTERING THE SHADOW REALM</h1>
+  <div class="sub">Legend of Shadows</div>
 </div>
+
+<div id="cursor"></div>
 
 <nav>
   <a href="index.html">Home</a>
   <a href="music.html">Music</a>
   <a href="gallery.html">Gallery</a>
-  <a href="chat room.html">Chat Room</a>
 </nav>
 
-<div id="cursor"></div>
+<div id="platforms">
+  ☽ Find Chris Legend of Shadows on Spotify · YouTube Music · Amazon Music · Apple Music ☾
+</div>
 
 <div class="container">
-  <h1>About Chris Legend of Shadows</h1>
+
+  <h1 class="pageTitle">CHRIS LEGEND OF SHADOWS</h1>
 
   <div class="box">
-    <h2>About Me</h2>
+    <h2>⚔ The Shadow Story</h2>
     <p id="typing"></p>
   </div>
 
   <div class="box">
-    <h2>🔥 Fun Facts</h2>
+    <h2>☽ Legends Never Fade</h2>
     <ul>
       <li>I turn emotions into music</li>
-      <li>I built my own universe</li>
-      <li>Cinematic dark emotional style</li>
+      <li>I built my own universe from darkness</li>
+      <li>Cinematic dark emotional style — shadow realm sound</li>
       <li>I express what I can't say out loud</li>
       <li>I'm building my legacy step by step</li>
+      <li>Every shadow hides a story waiting to be told</li>
     </ul>
   </div>
+
+  <div class="legendFooter">⚔ Stay Legendary ⚔</div>
 </div>
 
 <script>
-/* CURSOR — pointer devices only */
+/* ── CURSOR ── */
 if(window.matchMedia("(pointer: fine)").matches){
-  const cursor = document.getElementById("cursor");
+  const cur = document.getElementById("cursor");
   document.addEventListener("mousemove", e => {
-    cursor.style.left = e.clientX + "px";
-    cursor.style.top  = e.clientY + "px";
+    cur.style.left = e.clientX + "px";
+    cur.style.top  = e.clientY + "px";
   }, { passive: true });
 }
 
-/* TYPEWRITER */
-const text = `
-Welcome to the world of Chris Legend of Shadows.
+const isMobile = window.innerWidth < 600;
+const W = () => innerWidth, H = () => innerHeight;
+function fitCanvas(c){ c.width = W(); c.height = H(); }
+
+/* ── STARS ── */
+const starC = document.getElementById("starCanvas");
+const sctx = starC.getContext("2d");
+fitCanvas(starC);
+const starCount = isMobile ? 70 : 140;
+const stars = Array.from({ length: starCount }, () => ({
+  x: Math.random() * W(), y: Math.random() * H(),
+  r: Math.random() * 1.4, vy: 0.08 + Math.random() * 0.2,
+  alpha: 0.3 + Math.random() * 0.7
+}));
+function drawStars(){
+  sctx.clearRect(0, 0, W(), H());
+  for(const s of stars){
+    sctx.fillStyle = `rgba(140,200,255,${s.alpha})`;
+    sctx.beginPath();
+    sctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    sctx.fill();
+    s.y += s.vy;
+    if(s.y > H()) s.y = 0;
+  }
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+/* ── SMOKE ── */
+const smokeC = document.getElementById("smokeCanvas");
+const mctx = smokeC.getContext("2d");
+fitCanvas(smokeC);
+const smokeCount = isMobile ? 25 : 55;
+const smokePs = Array.from({ length: smokeCount }, () => ({
+  x: Math.random() * W(), y: H() + Math.random() * 100,
+  r: 25 + Math.random() * 70, vy: -(0.25 + Math.random() * 0.7),
+  vx: (Math.random()-.5) * .4, alpha: .03 + Math.random() * .07,
+  life: Math.random() * 200
+}));
+function drawSmoke(){
+  mctx.clearRect(0, 0, W(), H());
+  for(const p of smokePs){
+    const g = mctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+    g.addColorStop(0, `rgba(10,30,80,${p.alpha})`);
+    g.addColorStop(1, "transparent");
+    mctx.fillStyle = g;
+    mctx.beginPath();
+    mctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    mctx.fill();
+    p.x += p.vx; p.y += p.vy; p.life--;
+    if(p.life <= 0 || p.y < -p.r*2){
+      p.x = Math.random() * W(); p.y = H() + p.r;
+      p.life = 150 + Math.random() * 150;
+    }
+  }
+  requestAnimationFrame(drawSmoke);
+}
+drawSmoke();
+
+/* ── BLUE FLAMES ── */
+const flameC = document.getElementById("flameCanvas");
+const fctx = flameC.getContext("2d");
+fitCanvas(flameC);
+const flameCount = isMobile ? 45 : 90;
+const flames = Array.from({ length: flameCount }, () => ({
+  x: Math.random() * W(), y: H() + Math.random() * 60,
+  s: 2 + Math.random() * 7, vy: .8 + Math.random() * 2,
+  vx: (Math.random()-.5) * 1.1, alpha: .15 + Math.random() * .4,
+  hue: 195 + Math.random() * 35
+}));
+let lastF = 0;
+function drawFlames(ts){
+  if(ts - lastF < (isMobile ? 33 : 16)){ requestAnimationFrame(drawFlames); return; }
+  lastF = ts;
+  fctx.fillStyle = "rgba(0,0,0,.16)";
+  fctx.fillRect(0, 0, W(), H());
+  for(const f of flames){
+    const g = fctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.s*3);
+    g.addColorStop(0, `hsla(${f.hue},100%,65%,${f.alpha})`);
+    g.addColorStop(.6, `hsla(${f.hue},100%,45%,${f.alpha*.3})`);
+    g.addColorStop(1, "transparent");
+    fctx.fillStyle = g;
+    fctx.beginPath();
+    fctx.arc(f.x, f.y, f.s*3, 0, Math.PI*2);
+    fctx.fill();
+    f.x += f.vx; f.y -= f.vy;
+    if(f.y < -60){ f.y = H()+60; f.x = Math.random()*W(); }
+  }
+  requestAnimationFrame(drawFlames);
+}
+requestAnimationFrame(drawFlames);
+
+window.addEventListener("resize", () => {
+  fitCanvas(starC); fitCanvas(smokeC); fitCanvas(flameC);
+}, { passive: true });
+
+/* ── TYPEWRITER ── */
+const text = `Welcome to the world of Chris Legend of Shadows.
 
 This isn't just a name — it's a story built from everything I've been through.
 I created this world through pain, silence, and the battles in my own mind.
@@ -320,105 +461,15 @@ I write 90% of my music, and AI helps with music ideas and voice production.
 
 I didn't build this to be perfect — I built it to be real.
 A place where emotions turn into sound, and darkness turns into something powerful.
-`;
+
+Stay Legendary.`;
 
 let i = 0;
 function typeWriter(){
   const el = document.getElementById("typing");
-  if(i < text.length){
-    el.textContent += text.charAt(i++);
-    setTimeout(typeWriter, 20);
-  }
+  if(i < text.length){ el.textContent += text.charAt(i++); setTimeout(typeWriter, 18); }
 }
 window.addEventListener("load", typeWriter, { once: true });
-
-const isMobile = window.innerWidth < 600;
-
-/* STARFIELD */
-const starCanvas = document.getElementById("starfield");
-const sctx = starCanvas.getContext("2d");
-
-function resizeStars(){
-  starCanvas.width  = window.innerWidth;
-  starCanvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resizeStars, { passive: true });
-resizeStars();
-
-const starCount = isMobile ? 60 : 120;
-const stars = Array.from({ length: starCount }, () => ({
-  x: Math.random() * innerWidth,
-  y: Math.random() * innerHeight,
-  r: Math.random() * 2
-}));
-
-function drawStars(){
-  sctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
-  sctx.fillStyle = "#00c8ff";
-  stars.forEach(s => {
-    s.y += 0.2;
-    if(s.y > innerHeight) s.y = 0;
-    sctx.beginPath();
-    sctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    sctx.fill();
-  });
-  requestAnimationFrame(drawStars);
-}
-drawStars();
-
-/* BLUE RAIN */
-const rainCanvas = document.getElementById("blueRainCanvas");
-const rctx = rainCanvas.getContext("2d");
-
-function resizeRain(){
-  rainCanvas.width  = window.innerWidth;
-  rainCanvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resizeRain, { passive: true });
-resizeRain();
-
-const dropCount = isMobile ? 40 : 80;
-const drops = Array.from({ length: dropCount }, () => ({
-  x: Math.random() * innerWidth,
-  y: Math.random() * innerHeight,
-  l: Math.random() * 20 + 10,
-  s: Math.random() * 4 + 4
-}));
-
-let lastRainFrame = 0;
-function drawRain(ts){
-  if(ts - lastRainFrame < (isMobile ? 33 : 16)){
-    requestAnimationFrame(drawRain);
-    return;
-  }
-  lastRainFrame = ts;
-  rctx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
-  rctx.strokeStyle = "#00c8ff";
-  rctx.lineWidth = 1;
-  drops.forEach(d => {
-    rctx.beginPath();
-    rctx.moveTo(d.x, d.y);
-    rctx.lineTo(d.x, d.y + d.l);
-    rctx.stroke();
-    d.y += d.s;
-    if(d.y > innerHeight) d.y = 0;
-  });
-  requestAnimationFrame(drawRain);
-}
-requestAnimationFrame(drawRain);
-
-/* GHOST PARTICLES — reduced spawn rate on mobile */
-function spawnGhost(){
-  const ghost = document.createElement("div");
-  ghost.className = "ghost";
-  ghost.style.left = Math.random() * innerWidth + "px";
-  ghost.style.top  = innerHeight + "px";
-  ghost.style.animationDuration = (3 + Math.random() * 5) + "s";
-  document.getElementById("ghosts").appendChild(ghost);
-  setTimeout(() => ghost.remove(), 8000);
-}
-/* Mobile: spawn every 800ms, Desktop: every 400ms (was 400ms always) */
-setInterval(spawnGhost, isMobile ? 800 : 400);
 </script>
 
 <script>
@@ -428,6 +479,5 @@ if("serviceWorker" in navigator){
   );
 }
 </script>
-
 </body>
 </html>
