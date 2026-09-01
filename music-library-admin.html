@@ -797,7 +797,7 @@ import { getDatabase, ref, push, onValue, remove, serverTimestamp }
 /* ─── CONFIG ──────────────────────────────────────────────────────────── */
 const FOUNDER_EMAIL = "christijerina46@gmail.com";
 const LS_KEY        = "legendaryLibrary"; /* must match music-player.html */
-const WORKER_URL    = "https://chris-legend-media.christijerina.workers.dev";
+const WORKER_URL    = "https://chris-legend-media.nthntjrn.workers.dev";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAHwNhzonlsFbZFFrc1nvEqpl0ayM8N42c",
@@ -890,8 +890,15 @@ async function uploadToWorker(file, mediaType){
     body: file,
   });
 
-  const data = await res.json().catch(() => ({}));
-  if(!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  let data = {};
+  try { data = await res.json(); } catch(e) {}
+  if(!res.ok) {
+    const detail = data.error || `HTTP ${res.status}`;
+    const err = new Error(detail);
+    err.status = res.status;
+    err.detail = detail;
+    throw err;
+  }
   return data; /* { ok, key, url, size, mediaType } */
 }
 
@@ -1086,11 +1093,13 @@ addAllBtn.addEventListener("click", async () => {
       const retryBtn = item.status === "fail"
         ? `<button class="upload-item-retry" data-id="${item.id}">Retry</button>` : "";
 
+      const errorHint = (item.status === "fail" && item.error)
+        ? `<div style="font-size:9px;letter-spacing:1px;color:#ff9090;margin-top:2px;grid-column:1/-1;">${escHtml(item.error)}</div>` : "";
       div.innerHTML = `
         <div class="upload-item-name" title="${escHtml(item.entry.file.name)}">${escHtml(item.entry.title || item.entry.file.name)}</div>
         <div class="upload-item-bar"><div class="upload-item-fill" id="fill_${item.id}" style="width:${item.status==='ok'?100:0}%"></div></div>
         <div class="upload-item-status ${statusClass}">${statusIcon}</div>
-        ${retryBtn}
+        ${retryBtn}${errorHint}
       `;
       musicProgressList.appendChild(div);
     });
@@ -1346,11 +1355,13 @@ galleryUploadBtn.addEventListener("click", async () => {
       const retryBtn = item.status === "fail"
         ? `<button class="upload-item-retry" data-id="${item.id}">Retry</button>` : "";
 
+      const gErrorHint = (item.status === "fail" && item.error)
+        ? `<div style="font-size:9px;letter-spacing:1px;color:#ff9090;margin-top:2px;grid-column:1/-1;">${escHtml(item.error)}</div>` : "";
       div.innerHTML = `
         <div class="upload-item-name" title="${escHtml(item.entry.file.name)}">${escHtml(item.entry.title || item.entry.file.name)}</div>
         <div class="upload-item-bar"><div class="upload-item-fill" id="gfill_${item.id}" style="width:${item.status==='ok'?100:0}%"></div></div>
         <div class="upload-item-status ${statusClass}">${statusIcon}</div>
-        ${retryBtn}
+        ${retryBtn}${gErrorHint}
       `;
       galleryProgressList.appendChild(div);
     });
