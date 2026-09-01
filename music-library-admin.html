@@ -588,44 +588,7 @@ header .sub {
   ☽ Verifying access…
 </div>
 
-<!-- ── FOUNDER AUTH GUARD — runs immediately before any content is usable ── -->
-<script type="module">
-import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-const FOUNDER_EMAIL = "christijerina46@gmail.com";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAHwNhzonlsFbZFFrc1nvEqpl0ayM8N42c",
-  authDomain: "bue12-f6a1f.firebaseapp.com",
-  databaseURL: "https://bue12-f6a1f-default-rtdb.firebaseio.com",
-  projectId: "bue12-f6a1f",
-  storageBucket: "bue12-f6a1f.firebasestorage.app",
-  messagingSenderId: "383513452214",
-  appId: "1:383513452214:web:a86ee2969a3fc9e3459017"
-};
-
-try {
-  const app  = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  onAuthStateChanged(auth, user => {
-    const overlay = document.getElementById("authOverlay");
-    /* Only the Founder's authenticated email gains access */
-    if (user && user.email === FOUNDER_EMAIL) {
-      /* Reveal the page */
-      if (overlay) overlay.remove();
-    } else {
-      /* Not authenticated as Founder — hard redirect, no back navigation */
-      window.location.replace("founder-login.html");
-    }
-  });
-} catch (e) {
-  /* If Firebase fails to init, deny access for safety */
-  window.location.replace("founder-login.html");
-}
-</script>
+<!-- ── UNIFIED FOUNDER MODULE — single Firebase instance for auth + admin ── -->
 
 <canvas id="smokeCanvas"></canvas>
 <canvas id="flameCanvas"></canvas>
@@ -815,23 +778,14 @@ requestAnimationFrame(drawFlames);
 window.addEventListener("resize", ()=>{ fitCanvas(smokeC); fitCanvas(flameC); }, { passive:true });
 </script>
 
-<!-- ── BULK ADD LOGIC ── -->
+<!-- ── FOUNDER MEDIA MANAGER — single unified module ── -->
 <script type="module">
 /* ══════════════════════════════════════════════════════════════════════
    FOUNDER MEDIA MANAGER — R2 + Firebase integration
    ══════════════════════════════════════════════════════════════════════
-   Architecture:
-     1. Founder selects files (audio or images)
-     2. On upload, client fetches a Firebase ID token from the current session
-     3. Files are POSTed one-by-one to the Cloudflare Worker (WORKER_URL)
-     4. The Worker verifies the ID token server-side and writes to R2
-     5. Worker returns the public R2 URL
-     6. Metadata is saved to Firebase Realtime DB: /music/<id>  /gallery/<id>
-     7. music-player.html reads /music from Firebase
-     8. gallery.html reads /gallery from Firebase
-
-   localStorage is kept as a fallback sync layer so the player also
-   works when the user is on the same browser as the admin page.
+   Single Firebase app instance shared by auth guard + admin logic.
+   Auth guard wraps all admin initialisation so nothing runs until
+   Firebase confirms the session belongs to the Founder account.
    ══════════════════════════════════════════════════════════════════════ */
 
 import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -843,14 +797,7 @@ import { getDatabase, ref, push, onValue, remove, serverTimestamp }
 /* ─── CONFIG ──────────────────────────────────────────────────────────── */
 const FOUNDER_EMAIL = "christijerina46@gmail.com";
 const LS_KEY        = "legendaryLibrary"; /* must match music-player.html */
-
-/*
- * WORKER_URL — the deployed Cloudflare Worker URL.
- * After deploying the upload-worker, replace this placeholder with
- * the actual worker URL, e.g.:
- *   https://chris-legend-media.YOUR-SUBDOMAIN.workers.dev
- */
-const WORKER_URL = "https://chris-legend-media.christijerina.workers.dev";
+const WORKER_URL    = "https://chris-legend-media.christijerina.workers.dev";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAHwNhzonlsFbZFFrc1nvEqpl0ayM8N42c",
@@ -862,14 +809,30 @@ const firebaseConfig = {
   appId: "1:383513452214:web:a86ee2969a3fc9e3459017"
 };
 
-const app  = initializeApp(firebaseConfig, "admin");
+/* ─── SINGLE APP INSTANCE — used by both auth guard and admin logic ─── */
+const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getDatabase(app);
 
+/* ─── AUTH GUARD — wait for Firebase to restore session ─────────────── */
+/* Everything below only initialises after the Founder is confirmed.     */
 let currentUser = null;
+
 onAuthStateChanged(auth, user => {
-  currentUser = user;
+  const overlay = document.getElementById("authOverlay");
+
+  if (user && user.email === FOUNDER_EMAIL) {
+    /* ── Founder confirmed — reveal page and boot admin logic ── */
+    currentUser = user;
+    if (overlay) overlay.remove();
+    initAdminLogic();
+  } else {
+    /* ── Not authenticated as Founder — hard redirect ── */
+    window.location.replace("founder-login.html");
+  }
 });
+
+function initAdminLogic() {
 
 /* ─── HELPERS ────────────────────────────────────────────────────────── */
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
@@ -1492,6 +1455,8 @@ onValue(galleryDbRef, snap => {
     });
   });
 });
+
+} /* end initAdminLogic() */
 </script>
 
 <!-- ── SERVICE WORKER ── -->
