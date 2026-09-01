@@ -1437,9 +1437,16 @@ syncRepeatBtn();
 <!-- ── SERVICE WORKER ── -->
 <script>
 if("serviceWorker" in navigator){
-  window.addEventListener("load", () =>
-    navigator.serviceWorker.register("/sw.js").catch(() => {})
-  );
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").then(reg => {
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if(!sessionStorage.getItem("sw-reloaded")){
+          sessionStorage.setItem("sw-reloaded", "1");
+          location.reload();
+        }
+      });
+    }).catch(() => {});
+  });
 }
 </script>
 

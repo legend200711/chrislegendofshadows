@@ -508,9 +508,17 @@ autoFit();
 <script defer src="https://embed.tawk.to/6a3d7e9f94471a1d4dea3800/1js03d87e" charset="UTF-8" crossorigin="*"></script>
 <script>
 if("serviceWorker" in navigator){
-  window.addEventListener("load", () =>
-    navigator.serviceWorker.register("/sw.js").catch(() => {})
-  );
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").then(reg => {
+      /* When a new SW takes control, reload once to serve the latest build */
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if(!sessionStorage.getItem("sw-reloaded")){
+          sessionStorage.setItem("sw-reloaded", "1");
+          location.reload();
+        }
+      });
+    }).catch(() => {});
+  });
 }
 </script>
 

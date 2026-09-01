@@ -239,90 +239,20 @@ header .sub {
     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
 </div>
 
-<script src="https://elfsightcdn.com/platform.js" async defer></script>
-<div class="elfsight-app-3d43432f-da69-4ed7-9dcb-1a8bcd38b575" data-elfsight-app-lazy></div>
 
-<div class="legendFooter">⚔ Stay Legendary ⚔</div>
-
-<script>
-const isMobile = window.innerWidth < 600;
-const W = () => innerWidth, H = () => innerHeight;
-function fitCanvas(c){ c.width = W(); c.height = H(); }
-
-/* ── RAIN ── */
-const rain = document.getElementById("rain");
-const dropCount = isMobile ? 28 : 55;
-for(let i = 0; i < dropCount; i++){
-  const d = document.createElement("div");
-  d.className = "drop";
-  d.style.left = Math.random()*100 + "vw";
-  d.style.animationDuration = (.6 + Math.random()*1.4) + "s";
-  d.style.animationDelay = (Math.random()*2) + "s";
-  rain.appendChild(d);
-}
-
-/* ── SMOKE ── */
-const smokeC = document.getElementById("smokeCanvas");
-const mctx = smokeC.getContext("2d");
-fitCanvas(smokeC);
-const smokePs = Array.from({ length: isMobile ? 20 : 45 }, () => ({
-  x: Math.random()*W(), y: H()+Math.random()*100,
-  r: 25+Math.random()*70, vy: -(0.2+Math.random()*.6),
-  vx: (Math.random()-.5)*.4, alpha: .025+Math.random()*.06,
-  life: Math.random()*180
-}));
-function drawSmoke(){
-  mctx.clearRect(0,0,W(),H());
-  for(const p of smokePs){
-    const g = mctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
-    g.addColorStop(0,`rgba(8,25,70,${p.alpha})`);
-    g.addColorStop(1,"transparent");
-    mctx.fillStyle=g; mctx.beginPath(); mctx.arc(p.x,p.y,p.r,0,Math.PI*2); mctx.fill();
-    p.x+=p.vx; p.y+=p.vy; p.life--;
-    if(p.life<=0||p.y<-p.r*2){ p.x=Math.random()*W(); p.y=H()+p.r; p.life=130+Math.random()*150; }
-  }
-  requestAnimationFrame(drawSmoke);
-}
-drawSmoke();
-
-/* ── BLUE FLAMES ── */
-const flameC = document.getElementById("flameCanvas");
-const fctx = flameC.getContext("2d");
-fitCanvas(flameC);
-const flames = Array.from({ length: isMobile ? 40 : 80 }, () => ({
-  x: Math.random()*W(), y: H()+Math.random()*60,
-  s: 2+Math.random()*7, vy: .8+Math.random()*2,
-  vx: (Math.random()-.5)*1.1, alpha: .15+Math.random()*.4,
-  hue: 195+Math.random()*35
-}));
-let lastF = 0, beat = 0;
-setInterval(() => { beat = Math.random(); }, isMobile ? 500 : 250);
-
-function drawFlames(ts){
-  if(ts-lastF<(isMobile?33:16)){ requestAnimationFrame(drawFlames); return; }
-  lastF=ts;
-  fctx.fillStyle="rgba(0,0,0,.15)"; fctx.fillRect(0,0,W(),H());
-  for(const f of flames){
-    const g=fctx.createRadialGradient(f.x,f.y,0,f.x,f.y,(f.s+beat*4)*3);
-    g.addColorStop(0,`hsla(${f.hue},100%,65%,${f.alpha})`);
-    g.addColorStop(.6,`hsla(${f.hue},100%,45%,${f.alpha*.3})`);
-    g.addColorStop(1,"transparent");
-    fctx.fillStyle=g; fctx.beginPath(); fctx.arc(f.x,f.y,(f.s+beat*4)*3,0,Math.PI*2); fctx.fill();
-    f.x+=f.vx; f.y-=f.vy+beat*3;
-    if(f.y<-60){ f.y=H()+60; f.x=Math.random()*W(); }
-  }
-  requestAnimationFrame(drawFlames);
-}
-requestAnimationFrame(drawFlames);
-
-window.addEventListener("resize", ()=>{ fitCanvas(smokeC); fitCanvas(flameC); }, { passive:true });
-</script>
-
+c
 <script>
 if("serviceWorker" in navigator){
-  window.addEventListener("load", () =>
-    navigator.serviceWorker.register("/sw.js").catch(() => {})
-  );
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").then(reg => {
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if(!sessionStorage.getItem("sw-reloaded")){
+          sessionStorage.setItem("sw-reloaded", "1");
+          location.reload();
+        }
+      });
+    }).catch(() => {});
+  });
 }
 </script>
 </body>
