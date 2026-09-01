@@ -1,0 +1,13 @@
+name = "chris-legend-media"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "chris-legend-media"
+
+# Secrets set via: wrangler secret put <NAME>
+# Required secrets:
+#   FOUNDER_EMAIL        — christijerina46@gmail.com
+#   FIREBASE_PROJECT_ID  — bue12-f6a1f
+#   MEDIA_PUBLIC_BASE    — https://pub-XXXX.r2.dev  (or your custom domain once configured)

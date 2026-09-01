@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Founder Login · Chris Legend of Shadows</title>
+  <meta name="description" content="Founder Control — Authenticated access only.">
+  <meta name="theme-color" content="#000510">
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Chris Legend of Shadows">
+  <link rel="apple-touch-icon" href="wolf.png">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: #000510;
+      color: #c8d8f0;
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,60,160,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 80% at 20% 100%, rgba(60,0,120,.15) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      gap: 0;
+      padding: 0 16px;
+      background: rgba(0,5,16,.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(0,100,255,.12);
+    }
+
+    nav a {
+      display: inline-block;
+      padding: 14px 18px;
+      color: rgba(180,210,255,.6);
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color .2s;
+    }
+
+    nav a:hover { color: #c8d8f0; }
+
+    header {
+      text-align: center;
+      padding: 48px 20px 24px;
+    }
+
+    header h1 {
+      font-size: clamp(20px, 5vw, 34px);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #c8d8f0 30%, #6090d8 70%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header .sub {
+      margin-top: 8px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: rgba(140,170,210,.5);
+      text-transform: uppercase;
+    }
+
+    .login-card {
+      max-width: 420px;
+      margin: 12px auto 60px;
+      padding: 36px 32px;
+      background: rgba(0,10,30,.6);
+      border: 1px solid rgba(0,100,255,.18);
+      border-radius: 16px;
+      position: relative;
+    }
+
+    .login-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(0,80,200,.06), transparent 60%);
+      pointer-events: none;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(140,170,220,.6);
+      margin-bottom: 7px;
+      margin-top: 20px;
+    }
+
+    .field-label:first-of-type { margin-top: 0; }
+
+    .field-input {
+      width: 100%;
+      background: rgba(0,20,60,.5);
+      border: 1px solid rgba(0,100,200,.25);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #c8d8f0;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .field-input:focus {
+      border-color: rgba(0,160,255,.5);
+      box-shadow: 0 0 10px rgba(0,120,255,.15);
+    }
+
+    .btn-login {
+      margin-top: 28px;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(0,80,200,.6), rgba(0,40,120,.8));
+      border: 1px solid rgba(0,120,255,.35);
+      border-radius: 10px;
+      color: #c8d8f0;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .2s, border-color .2s, transform .1s;
+    }
+
+    .btn-login:hover {
+      background: linear-gradient(135deg, rgba(0,100,240,.7), rgba(0,60,160,.9));
+      border-color: rgba(0,160,255,.5);
+    }
+
+    .btn-login:active { transform: translateY(1px); }
+    .btn-login:disabled { opacity: .5; cursor: not-allowed; }
+
+    #statusMsg {
+      margin-top: 18px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      min-height: 18px;
+      text-align: center;
+      padding: 10px 14px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    #statusMsg.error {
+      display: block;
+      color: #ff8080;
+      background: rgba(80,0,0,.3);
+      border: 1px solid rgba(200,0,0,.25);
+    }
+
+    #statusMsg.info {
+      display: block;
+      color: #80c8ff;
+      background: rgba(0,30,80,.3);
+      border: 1px solid rgba(0,100,200,.25);
+    }
+
+    #loadingOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,5,16,.85);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(140,180,255,.7);
+    }
+
+    #loadingOverlay.visible { display: flex; }
+
+    .legendFooter {
+      text-align: center;
+      padding: 24px;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: rgba(100,130,170,.35);
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 480px) {
+      .login-card { margin: 12px 16px 48px; padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loadingOverlay">☽ Checking authentication…</div>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="music.html">Music</a>
+  <a href="music-player.html">Player</a>
+</nav>
+
+<header>
+  <h1>FOUNDER CONTROL</h1>
+  <div class="sub">Authorized Access Only · Chris Legend of Shadows</div>
+</header>
+
+<div class="login-card">
+  <label class="field-label" for="emailInput">Email</label>
+  <input class="field-input" type="email" id="emailInput" autocomplete="email" placeholder="founder@email.com">
+
+  <label class="field-label" for="passwordInput">Password</label>
+  <input class="field-input" type="password" id="passwordInput" autocomplete="current-password" placeholder="••••••••">
+
+  <button class="btn-login" id="loginBtn">⚔ Enter the Shadow Realm</button>
+
+  <div id="statusMsg"></div>
+</div>
+
+<div class="legendFooter">⚔ Stay Legendary ⚔</div>
+
+<!-- Firebase Auth -->
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const FOUNDER_EMAIL = "christijerina46@gmail.com";
+const REDIRECT_ON_SUCCESS = "music-library-admin.html";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAHwNhzonlsFbZFFrc1nvEqpl0ayM8N42c",
+  authDomain: "bue12-f6a1f.firebaseapp.com",
+  databaseURL: "https://bue12-f6a1f-default-rtdb.firebaseio.com",
+  projectId: "bue12-f6a1f",
+  storageBucket: "bue12-f6a1f.firebasestorage.app",
+  messagingSenderId: "383513452214",
+  appId: "1:383513452214:web:a86ee2969a3fc9e3459017"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const loadingOverlay = document.getElementById("loadingOverlay");
+const loginBtn       = document.getElementById("loginBtn");
+const emailInput     = document.getElementById("emailInput");
+const passwordInput  = document.getElementById("passwordInput");
+const statusMsg      = document.getElementById("statusMsg");
+
+function setStatus(text, type) {
+  statusMsg.textContent  = text;
+  statusMsg.className    = type || "";
+  statusMsg.style.display = text ? "" : "none";
+}
+
+/* If the Founder is already signed in, redirect immediately */
+loadingOverlay.classList.add("visible");
+onAuthStateChanged(auth, user => {
+  loadingOverlay.classList.remove("visible");
+  if (user && user.email === FOUNDER_EMAIL) {
+    window.location.replace(REDIRECT_ON_SUCCESS);
+  }
+});
+
+loginBtn.addEventListener("click", async () => {
+  const email    = emailInput.value.trim();
+  const password = passwordInput.value;
+
+  setStatus("");
+
+  if (!email || !password) {
+    setStatus("Please enter your email and password.", "error");
+    return;
+  }
+
+  /* Reject immediately if email is not the Founder — don't even hit Firebase */
+  if (email.toLowerCase() !== FOUNDER_EMAIL) {
+    setStatus("Unauthorized. This area is restricted to the Founder.", "error");
+    return;
+  }
+
+  loginBtn.disabled = true;
+  setStatus("Authenticating…", "info");
+
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+
+    /* Double-check the authenticated email matches the Founder account */
+    if (cred.user.email !== FOUNDER_EMAIL) {
+      await auth.signOut();
+      setStatus("Unauthorized. Access denied.", "error");
+      loginBtn.disabled = false;
+      return;
+    }
+
+    setStatus("Access granted. Entering Shadow Realm…", "info");
+    setTimeout(() => window.location.replace(REDIRECT_ON_SUCCESS), 600);
+
+  } catch (err) {
+    loginBtn.disabled = false;
+
+    /* Map Firebase error codes to user-friendly messages */
+    const code = err.code || "";
+    if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") {
+      setStatus("Invalid credentials. Access denied.", "error");
+    } else if (code === "auth/too-many-requests") {
+      setStatus("Too many attempts. Please wait and try again.", "error");
+    } else if (code === "auth/network-request-failed") {
+      setStatus("Network error. Check your connection.", "error");
+    } else {
+      setStatus("Authentication failed. Try again.", "error");
+    }
+  }
+});
+
+/* Allow Enter key on password field */
+passwordInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") loginBtn.click();
+});
+</script>
+
+<!-- Service Worker -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () =>
+    navigator.serviceWorker.register("/sw.js").catch(() => {})
+  );
+}
+</script>
+
+</body>
+</html>

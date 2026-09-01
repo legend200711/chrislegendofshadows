@@ -1,0 +1,44 @@
+{
+  "rules": {
+    "comments": {
+      ".read": true,
+
+      "$commentId": {
+        ".write": "
+          (
+            auth != null
+            && newData.exists()
+          )
+          ||
+          (
+            auth != null
+            && !newData.exists()
+            && data.child('uid').val() == auth.uid
+          )
+          ||
+          (
+            auth != null
+            && !newData.exists()
+            && auth.token.firebase.sign_in_provider != 'anonymous'
+            && auth.token.email == 'christijerina46@gmail.com'
+          )
+        ",
+
+        ".validate": "
+          !newData.exists()
+          ||
+          (
+            newData.hasChildren(['name', 'message', 'time'])
+            && newData.child('name').isString()
+            && newData.child('name').val().length > 0
+            && newData.child('name').val().length <= 80
+            && newData.child('message').isString()
+            && newData.child('message').val().length > 0
+            && newData.child('message').val().length <= 1000
+            && newData.child('time').isNumber()
+          )
+        "
+      }
+    }
+  }
+}

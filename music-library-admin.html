@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Founder Control · Media Manager · Chris Legend of Shadows</title>
+<meta name="description" content="Founder Control — Bulk upload music and gallery images to Cloudflare R2.">
+<meta name="theme-color" content="#000510">
+<!-- PWA / iOS -->
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chris Legend of Shadows">
+<link rel="apple-touch-icon" href="wolf.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  min-height: 100%;
+  overflow-x: hidden;
+  background: #000;
+  color: #c0deff;
+  font-family: 'Cinzel', Georgia, serif;
+}
+
+/* ── SHADOW REALM BG ── */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(0,20,70,.9),  transparent 50%),
+    radial-gradient(ellipse at 0%   50%, rgba(0,0,50,.8),   transparent 55%),
+    radial-gradient(ellipse at 100% 50%, rgba(5,0,40,.8),   transparent 55%),
+    radial-gradient(ellipse at 50% 110%,rgba(0,10,50,.9),   transparent 60%);
+  z-index: -20;
+  pointer-events: none;
+}
+
+/* ── MOONLIGHT ── */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 220px; height: 50vh;
+  background: linear-gradient(to bottom, rgba(60,140,255,.08), transparent 80%);
+  clip-path: polygon(28% 0%, 72% 0%, 100% 100%, 0% 100%);
+  pointer-events: none;
+  z-index: -5;
+  animation: moonBeam 10s ease-in-out infinite;
+}
+@keyframes moonBeam {
+  0%,100% { opacity: .4; }
+  50%     { opacity: .8; }
+}
+
+/* ── CANVAS ── */
+#smokeCanvas, #flameCanvas {
+  position: fixed; inset: 0;
+  pointer-events: none;
+}
+#smokeCanvas { z-index: -12; }
+#flameCanvas { z-index: -8; }
+
+/* ── RAIN ── */
+.rain { position: fixed; inset: 0; pointer-events: none; z-index: -6; overflow: hidden; }
+.drop {
+  position: absolute; bottom: 100%;
+  width: 1px; height: 70px;
+  background: linear-gradient(to bottom, transparent, rgba(0,140,255,.4));
+  animation: fall linear infinite;
+}
+@keyframes fall { to { transform: translateY(115vh); } }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0;
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 6px; padding: 12px 16px;
+  background: rgba(0,0,10,.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 100;
+  border-bottom: 1px solid rgba(0,120,255,.2);
+}
+nav a {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: 3px;
+  color: rgba(130,190,255,.7);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: 1px solid rgba(0,100,255,.2);
+  background: rgba(0,0,20,.4);
+  transition: .25s;
+  text-transform: uppercase;
+}
+nav a:hover, nav a.active {
+  color: #fff;
+  background: rgba(0,70,180,.3);
+  border-color: rgba(0,150,255,.5);
+  box-shadow: 0 0 16px rgba(0,120,255,.4);
+}
+nav a.active {
+  box-shadow: 0 0 18px rgba(0,160,255,.5), inset 0 0 8px rgba(0,100,220,.2);
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  padding: 44px 20px 10px;
+  position: relative; z-index: 2;
+}
+header h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(18px, 4vw, 36px);
+  letter-spacing: 4px;
+  color: #80c0ff;
+  text-shadow: 0 0 15px rgba(0,120,255,.8), 0 0 40px rgba(0,80,200,.5);
+  animation: titleShimmer 6s ease-in-out infinite;
+}
+header .sub {
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: rgba(120,180,255,.45);
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+@keyframes titleShimmer {
+  0%,100% { text-shadow: 0 0 15px rgba(0,120,255,.8), 0 0 40px rgba(0,80,200,.5); }
+  50%     { text-shadow: 0 0 25px rgba(0,180,255,.9), 0 0 60px rgba(0,120,255,.7), 0 0 100px rgba(0,60,200,.4); }
+}
+
+/* ── CARD ── */
+.admin-card {
+  max-width: 760px;
+  margin: 28px auto;
+  padding: 32px 28px 28px;
+  background: rgba(0,8,28,.7);
+  border: 1px solid rgba(0,140,255,.3);
+  border-radius: 22px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 0 40px rgba(0,100,255,.15),
+    0 0 80px rgba(0,50,180,.08),
+    inset 0 0 40px rgba(0,20,70,.4);
+  position: relative;
+  z-index: 2;
+}
+.admin-card::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: 8%; right: 8%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgba(0,200,255,1), rgba(80,180,255,.9), rgba(0,200,255,1), transparent);
+  filter: blur(1px);
+  border-radius: 2px;
+}
+
+/* ── SECTION LABELS ── */
+.section-label {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: rgba(80,150,255,.55);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+/* ── DROP ZONE ── */
+.drop-zone {
+  border: 2px dashed rgba(0,140,255,.35);
+  border-radius: 16px;
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: .25s;
+  background: rgba(0,10,40,.35);
+  margin-bottom: 24px;
+  position: relative;
+}
+.drop-zone.over {
+  border-color: rgba(0,210,255,.7);
+  background: rgba(0,40,100,.3);
+  box-shadow: 0 0 24px rgba(0,160,255,.25);
+}
+.drop-zone input[type="file"] {
+  position: absolute; inset: 0;
+  opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.drop-zone-icon {
+  font-size: 36px;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+.drop-zone-text {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: rgba(140,200,255,.7);
+  margin-bottom: 6px;
+}
+.drop-zone-sub {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(80,130,200,.5);
+}
+
+/* ── PREVIEW TABLE ── */
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.preview-count {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(80,150,255,.6);
+}
+.preview-list {
+  list-style: none;
+  max-height: 380px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,100,200,.4) transparent;
+  margin-bottom: 20px;
+}
+.preview-list::-webkit-scrollbar { width: 4px; }
+.preview-list::-webkit-scrollbar-track { background: transparent; }
+.preview-list::-webkit-scrollbar-thumb { background: rgba(0,120,255,.4); border-radius: 4px; }
+
+.prev-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,100,200,.15);
+  margin-bottom: 6px;
+  background: rgba(0,10,40,.4);
+  transition: .2s;
+}
+.prev-item:hover { border-color: rgba(0,140,255,.3); background: rgba(0,20,60,.4); }
+.prev-art {
+  width: 44px; height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(0,100,200,.25);
+  background: rgba(0,15,50,.6);
+  flex-shrink: 0;
+}
+.prev-info { flex: 1; min-width: 0; }
+.prev-title-input {
+  background: rgba(0,20,60,.5);
+  border: 1px solid rgba(0,100,200,.25);
+  border-radius: 8px;
+  color: #a8d0ff;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  width: 100%;
+  outline: none;
+  transition: .2s;
+  margin-bottom: 4px;
+}
+.prev-title-input:focus {
+  border-color: rgba(0,180,255,.5);
+  box-shadow: 0 0 8px rgba(0,140,255,.2);
+}
+.prev-meta {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: rgba(80,130,200,.55);
+}
+.prev-dur {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: rgba(80,130,200,.5);
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: right;
+}
+.prev-remove {
+  background: rgba(60,0,0,.4);
+  border: 1px solid rgba(180,0,0,.2);
+  border-radius: 50%;
+  color: rgba(255,80,80,.7);
+  width: 28px; height: 28px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.prev-remove:hover { background: rgba(120,0,0,.5); color: #ff8080; border-color: rgba(255,0,0,.4); }
+
+/* ── BUTTONS ── */
+.btn-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn-legendary-admin {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 14px 30px;
+  border-radius: 30px;
+  border: 1px solid rgba(0,180,255,.5);
+  background: rgba(0,30,80,.7);
+  color: #80c8ff;
+  cursor: pointer;
+  transition: .25s;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-legendary-admin::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent, rgba(0,180,255,.25) 60deg, transparent 120deg, rgba(0,220,255,.25) 230deg, transparent 300deg);
+  filter: blur(8px);
+  animation: btnFlame 3s linear infinite;
+  pointer-events: none;
+}
+@keyframes btnFlame { to { transform: rotate(360deg); } }
+.btn-legendary-admin:hover, .btn-legendary-admin:focus-visible {
+  background: rgba(0,60,160,.6);
+  border-color: rgba(0,220,255,.7);
+  color: #fff;
+  box-shadow: 0 0 24px rgba(0,160,255,.4);
+  transform: translateY(-1px);
+  outline: none;
+}
+.btn-legendary-admin:active { transform: translateY(0); }
+.btn-legendary-admin.primary {
+  background: rgba(0,60,160,.7);
+  border-color: rgba(0,210,255,.6);
+  font-size: 13px;
+  padding: 16px 36px;
+}
+.btn-legendary-admin.danger {
+  border-color: rgba(180,0,0,.4);
+  color: rgba(255,120,120,.8);
+  background: rgba(40,0,0,.5);
+}
+.btn-legendary-admin.danger:hover {
+  background: rgba(80,0,0,.6);
+  border-color: rgba(255,0,0,.5);
+  color: #ffa0a0;
+  box-shadow: 0 0 20px rgba(200,0,0,.3);
+}
+
+/* ── LIBRARY MANAGER ── */
+.lib-manager {
+  margin-top: 36px;
+  border-top: 1px solid rgba(0,100,200,.2);
+  padding-top: 28px;
+}
+.lib-manager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.lib-stat {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(80,150,255,.55);
+}
+.lib-entries {
+  list-style: none;
+  max-height: 240px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,100,200,.4) transparent;
+  margin-bottom: 16px;
+}
+.lib-entries::-webkit-scrollbar { width: 4px; }
+.lib-entries::-webkit-scrollbar-track { background: transparent; }
+.lib-entries::-webkit-scrollbar-thumb { background: rgba(0,120,255,.4); border-radius: 4px; }
+
+.lib-entry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: .15s;
+}
+.lib-entry:hover { background: rgba(0,20,60,.4); border-color: rgba(0,100,200,.2); }
+.lib-entry-num {
+  font-size: 10px; letter-spacing: 1px;
+  color: rgba(80,130,200,.4);
+  min-width: 22px; text-align: right;
+  flex-shrink: 0;
+}
+.lib-entry-title {
+  flex: 1;
+  font-size: 12px; letter-spacing: 1px;
+  color: rgba(160,210,255,.8);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lib-entry-type {
+  font-size: 9px; letter-spacing: 1px;
+  color: rgba(60,120,200,.5);
+  flex-shrink: 0;
+}
+.lib-entry-remove {
+  background: none;
+  border: none;
+  color: rgba(180,50,50,.5);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: .15s;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.lib-entry-remove:hover { color: #ff8080; background: rgba(80,0,0,.3); }
+
+.empty-library {
+  text-align: center;
+  padding: 20px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: rgba(60,110,200,.4);
+}
+
+/* ── TOAST ── */
+#toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: rgba(0,30,80,.9);
+  border: 1px solid rgba(0,180,255,.4);
+  border-radius: 20px;
+  padding: 10px 24px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #80d0ff;
+  box-shadow: 0 0 20px rgba(0,120,255,.3);
+  z-index: 999;
+  transition: transform .3s ease, opacity .3s ease;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* ── UPLOAD PROGRESS PANEL ── */
+.upload-progress-panel {
+  margin: 20px 0;
+  background: rgba(0,8,28,.6);
+  border: 1px solid rgba(0,100,200,.2);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: none;
+}
+.upload-progress-panel.active { display: block; }
+.upload-summary {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(100,170,255,.6);
+  margin-bottom: 14px;
+  text-align: center;
+}
+.upload-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(0,60,120,.15);
+  font-size: 11px;
+}
+.upload-item:last-child { border-bottom: none; }
+.upload-item-name {
+  flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: rgba(160,210,255,.8);
+  letter-spacing: 1px;
+}
+.upload-item-bar {
+  width: 80px;
+  height: 4px;
+  background: rgba(0,40,100,.5);
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.upload-item-fill {
+  height: 100%;
+  background: linear-gradient(to right, #0080ff, #00d4ff);
+  border-radius: 4px;
+  width: 0%;
+  transition: width .3s;
+}
+.upload-item-status {
+  font-size: 13px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+.upload-item-status.pending  { color: rgba(100,140,200,.4); }
+.upload-item-status.uploading{ color: #60b0ff; }
+.upload-item-status.ok       { color: #50e080; }
+.upload-item-status.fail     { color: #ff6060; }
+.upload-item-retry {
+  background: rgba(60,0,0,.4);
+  border: 1px solid rgba(180,0,0,.3);
+  color: rgba(255,120,120,.8);
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.upload-item-retry:hover { background: rgba(100,0,0,.5); color: #ffaaaa; }
+
+/* ── GALLERY UPLOAD SECTION ── */
+.gallery-section {
+  margin-top: 40px;
+  border-top: 1px solid rgba(0,100,200,.2);
+  padding-top: 28px;
+}
+
+/* ── FOOTER ── */
+.legendFooter {
+  text-align: center;
+  padding: 30px 20px 50px;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(11px, 2vw, 14px);
+  letter-spacing: 6px;
+  color: rgba(80,160,255,.5);
+  text-transform: uppercase;
+  animation: footerPulse 5s ease-in-out infinite;
+  position: relative; z-index: 2;
+}
+@keyframes footerPulse {
+  0%,100% { opacity: .5; }
+  50%     { opacity: 1; text-shadow: 0 0 20px rgba(0,120,255,.5); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 720px) {
+  .admin-card { margin: 14px; padding: 22px 14px 20px; }
+  .prev-item { flex-wrap: wrap; }
+  .prev-art { width: 36px; height: 36px; }
+  .btn-legendary-admin { font-size: 11px; padding: 12px 22px; }
+  .btn-legendary-admin.primary { font-size: 12px; padding: 14px 28px; }
+  .upload-item-bar { width: 50px; }
+}
+@media (max-width: 420px) {
+  .drop-zone { padding: 26px 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── FOUNDER AUTH GUARD — hides page until auth is confirmed ── -->
+<div id="authOverlay" style="
+  position:fixed;inset:0;background:#000510;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  font-family:-apple-system,system-ui,sans-serif;
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(140,180,255,.6);">
+  ☽ Verifying access…
+</div>
+
+<!-- ── FOUNDER AUTH GUARD — runs immediately before any content is usable ── -->
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const FOUNDER_EMAIL = "christijerina46@gmail.com";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAHwNhzonlsFbZFFrc1nvEqpl0ayM8N42c",
+  authDomain: "bue12-f6a1f.firebaseapp.com",
+  databaseURL: "https://bue12-f6a1f-default-rtdb.firebaseio.com",
+  projectId: "bue12-f6a1f",
+  storageBucket: "bue12-f6a1f.firebasestorage.app",
+  messagingSenderId: "383513452214",
+  appId: "1:383513452214:web:a86ee2969a3fc9e3459017"
+};
+
+try {
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, user => {
+    const overlay = document.getElementById("authOverlay");
+    /* Only the Founder's authenticated email gains access */
+    if (user && user.email === FOUNDER_EMAIL) {
+      /* Reveal the page */
+      if (overlay) overlay.remove();
+    } else {
+      /* Not authenticated as Founder — hard redirect, no back navigation */
+      window.location.replace("founder-login.html");
+    }
+  });
+} catch (e) {
+  /* If Firebase fails to init, deny access for safety */
+  window.location.replace("founder-login.html");
+}
+</script>
+
+<canvas id="smokeCanvas"></canvas>
+<canvas id="flameCanvas"></canvas>
+<div class="rain" id="rain"></div>
+
+<div id="toast"></div>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="music.html">Music</a>
+  <a href="music-player.html">Player</a>
+  <a href="founder-login.html">Founder Login</a>
+  <a href="music-library-admin.html" class="active">Add Songs</a>
+</nav>
+
+<header>
+  <h1>MEDIA CONTROL</h1>
+  <div class="sub">Founder Control · Music &amp; Gallery · R2 Storage</div>
+</header>
+
+<div class="admin-card">
+
+  <!-- ══════════════════════════════════════════
+       MUSIC UPLOAD
+       ══════════════════════════════════════════ -->
+  <p class="section-label">⚡ Upload Music to R2</p>
+  <div class="drop-zone" id="dropZone">
+    <input type="file" id="fileInput" multiple
+           accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/x-m4a,audio/aac,audio/mp4,.mp3,.wav,.ogg,.m4a,.aac">
+    <div class="drop-zone-icon">🎵</div>
+    <div class="drop-zone-text">Tap or drop audio files here</div>
+    <div class="drop-zone-sub">MP3 · WAV · OGG · M4A/AAC · Select multiple at once</div>
+  </div>
+
+  <!-- ── MUSIC PREVIEW ── -->
+  <div id="previewSection" style="display:none;">
+    <div class="preview-header">
+      <p class="section-label" style="margin-bottom:0;">☽ Ready to Upload</p>
+      <span class="preview-count" id="previewCount"></span>
+    </div>
+    <ul class="preview-list" id="previewList"></ul>
+    <div class="btn-row">
+      <button class="btn-legendary-admin primary" id="addAllBtn">⚔ Upload to R2</button>
+      <button class="btn-legendary-admin" id="clearPreviewBtn">✕ Clear Selection</button>
+    </div>
+  </div>
+
+  <!-- ── MUSIC UPLOAD PROGRESS ── -->
+  <div class="upload-progress-panel" id="musicProgressPanel">
+    <div class="upload-summary" id="musicProgressSummary"></div>
+    <div id="musicProgressList"></div>
+  </div>
+
+  <!-- ── MUSIC LIBRARY MANAGER ── -->
+  <div class="lib-manager">
+    <div class="lib-manager-header">
+      <p class="section-label" style="margin-bottom:0;">📚 Music Library (R2 + Firebase)</p>
+      <span class="lib-stat" id="libStat"></span>
+    </div>
+    <ul class="lib-entries" id="libEntries"></ul>
+    <div class="btn-row">
+      <button class="btn-legendary-admin danger" id="clearLibBtn">🗑 Clear Entire Library</button>
+      <a href="music-player.html" class="btn-legendary-admin" style="text-decoration:none;display:inline-flex;align-items:center;">
+        ▶ Open Player
+      </a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       GALLERY UPLOAD
+       ══════════════════════════════════════════ -->
+  <div class="gallery-section">
+    <p class="section-label">🖼 Upload Gallery Images to R2</p>
+    <div class="drop-zone" id="galleryDropZone">
+      <input type="file" id="galleryFileInput" multiple
+             accept="image/jpeg,image/png,image/gif,image/webp,image/avif,.jpg,.jpeg,.png,.gif,.webp,.avif">
+      <div class="drop-zone-icon">🌌</div>
+      <div class="drop-zone-text">Tap or drop images here</div>
+      <div class="drop-zone-sub">JPG · PNG · WebP · GIF · AVIF · Select multiple at once</div>
+    </div>
+
+    <div id="galleryPreviewSection" style="display:none;">
+      <div class="preview-header">
+        <p class="section-label" style="margin-bottom:0;">☽ Images Ready to Upload</p>
+        <span class="preview-count" id="galleryPreviewCount"></span>
+      </div>
+      <ul class="preview-list" id="galleryPreviewList"></ul>
+      <div class="btn-row">
+        <button class="btn-legendary-admin primary" id="galleryUploadBtn">🌌 Upload Images to R2</button>
+        <button class="btn-legendary-admin" id="galleryClearPreviewBtn">✕ Clear Selection</button>
+      </div>
+    </div>
+
+    <!-- Gallery upload progress -->
+    <div class="upload-progress-panel" id="galleryProgressPanel">
+      <div class="upload-summary" id="galleryProgressSummary"></div>
+      <div id="galleryProgressList"></div>
+    </div>
+
+    <!-- Gallery library -->
+    <div class="lib-manager">
+      <div class="lib-manager-header">
+        <p class="section-label" style="margin-bottom:0;">🖼 Gallery Images (R2 + Firebase)</p>
+        <span class="lib-stat" id="galleryLibStat"></span>
+      </div>
+      <ul class="lib-entries" id="galleryLibEntries"></ul>
+      <div class="btn-row">
+        <a href="gallery.html" class="btn-legendary-admin" style="text-decoration:none;display:inline-flex;align-items:center;">
+          🖼 Open Gallery
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="legendFooter">⚔ Stay Legendary ⚔</div>
+
+<!-- ── BACKGROUND EFFECTS ── -->
+<script>
+const isMobile = window.innerWidth < 600;
+const W = () => innerWidth, H = () => innerHeight;
+function fitCanvas(c){ c.width = W(); c.height = H(); }
+
+const rain = document.getElementById("rain");
+const dropCount = isMobile ? 28 : 55;
+for(let i = 0; i < dropCount; i++){
+  const d = document.createElement("div");
+  d.className = "drop";
+  d.style.left = Math.random()*100 + "vw";
+  d.style.animationDuration = (.6 + Math.random()*1.4) + "s";
+  d.style.animationDelay = (Math.random()*2) + "s";
+  rain.appendChild(d);
+}
+
+const smokeC = document.getElementById("smokeCanvas");
+const mctx = smokeC.getContext("2d");
+fitCanvas(smokeC);
+const smokePs = Array.from({ length: isMobile ? 20 : 45 }, () => ({
+  x: Math.random()*W(), y: H()+Math.random()*100,
+  r: 25+Math.random()*70, vy: -(0.2+Math.random()*.6),
+  vx: (Math.random()-.5)*.4, alpha: .025+Math.random()*.06,
+  life: Math.random()*180
+}));
+function drawSmoke(){
+  mctx.clearRect(0,0,W(),H());
+  for(const p of smokePs){
+    const g = mctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+    g.addColorStop(0,`rgba(8,25,70,${p.alpha})`);
+    g.addColorStop(1,"transparent");
+    mctx.fillStyle=g; mctx.beginPath(); mctx.arc(p.x,p.y,p.r,0,Math.PI*2); mctx.fill();
+    p.x+=p.vx; p.y+=p.vy; p.life--;
+    if(p.life<=0||p.y<-p.r*2){ p.x=Math.random()*W(); p.y=H()+p.r; p.life=130+Math.random()*150; }
+  }
+  requestAnimationFrame(drawSmoke);
+}
+drawSmoke();
+
+const flameC = document.getElementById("flameCanvas");
+const fctx = flameC.getContext("2d");
+fitCanvas(flameC);
+const flames = Array.from({ length: isMobile ? 40 : 80 }, () => ({
+  x: Math.random()*W(), y: H()+Math.random()*60,
+  s: 2+Math.random()*7, vy: .8+Math.random()*2,
+  vx: (Math.random()-.5)*1.1, alpha: .15+Math.random()*.4,
+  hue: 195+Math.random()*35
+}));
+let lastF = 0, beat = 0;
+setInterval(() => { beat = Math.random(); }, isMobile ? 500 : 250);
+function drawFlames(ts){
+  if(ts-lastF<(isMobile?33:16)){ requestAnimationFrame(drawFlames); return; }
+  lastF=ts;
+  fctx.fillStyle="rgba(0,0,0,.15)"; fctx.fillRect(0,0,W(),H());
+  for(const f of flames){
+    const g=fctx.createRadialGradient(f.x,f.y,0,f.x,f.y,(f.s+beat*4)*3);
+    g.addColorStop(0,`hsla(${f.hue},100%,65%,${f.alpha})`);
+    g.addColorStop(.6,`hsla(${f.hue},100%,45%,${f.alpha*.3})`);
+    g.addColorStop(1,"transparent");
+    fctx.fillStyle=g; fctx.beginPath(); fctx.arc(f.x,f.y,(f.s+beat*4)*3,0,Math.PI*2); fctx.fill();
+    f.x+=f.vx; f.y-=f.vy+beat*3;
+    if(f.y<-60){ f.y=H()+60; f.x=Math.random()*W(); }
+  }
+  requestAnimationFrame(drawFlames);
+}
+requestAnimationFrame(drawFlames);
+window.addEventListener("resize", ()=>{ fitCanvas(smokeC); fitCanvas(flameC); }, { passive:true });
+</script>
+
+<!-- ── BULK ADD LOGIC ── -->
+<script type="module">
+/* ══════════════════════════════════════════════════════════════════════
+   FOUNDER MEDIA MANAGER — R2 + Firebase integration
+   ══════════════════════════════════════════════════════════════════════
+   Architecture:
+     1. Founder selects files (audio or images)
+     2. On upload, client fetches a Firebase ID token from the current session
+     3. Files are POSTed one-by-one to the Cloudflare Worker (WORKER_URL)
+     4. The Worker verifies the ID token server-side and writes to R2
+     5. Worker returns the public R2 URL
+     6. Metadata is saved to Firebase Realtime DB: /music/<id>  /gallery/<id>
+     7. music-player.html reads /music from Firebase
+     8. gallery.html reads /gallery from Firebase
+
+   localStorage is kept as a fallback sync layer so the player also
+   works when the user is on the same browser as the admin page.
+   ══════════════════════════════════════════════════════════════════════ */
+
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, push, onValue, remove, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* ─── CONFIG ──────────────────────────────────────────────────────────── */
+const FOUNDER_EMAIL = "christijerina46@gmail.com";
+const LS_KEY        = "legendaryLibrary"; /* must match music-player.html */
+
+/*
+ * WORKER_URL — the deployed Cloudflare Worker URL.
+ * After deploying the upload-worker, replace this placeholder with
+ * the actual worker URL, e.g.:
+ *   https://chris-legend-media.YOUR-SUBDOMAIN.workers.dev
+ */
+const WORKER_URL = "https://chris-legend-media.christijerina.workers.dev";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAHwNhzonlsFbZFFrc1nvEqpl0ayM8N42c",
+  authDomain: "bue12-f6a1f.firebaseapp.com",
+  databaseURL: "https://bue12-f6a1f-default-rtdb.firebaseio.com",
+  projectId: "bue12-f6a1f",
+  storageBucket: "bue12-f6a1f.firebasestorage.app",
+  messagingSenderId: "383513452214",
+  appId: "1:383513452214:web:a86ee2969a3fc9e3459017"
+};
+
+const app  = initializeApp(firebaseConfig, "admin");
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+let currentUser = null;
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+});
+
+/* ─── HELPERS ────────────────────────────────────────────────────────── */
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function fmtTime(sec){
+  if(!isFinite(sec)||isNaN(sec)) return "–:––";
+  return `${Math.floor(sec/60)}:${String(Math.floor(sec%60)).padStart(2,"0")}`;
+}
+function escHtml(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function filenameToTitle(name){
+  return name
+    .replace(/\.[^.]+$/,"")
+    .replace(/[-_]+/g," ")
+    .replace(/\s{2,}/g," ")
+    .trim()
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+function fmtSize(bytes){
+  if(bytes < 1024) return bytes + " B";
+  if(bytes < 1024*1024) return (bytes/1024).toFixed(1) + " KB";
+  return (bytes/1024/1024).toFixed(1) + " MB";
+}
+
+/* ─── TOAST ──────────────────────────────────────────────────────────── */
+const toastEl = document.getElementById("toast");
+let toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove("show"), 3000);
+}
+
+/* ─── GET ID TOKEN ───────────────────────────────────────────────────── */
+async function getIdToken(){
+  if(!currentUser) throw new Error("Not authenticated");
+  return currentUser.getIdToken(/* forceRefresh */ false);
+}
+
+/* ─── UPLOAD ONE FILE TO WORKER ─────────────────────────────────────── */
+async function uploadToWorker(file, mediaType){
+  const token = await getIdToken();
+  const endpoint = `${WORKER_URL}/upload/${mediaType}`;
+
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Authorization":  `Bearer ${token}`,
+      "X-File-Name":    encodeURIComponent(file.name),
+      "X-File-Type":    file.type || "application/octet-stream",
+      "X-File-Size":    String(file.size),
+      "Content-Type":   file.type || "application/octet-stream",
+    },
+    body: file,
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if(!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data; /* { ok, key, url, size, mediaType } */
+}
+
+/* ─── CHECK DUPLICATE VIA WORKER ────────────────────────────────────── */
+async function checkDuplicate(prefix, fileName){
+  try {
+    const token = await getIdToken();
+    const res = await fetch(`${WORKER_URL}/check-duplicate`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ prefix, fileName }),
+    });
+    const data = await res.json().catch(() => ({}));
+    return data; /* { exists, key } */
+  } catch(e) {
+    return { exists: false, key: null }; /* non-fatal */
+  }
+}
+
+/* ─── SAVE TRACK METADATA TO FIREBASE ───────────────────────────────── */
+async function saveTrackToFirebase(track){
+  /* Save to /music in Realtime DB */
+  const musicRef = ref(db, "music");
+  await push(musicRef, {
+    ...track,
+    uploadedBy: FOUNDER_EMAIL,
+    savedAt:    Date.now(),
+  });
+}
+
+/* ─── SAVE IMAGE METADATA TO FIREBASE ───────────────────────────────── */
+async function saveImageToFirebase(image){
+  const galleryRef = ref(db, "gallery");
+  await push(galleryRef, {
+    ...image,
+    uploadedBy: FOUNDER_EMAIL,
+    savedAt:    Date.now(),
+  });
+}
+
+/* ─── SYNC TO LOCALSTORAGE (player fallback) ────────────────────────── */
+function syncLocalStorage(track){
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    const lib = raw ? JSON.parse(raw) : [];
+    lib.push(track);
+    localStorage.setItem(LS_KEY, JSON.stringify(lib));
+  } catch(e){}
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   MUSIC UPLOAD
+   ════════════════════════════════════════════════════════════════════════ */
+let pendingMusicFiles = [];
+
+const fileInput           = document.getElementById("fileInput");
+const dropZone            = document.getElementById("dropZone");
+const previewSection      = document.getElementById("previewSection");
+const previewList         = document.getElementById("previewList");
+const previewCountEl      = document.getElementById("previewCount");
+const addAllBtn           = document.getElementById("addAllBtn");
+const clearPreviewBtn     = document.getElementById("clearPreviewBtn");
+const libEntries          = document.getElementById("libEntries");
+const libStat             = document.getElementById("libStat");
+const clearLibBtn         = document.getElementById("clearLibBtn");
+const musicProgressPanel  = document.getElementById("musicProgressPanel");
+const musicProgressSummary= document.getElementById("musicProgressSummary");
+const musicProgressList   = document.getElementById("musicProgressList");
+
+/* ── Drag-and-drop ── */
+dropZone.addEventListener("dragover",  e => { e.preventDefault(); dropZone.classList.add("over"); });
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("over"));
+dropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropZone.classList.remove("over");
+  const files = Array.from(e.dataTransfer.files).filter(f =>
+    f.type.startsWith("audio/") || /\.(mp3|wav|ogg|m4a|aac)$/i.test(f.name)
+  );
+  if(files.length) handleMusicFiles(files);
+});
+fileInput.addEventListener("change", () => {
+  if(fileInput.files.length) handleMusicFiles(Array.from(fileInput.files));
+  fileInput.value = "";
+});
+
+/* ── Read metadata from selected files ── */
+function handleMusicFiles(files){
+  const promises = files.map(file => new Promise(resolve => {
+    const blobUrl  = URL.createObjectURL(file);
+    const tmpAudio = new Audio();
+    tmpAudio.preload = "metadata";
+    tmpAudio.src = blobUrl;
+    const entry = { file, blobUrl, title: filenameToTitle(file.name), duration: null };
+    tmpAudio.addEventListener("loadedmetadata", () => { entry.duration = tmpAudio.duration; resolve(entry); }, { once: true });
+    tmpAudio.addEventListener("error",          () => resolve(entry), { once: true });
+    setTimeout(() => resolve(entry), 4000);
+  }));
+  Promise.all(promises).then(entries => {
+    pendingMusicFiles = pendingMusicFiles.concat(entries);
+    renderMusicPreview();
+  });
+}
+
+/* ── Render preview list ── */
+function renderMusicPreview(){
+  if(!pendingMusicFiles.length){ previewSection.style.display = "none"; return; }
+  previewSection.style.display = "block";
+  previewCountEl.textContent   = `${pendingMusicFiles.length} track${pendingMusicFiles.length !== 1 ? "s" : ""} selected`;
+  previewList.innerHTML = "";
+
+  pendingMusicFiles.forEach((entry, idx) => {
+    const li = document.createElement("li");
+    li.className = "prev-item";
+    const fileType = entry.file.name.split(".").pop().toUpperCase();
+    li.innerHTML = `
+      <img class="prev-art" src="wolf.png" alt="">
+      <div class="prev-info">
+        <input class="prev-title-input" type="text" value="${escHtml(entry.title)}"
+               aria-label="Track title" data-idx="${idx}">
+        <div class="prev-meta">${escHtml(entry.file.name)} · ${fileType} · ${fmtSize(entry.file.size)}</div>
+      </div>
+      <span class="prev-dur">${entry.duration ? fmtTime(entry.duration) : "–:––"}</span>
+      <button class="prev-remove" aria-label="Remove" data-idx="${idx}" title="Remove">✕</button>
+    `;
+    previewList.appendChild(li);
+  });
+
+  previewList.querySelectorAll(".prev-title-input").forEach(inp =>
+    inp.addEventListener("input", e => {
+      const i = parseInt(e.target.dataset.idx, 10);
+      if(pendingMusicFiles[i]) pendingMusicFiles[i].title = e.target.value;
+    })
+  );
+  previewList.querySelectorAll(".prev-remove").forEach(btn =>
+    btn.addEventListener("click", e => {
+      const i = parseInt(e.currentTarget.dataset.idx, 10);
+      if(pendingMusicFiles[i]) URL.revokeObjectURL(pendingMusicFiles[i].blobUrl);
+      pendingMusicFiles.splice(i, 1);
+      renderMusicPreview();
+    })
+  );
+}
+
+/* ── Clear preview ── */
+clearPreviewBtn.addEventListener("click", () => {
+  pendingMusicFiles.forEach(e => URL.revokeObjectURL(e.blobUrl));
+  pendingMusicFiles = [];
+  renderMusicPreview();
+});
+
+/* ── UPLOAD ALL MUSIC ── */
+addAllBtn.addEventListener("click", async () => {
+  if(!pendingMusicFiles.length) return;
+  if(!currentUser || currentUser.email !== FOUNDER_EMAIL){
+    showToast("⚠ Not authenticated as Founder");
+    return;
+  }
+
+  const files = [...pendingMusicFiles];
+  pendingMusicFiles = [];
+  renderMusicPreview();
+
+  /* Build progress items */
+  const items = files.map((entry, i) => ({
+    entry, id: uid(),
+    status: "pending", /* pending | uploading | ok | fail */
+    error: null,
+  }));
+
+  function renderMusicProgress(){
+    const total   = items.length;
+    const done    = items.filter(x => x.status === "ok").length;
+    const failed  = items.filter(x => x.status === "fail").length;
+    const pending = items.filter(x => x.status === "pending" || x.status === "uploading").length;
+
+    musicProgressPanel.classList.add("active");
+    musicProgressSummary.textContent =
+      `${total} files · ${done} uploaded · ${failed} failed · ${pending} remaining`;
+
+    musicProgressList.innerHTML = "";
+    items.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "upload-item";
+      const statusIcon = item.status === "ok" ? "✓"
+        : item.status === "fail"    ? "✗"
+        : item.status === "uploading" ? "⟳"
+        : "·";
+      const statusClass = item.status === "ok" ? "ok"
+        : item.status === "fail"    ? "fail"
+        : item.status === "uploading" ? "uploading"
+        : "pending";
+      const retryBtn = item.status === "fail"
+        ? `<button class="upload-item-retry" data-id="${item.id}">Retry</button>` : "";
+
+      div.innerHTML = `
+        <div class="upload-item-name" title="${escHtml(item.entry.file.name)}">${escHtml(item.entry.title || item.entry.file.name)}</div>
+        <div class="upload-item-bar"><div class="upload-item-fill" id="fill_${item.id}" style="width:${item.status==='ok'?100:0}%"></div></div>
+        <div class="upload-item-status ${statusClass}">${statusIcon}</div>
+        ${retryBtn}
+      `;
+      musicProgressList.appendChild(div);
+    });
+
+    /* Wire retry buttons */
+    musicProgressList.querySelectorAll(".upload-item-retry").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const id   = btn.dataset.id;
+        const item = items.find(x => x.id === id);
+        if(item) await uploadMusicItem(item);
+      });
+    });
+  }
+
+  async function uploadMusicItem(item){
+    item.status = "uploading";
+    renderMusicProgress();
+
+    try {
+      /* Duplicate check */
+      const dupCheck = await checkDuplicate("music", item.entry.file.name);
+      if(dupCheck.exists){
+        const overwrite = confirm(`"${item.entry.file.name}" already exists in R2.\nClick OK to replace, Cancel to skip.`);
+        if(!overwrite){
+          item.status = "fail";
+          item.error  = "Skipped (duplicate)";
+          renderMusicProgress();
+          return;
+        }
+      }
+
+      /* Animate progress bar to 50% while uploading */
+      const fillEl = document.getElementById(`fill_${item.id}`);
+      if(fillEl) fillEl.style.width = "50%";
+
+      const result = await uploadToWorker(item.entry.file, "music");
+
+      if(fillEl) fillEl.style.width = "100%";
+
+      /* Save metadata to Firebase */
+      const track = {
+        id:       item.id,
+        title:    item.entry.title.trim() || filenameToTitle(item.entry.file.name),
+        artist:   "Chris Legend of Shadows",
+        album:    "",
+        src:      result.url,   /* permanent R2 HTTPS URL */
+        art:      "",
+        type:     item.entry.file.type || item.entry.file.name.split(".").pop().toLowerCase(),
+        duration: item.entry.duration  || null,
+        added:    new Date().toISOString(),
+        r2Key:    result.key,
+        fileSize: result.size,
+      };
+
+      await saveTrackToFirebase(track);
+      syncLocalStorage(track); /* keep localStorage in sync for same-browser player */
+
+      item.status = "ok";
+      renderMusicProgress();
+    } catch(e){
+      item.status = "fail";
+      item.error  = e.message;
+      renderMusicProgress();
+      console.error("Music upload failed:", item.entry.file.name, e);
+    }
+  }
+
+  /* Upload all serially (to avoid exhausting connections on mobile) */
+  renderMusicProgress();
+  addAllBtn.disabled = true;
+  for(const item of items){
+    await uploadMusicItem(item);
+  }
+  addAllBtn.disabled = false;
+
+  const ok   = items.filter(x => x.status === "ok").length;
+  const fail = items.filter(x => x.status === "fail").length;
+  showToast(`✔ ${ok} uploaded${fail ? " · ✗ " + fail + " failed" : ""}`);
+  renderMusicProgress();
+});
+
+/* ─── MUSIC LIBRARY (Firebase) ────────────────────────────────────────── */
+const musicDbRef = ref(db, "music");
+onValue(musicDbRef, snap => {
+  const data = snap.val() || {};
+  const tracks = Object.entries(data).map(([fbKey, t]) => ({ fbKey, ...t }));
+  tracks.sort((a, b) => (a.added || "").localeCompare(b.added || ""));
+
+  libStat.textContent = `${tracks.length} track${tracks.length !== 1 ? "s" : ""} in library`;
+
+  if(!tracks.length){
+    libEntries.innerHTML = `<div class="empty-library">No tracks yet. Upload music above.</div>`;
+    return;
+  }
+
+  libEntries.innerHTML = "";
+  tracks.forEach((t, idx) => {
+    const li = document.createElement("li");
+    li.className = "lib-entry";
+    const typeLabel = (t.type || "").replace("audio/","").toUpperCase().slice(0,4);
+    li.innerHTML = `
+      <span class="lib-entry-num">${idx+1}</span>
+      <span class="lib-entry-title" title="${escHtml(t.src || '')}">${escHtml(t.title || "Untitled")}</span>
+      <span class="lib-entry-type">${escHtml(typeLabel || "–")}</span>
+      <button class="lib-entry-remove" aria-label="Remove ${escHtml(t.title)}"
+              data-fbkey="${escHtml(t.fbKey)}" title="Remove">✕</button>
+    `;
+    libEntries.appendChild(li);
+  });
+
+  libEntries.querySelectorAll(".lib-entry-remove").forEach(btn => {
+    btn.addEventListener("click", async e => {
+      const fbKey = e.currentTarget.dataset.fbkey;
+      if(!confirm("Remove this track from the library?")) return;
+      try {
+        await remove(ref(db, `music/${fbKey}`));
+        showToast("Track removed.");
+      } catch(err){
+        showToast("⚠ Could not remove track.");
+      }
+    });
+  });
+});
+
+/* ─── CLEAR LIBRARY ──────────────────────────────────────────────────── */
+clearLibBtn.addEventListener("click", async () => {
+  if(!confirm("Clear the ENTIRE music library? This cannot be undone.\n\nThis removes all tracks from Firebase. R2 files are NOT deleted.")) return;
+  try {
+    await remove(ref(db, "music"));
+    /* Also clear localStorage so player reflects changes immediately */
+    try { localStorage.removeItem(LS_KEY); } catch(e){}
+    showToast("Music library cleared.");
+  } catch(e){
+    showToast("⚠ Could not clear library: " + e.message);
+  }
+});
+
+/* ════════════════════════════════════════════════════════════════════════
+   GALLERY UPLOAD
+   ════════════════════════════════════════════════════════════════════════ */
+let pendingGalleryFiles = [];
+
+const galleryFileInput        = document.getElementById("galleryFileInput");
+const galleryDropZone         = document.getElementById("galleryDropZone");
+const galleryPreviewSection   = document.getElementById("galleryPreviewSection");
+const galleryPreviewList      = document.getElementById("galleryPreviewList");
+const galleryPreviewCountEl   = document.getElementById("galleryPreviewCount");
+const galleryUploadBtn        = document.getElementById("galleryUploadBtn");
+const galleryClearPreviewBtn  = document.getElementById("galleryClearPreviewBtn");
+const galleryLibEntries       = document.getElementById("galleryLibEntries");
+const galleryLibStat          = document.getElementById("galleryLibStat");
+const galleryProgressPanel    = document.getElementById("galleryProgressPanel");
+const galleryProgressSummary  = document.getElementById("galleryProgressSummary");
+const galleryProgressList     = document.getElementById("galleryProgressList");
+
+/* ── Drag-and-drop ── */
+galleryDropZone.addEventListener("dragover",  e => { e.preventDefault(); galleryDropZone.classList.add("over"); });
+galleryDropZone.addEventListener("dragleave", () => galleryDropZone.classList.remove("over"));
+galleryDropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  galleryDropZone.classList.remove("over");
+  const files = Array.from(e.dataTransfer.files).filter(f =>
+    f.type.startsWith("image/") || /\.(jpg|jpeg|png|gif|webp|avif)$/i.test(f.name)
+  );
+  if(files.length) handleGalleryFiles(files);
+});
+galleryFileInput.addEventListener("change", () => {
+  if(galleryFileInput.files.length) handleGalleryFiles(Array.from(galleryFileInput.files));
+  galleryFileInput.value = "";
+});
+
+function handleGalleryFiles(files){
+  const entries = files.map(file => ({ file, blobUrl: URL.createObjectURL(file), title: filenameToTitle(file.name) }));
+  pendingGalleryFiles = pendingGalleryFiles.concat(entries);
+  renderGalleryPreview();
+}
+
+function renderGalleryPreview(){
+  if(!pendingGalleryFiles.length){ galleryPreviewSection.style.display = "none"; return; }
+  galleryPreviewSection.style.display = "block";
+  galleryPreviewCountEl.textContent   = `${pendingGalleryFiles.length} image${pendingGalleryFiles.length !== 1 ? "s" : ""} selected`;
+  galleryPreviewList.innerHTML = "";
+
+  pendingGalleryFiles.forEach((entry, idx) => {
+    const li = document.createElement("li");
+    li.className = "prev-item";
+    li.innerHTML = `
+      <img class="prev-art" src="${escHtml(entry.blobUrl)}" alt="" style="object-fit:cover;">
+      <div class="prev-info">
+        <input class="prev-title-input" type="text" value="${escHtml(entry.title)}"
+               aria-label="Image caption" data-idx="${idx}">
+        <div class="prev-meta">${escHtml(entry.file.name)} · ${fmtSize(entry.file.size)}</div>
+      </div>
+      <button class="prev-remove" aria-label="Remove" data-idx="${idx}" title="Remove">✕</button>
+    `;
+    galleryPreviewList.appendChild(li);
+  });
+
+  galleryPreviewList.querySelectorAll(".prev-title-input").forEach(inp =>
+    inp.addEventListener("input", e => {
+      const i = parseInt(e.target.dataset.idx, 10);
+      if(pendingGalleryFiles[i]) pendingGalleryFiles[i].title = e.target.value;
+    })
+  );
+  galleryPreviewList.querySelectorAll(".prev-remove").forEach(btn =>
+    btn.addEventListener("click", e => {
+      const i = parseInt(e.currentTarget.dataset.idx, 10);
+      if(pendingGalleryFiles[i]) URL.revokeObjectURL(pendingGalleryFiles[i].blobUrl);
+      pendingGalleryFiles.splice(i, 1);
+      renderGalleryPreview();
+    })
+  );
+}
+
+galleryClearPreviewBtn.addEventListener("click", () => {
+  pendingGalleryFiles.forEach(e => URL.revokeObjectURL(e.blobUrl));
+  pendingGalleryFiles = [];
+  renderGalleryPreview();
+});
+
+/* ── UPLOAD ALL GALLERY IMAGES ── */
+galleryUploadBtn.addEventListener("click", async () => {
+  if(!pendingGalleryFiles.length) return;
+  if(!currentUser || currentUser.email !== FOUNDER_EMAIL){
+    showToast("⚠ Not authenticated as Founder");
+    return;
+  }
+
+  const files = [...pendingGalleryFiles];
+  pendingGalleryFiles = [];
+  renderGalleryPreview();
+
+  const items = files.map((entry, i) => ({
+    entry, id: uid(), status: "pending", error: null,
+  }));
+
+  function renderGalleryProgress(){
+    const total   = items.length;
+    const done    = items.filter(x => x.status === "ok").length;
+    const failed  = items.filter(x => x.status === "fail").length;
+    const pending = items.filter(x => x.status === "pending" || x.status === "uploading").length;
+
+    galleryProgressPanel.classList.add("active");
+    galleryProgressSummary.textContent =
+      `${total} images · ${done} uploaded · ${failed} failed · ${pending} remaining`;
+
+    galleryProgressList.innerHTML = "";
+    items.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "upload-item";
+      const statusIcon = item.status === "ok" ? "✓" : item.status === "fail" ? "✗" : item.status === "uploading" ? "⟳" : "·";
+      const statusClass = item.status === "ok" ? "ok" : item.status === "fail" ? "fail" : item.status === "uploading" ? "uploading" : "pending";
+      const retryBtn = item.status === "fail"
+        ? `<button class="upload-item-retry" data-id="${item.id}">Retry</button>` : "";
+
+      div.innerHTML = `
+        <div class="upload-item-name" title="${escHtml(item.entry.file.name)}">${escHtml(item.entry.title || item.entry.file.name)}</div>
+        <div class="upload-item-bar"><div class="upload-item-fill" id="gfill_${item.id}" style="width:${item.status==='ok'?100:0}%"></div></div>
+        <div class="upload-item-status ${statusClass}">${statusIcon}</div>
+        ${retryBtn}
+      `;
+      galleryProgressList.appendChild(div);
+    });
+
+    galleryProgressList.querySelectorAll(".upload-item-retry").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const id   = btn.dataset.id;
+        const item = items.find(x => x.id === id);
+        if(item) await uploadGalleryItem(item);
+      });
+    });
+  }
+
+  async function uploadGalleryItem(item){
+    item.status = "uploading";
+    renderGalleryProgress();
+
+    try {
+      const dupCheck = await checkDuplicate("gallery", item.entry.file.name);
+      if(dupCheck.exists){
+        const overwrite = confirm(`"${item.entry.file.name}" already exists.\nClick OK to replace, Cancel to skip.`);
+        if(!overwrite){
+          item.status = "fail"; item.error = "Skipped (duplicate)";
+          renderGalleryProgress(); return;
+        }
+      }
+
+      const fillEl = document.getElementById(`gfill_${item.id}`);
+      if(fillEl) fillEl.style.width = "50%";
+
+      const result = await uploadToWorker(item.entry.file, "gallery");
+      if(fillEl) fillEl.style.width = "100%";
+
+      const image = {
+        id:       item.id,
+        title:    item.entry.title.trim() || filenameToTitle(item.entry.file.name),
+        src:      result.url,
+        type:     item.entry.file.type || "image/jpeg",
+        added:    new Date().toISOString(),
+        r2Key:    result.key,
+        fileSize: result.size,
+      };
+
+      await saveImageToFirebase(image);
+      item.status = "ok";
+      renderGalleryProgress();
+    } catch(e){
+      item.status = "fail"; item.error = e.message;
+      renderGalleryProgress();
+      console.error("Gallery upload failed:", item.entry.file.name, e);
+    }
+  }
+
+  renderGalleryProgress();
+  galleryUploadBtn.disabled = true;
+  for(const item of items) await uploadGalleryItem(item);
+  galleryUploadBtn.disabled = false;
+
+  const ok   = items.filter(x => x.status === "ok").length;
+  const fail = items.filter(x => x.status === "fail").length;
+  showToast(`🖼 ${ok} images uploaded${fail ? " · ✗ " + fail + " failed" : ""}`);
+  renderGalleryProgress();
+});
+
+/* ─── GALLERY LIBRARY (Firebase) ──────────────────────────────────────── */
+const galleryDbRef = ref(db, "gallery");
+onValue(galleryDbRef, snap => {
+  const data = snap.val() || {};
+  const images = Object.entries(data).map(([fbKey, img]) => ({ fbKey, ...img }));
+  images.sort((a, b) => (a.added || "").localeCompare(b.added || ""));
+
+  galleryLibStat.textContent = `${images.length} image${images.length !== 1 ? "s" : ""}`;
+
+  if(!images.length){
+    galleryLibEntries.innerHTML = `<div class="empty-library">No images yet. Upload above.</div>`;
+    return;
+  }
+
+  galleryLibEntries.innerHTML = "";
+  images.forEach((img, idx) => {
+    const li = document.createElement("li");
+    li.className = "lib-entry";
+    li.innerHTML = `
+      <span class="lib-entry-num">${idx+1}</span>
+      <span class="lib-entry-title" title="${escHtml(img.src || '')}">${escHtml(img.title || "Untitled")}</span>
+      <span class="lib-entry-type">IMG</span>
+      <button class="lib-entry-remove" aria-label="Remove" data-fbkey="${escHtml(img.fbKey)}" title="Remove">✕</button>
+    `;
+    galleryLibEntries.appendChild(li);
+  });
+
+  galleryLibEntries.querySelectorAll(".lib-entry-remove").forEach(btn => {
+    btn.addEventListener("click", async e => {
+      const fbKey = e.currentTarget.dataset.fbkey;
+      if(!confirm("Remove this image from the gallery?")) return;
+      try {
+        await remove(ref(db, `gallery/${fbKey}`));
+        showToast("Image removed from gallery.");
+      } catch(err){
+        showToast("⚠ Could not remove image.");
+      }
+    });
+  });
+});
+</script>
+
+<!-- ── SERVICE WORKER ── -->
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () =>
+    navigator.serviceWorker.register("/sw.js").catch(() => {})
+  );
+}
+</script>
+
+</body>
+</html>

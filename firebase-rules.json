@@ -1,0 +1,38 @@
+{
+  "rules": {
+    /* ── MUSIC LIBRARY ──────────────────────────────────────
+       Public read: anyone can read the music library metadata.
+       Write: only authenticated Founder email.
+    ──────────────────────────────────────────────────────── */
+    "music": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email == 'christijerina46@gmail.com'"
+    },
+
+    /* ── GALLERY IMAGES ─────────────────────────────────────
+       Public read: anyone can see gallery image metadata.
+       Write: only authenticated Founder email.
+    ──────────────────────────────────────────────────────── */
+    "gallery": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email == 'christijerina46@gmail.com'"
+    },
+
+    /* ── COMMENTS ────────────────────────────────────────────
+       Public read (view comments).
+       Write: any authenticated user (anonymous or email).
+       Delete own: only if same uid.
+       Delete any: only Founder.
+    ──────────────────────────────────────────────────────── */
+    "comments": {
+      ".read": true,
+      "$commentId": {
+        ".write": "auth != null && (
+          !data.exists() ||
+          data.child('uid').val() === auth.uid ||
+          auth.token.email === 'christijerina46@gmail.com'
+        )"
+      }
+    }
+  }
+}
