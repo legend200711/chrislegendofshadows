@@ -388,13 +388,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyByZRmp6R9HY17T2_WdJUFWeeaLNOP6y2Y",
-  authDomain: "horr-a08f4.firebaseapp.com",
-  databaseURL: "https://horr-a08f4-default-rtdb.firebaseio.com",
-  projectId: "horr-a08f4",
-  storageBucket: "horr-a08f4.firebasestorage.app",
-  messagingSenderId: "933810617818",
-  appId: "1:933810617818:web:efb24f123337dd987c14e3"
+  apiKey: "AIzaSyAHwNhzonlsFbZFFrc1nvEqpl0ayM8N42c",
+  authDomain: "bue12-f6a1f.firebaseapp.com",
+  databaseURL: "https://bue12-f6a1f-default-rtdb.firebaseio.com",
+  projectId: "bue12-f6a1f",
+  storageBucket: "bue12-f6a1f.firebasestorage.app",
+  messagingSenderId: "383513452214",
+  appId: "1:383513452214:web:a86ee2969a3fc9e3459017"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -402,7 +402,14 @@ const db  = getDatabase(app);
 
 let chatRef    = null;
 let currentRoom = "LOBBY";
-const userId   = Math.random().toString(36).substring(2, 10);
+
+// Stable per browser-tab session — survives refresh, cleared on tab close.
+// This prevents duplicate presence records on refresh.
+if(!sessionStorage.getItem("chatUserId")){
+  sessionStorage.setItem("chatUserId", Math.random().toString(36).substring(2, 10));
+}
+const userId = sessionStorage.getItem("chatUserId");
+
 const msgListeners = {};
 
 /* ── EMOTES ── */
@@ -456,23 +463,39 @@ function enterRoom(room, name){
 function setupPresence(room, name){
   const presenceRef = ref(db, "rooms/" + room + "/presence/" + userId);
   const allPresence = ref(db, "rooms/" + room + "/presence");
-  function register(){ set(presenceRef, { name, online: true, ts: Date.now() }); }
+
+  // Write our own presence record; Firebase removes it on disconnect.
+  function register(){
+    set(presenceRef, { name, online: true, ts: Date.now() })
+      .catch(err => console.error("Presence write failed:", err));
+  }
   register();
   onDisconnect(presenceRef).remove();
+
+  // Re-register when the tab becomes visible again (phone lock / tab switch).
   document.addEventListener("visibilitychange", () => {
     if(document.visibilityState === "visible") register();
   });
+
+  // Listen to ALL presence records and show a live name list.
   onValue(allPresence, snap => {
     const data = snap.val() || {};
     const now  = Date.now();
-    let live = 0;
+    const names = [];
+
     Object.entries(data).forEach(([uid, v]) => {
+      // Remove stale entries older than 5 minutes (heartbeat gap).
       if(v.ts && now - v.ts > 5 * 60 * 1000){
         remove(ref(db, "rooms/" + room + "/presence/" + uid));
-      } else { live++; }
+      } else {
+        names.push(v.name || "Shadow");
+      }
     });
+
+    const count = names.length;
+    const nameList = count > 0 ? " — " + names.join(", ") : "";
     document.getElementById("roomTitle").textContent =
-      "☽ SHADOW CHAT ☾ | 👥 Online: " + live;
+      "☽ SHADOW CHAT ☾ | 👥 Online: " + count + nameList;
   });
 }
 
@@ -567,9 +590,19 @@ function listenMessages(){
 window.sendMessage = function(){
   const name    = document.getElementById("name").value.trim() || "Shadow";
   const message = document.getElementById("message").value.trim();
-  if(!chatRef || !message) return;
-  push(chatRef, { name, message, time: Date.now() });
-  document.getElementById("message").value = "";
+  if(!message) return;
+  if(!chatRef){
+    console.error("sendMessage: chatRef not set — join a room first.");
+    return;
+  }
+  push(chatRef, { name, message, time: Date.now() })
+    .then(() => {
+      document.getElementById("message").value = "";
+    })
+    .catch(err => {
+      console.error("Message send failed:", err);
+      alert("Could not send message: " + (err.message || err.code || err));
+    });
 };
 
 document.getElementById("message").addEventListener("keydown", e => {

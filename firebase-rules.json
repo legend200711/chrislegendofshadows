@@ -33,6 +33,32 @@
           auth.token.email === 'christijerina46@gmail.com'
         )"
       }
+    },
+
+    /* ── CHAT ROOMS ──────────────────────────────────────────
+       Public read: anyone can read chat messages and presence.
+       Messages: any visitor (no auth required) can push new
+         messages. They cannot edit or delete other messages.
+         Founder can delete any message.
+       Presence: each user may only write their own slot
+         (keyed by their userId client token).
+         Founder can remove any stale presence record.
+    ──────────────────────────────────────────────────────── */
+    "rooms": {
+      "$room": {
+        "messages": {
+          ".read": true,
+          "$messageId": {
+            ".write": "!data.exists() || (auth != null && auth.token.email === 'christijerina46@gmail.com')"
+          }
+        },
+        "presence": {
+          ".read": true,
+          "$userId": {
+            ".write": "!data.exists() || auth == null || auth.token.email === 'christijerina46@gmail.com'"
+          }
+        }
+      }
     }
   }
 }
