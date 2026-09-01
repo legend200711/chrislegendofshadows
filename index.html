@@ -188,8 +188,10 @@ body::after {
 
 .node { position: absolute; top: 0; left: 0; }
 #aboutNode   { transform: rotate(0deg)   translateX(260px); }
-#galleryNode { transform: rotate(120deg) translateX(260px); }
-#musicNode   { transform: rotate(240deg) translateX(260px); }
+#galleryNode { transform: rotate(72deg)  translateX(260px); }
+#musicNode   { transform: rotate(144deg) translateX(260px); }
+#chatNode    { transform: rotate(216deg) translateX(260px); }
+#playerNode  { transform: rotate(288deg) translateX(260px); }
 
 .portal {
   position: absolute;
@@ -257,15 +259,19 @@ body::after {
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   #aboutNode   { transform: rotate(0deg)   translateX(200px); }
-  #galleryNode { transform: rotate(120deg) translateX(200px); }
-  #musicNode   { transform: rotate(240deg) translateX(200px); }
+  #galleryNode { transform: rotate(72deg)  translateX(200px); }
+  #musicNode   { transform: rotate(144deg) translateX(200px); }
+  #chatNode    { transform: rotate(216deg) translateX(200px); }
+  #playerNode  { transform: rotate(288deg) translateX(200px); }
   .portal { width: 110px; height: 110px; }
   #sigil  { width: 160px; height: 160px; }
 }
 @media (max-width: 600px) {
   #aboutNode   { transform: rotate(0deg)   translateX(120px); }
-  #galleryNode { transform: rotate(120deg) translateX(120px); }
-  #musicNode   { transform: rotate(240deg) translateX(120px); }
+  #galleryNode { transform: rotate(72deg)  translateX(120px); }
+  #musicNode   { transform: rotate(144deg) translateX(120px); }
+  #chatNode    { transform: rotate(216deg) translateX(120px); }
+  #playerNode  { transform: rotate(288deg) translateX(120px); }
   .portal { width: 80px; height: 80px; font-size: 9px; }
   #sigil  { width: 110px; height: 110px; }
   #moon   { width: 70px; height: 70px; top: 3%; }
@@ -341,6 +347,12 @@ body::after {
   </div>
   <div class="node" id="musicNode">
     <a href="music.html" class="portal">MUSIC</a>
+  </div>
+  <div class="node" id="chatNode">
+    <a href="chat room.html" class="portal">CHAT</a>
+  </div>
+  <div class="node" id="playerNode">
+    <a href="music-player.html" class="portal">PLAYER</a>
   </div>
 </div>
 

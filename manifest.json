@@ -26,6 +26,13 @@
   ],
   "shortcuts": [
     {
+      "name": "Legendary Player",
+      "short_name": "Player",
+      "description": "Legendary Media Player",
+      "url": "https://chrislegendofshadows.com/music-player.html",
+      "icons": [{ "src": "wolf.png", "sizes": "any" }]
+    },
+    {
       "name": "Music",
       "short_name": "Music",
       "description": "Shadow Music Hub",
